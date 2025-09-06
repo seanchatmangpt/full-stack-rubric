@@ -51,6 +51,16 @@ const { header } = useAppConfig()
         class="lg:hidden"
       />
 
+      <UButton
+        to="/typing"
+        color="primary"
+        variant="soft"
+        class="mr-2"
+      >
+        <Icon name="i-heroicons-pencil" class="mr-1" />
+        Typing Tutor
+      </UButton>
+
       <UColorModeButton v-if="header?.colorMode" />
 
       <template v-if="header?.links">
