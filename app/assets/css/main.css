@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
-@import "./typing.css";
 
 @source "../../../content/**/*";
 
