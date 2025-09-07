@@ -1,95 +1,61 @@
 <template>
-  <div class="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-    <!-- Header -->
-    <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-4">
-          <h1 class="text-xl font-semibold">Full-Stack Interview Typing Practice</h1>
-          <UBadge :color="currentExercise.difficulty === 'easy' ? 'green' : currentExercise.difficulty === 'medium' ? 'yellow' : 'red'">
-            {{ currentExercise.difficulty }}
-          </UBadge>
-          <UBadge variant="outline">{{ currentExercise.category }}</UBadge>
-        </div>
-        
-        <div class="flex items-center space-x-6">
-          <!-- Stats -->
-          <div class="flex items-center space-x-4 text-sm">
-            <div class="text-center">
-              <div class="font-bold text-blue-600">{{ wpm }}</div>
-              <div class="text-gray-500">WPM</div>
-            </div>
-            <div class="text-center">
-              <div class="font-bold text-green-600">{{ accuracy.toFixed(1) }}%</div>
-              <div class="text-gray-500">Accuracy</div>
-            </div>
-            <div class="text-center">
-              <div class="font-bold text-red-600">{{ errors }}</div>
-              <div class="text-gray-500">Errors</div>
-            </div>
-          </div>
-          
-          <UButton @click="resetTyping" size="sm" variant="outline">Reset</UButton>
-          <UButton @click="nextExercise" size="sm" v-if="isComplete">Next Exercise</UButton>
-        </div>
-      </div>
+  <div class="container mx-auto py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-3xl font-bold mb-8 text-center">Typing Tutor</h1>
       
-      <!-- Progress -->
-      <div class="mt-3">
-        <div class="flex justify-between text-xs text-gray-500 mb-1">
-          <span>{{ currentExercise.title }}</span>
-          <span>{{ Math.round(progress) }}% complete</span>
+      <!-- Statistics Panel -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white p-4 rounded-lg shadow">
+          <div class="text-sm text-gray-600">WPM</div>
+          <div class="text-2xl font-bold text-blue-600">{{ wpm }}</div>
         </div>
-        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-          <div 
-            class="bg-blue-600 h-1 rounded-full transition-all duration-300"
-            :style="{ width: `${Math.min(progress, 100)}%` }"
-          ></div>
+        <div class="bg-white p-4 rounded-lg shadow">
+          <div class="text-sm text-gray-600">Accuracy</div>
+          <div class="text-2xl font-bold text-green-600">{{ accuracy.toFixed(1) }}%</div>
         </div>
-      </div>
-    </div>
-
-    <!-- Main Content Area -->
-    <div class="flex-1 flex overflow-hidden">
-      <!-- Code to Type Panel -->
-      <div class="w-1/2 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-        <div class="h-full flex flex-col">
-          <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-            <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Code to Type</h2>
-            <p class="text-xs text-gray-500 mt-1">{{ currentExercise.description }}</p>
-          </div>
-          
-          <div class="flex-1 p-4 overflow-auto">
-            <pre class="text-sm leading-relaxed font-mono"><code><span
-              v-for="(char, index) in targetText"
-              :key="index"
-              :class="getCharClass(char, index)"
-            >{{ char }}</span></code></pre>
-          </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+          <div class="text-sm text-gray-600">Errors</div>
+          <div class="text-2xl font-bold text-red-600">{{ errors }}</div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+          <div class="text-sm text-gray-600">Progress</div>
+          <div class="text-2xl font-bold">{{ progress.toFixed(0) }}% complete</div>
         </div>
       </div>
 
-      <!-- Your Code Panel -->
-      <div class="w-1/2 bg-white dark:bg-gray-800">
-        <div class="h-full flex flex-col">
-          <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-            <div class="flex items-center justify-between">
-              <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Your Code</h2>
-              <div class="text-xs text-gray-500">
-                {{ userInput.length }} / {{ targetText.length }} chars
-              </div>
-            </div>
-          </div>
-          
-          <div class="flex-1 relative">
-            <MonacoEditor
-              v-model="userInput"
-              :lang="currentExercise.language"
-              :options="editorOptions"
-              @update:modelValue="handleInput"
-              class="h-full"
-            />
-          </div>
-        </div>
+      <!-- Progress Bar -->
+      <div class="w-full bg-gray-200 rounded-full h-2 mb-8">
+        <div 
+          class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+          :style="{ width: `${progress}%` }"
+        ></div>
+      </div>
+
+      <!-- Code Display -->
+      <div class="bg-gray-900 text-gray-100 p-6 rounded-lg font-mono text-lg mb-6 overflow-auto">
+        <pre><code v-html="highlightedText"></code></pre>
+      </div>
+
+      <!-- Input Area -->
+      <div class="mb-6">
+        <textarea
+          v-model="userInput"
+          @input="handleInput"
+          @keydown="handleKeydown"
+          class="w-full h-32 p-4 border border-gray-300 rounded-lg font-mono text-lg resize-none"
+          placeholder="Start typing here..."
+          :disabled="isComplete"
+        ></textarea>
+      </div>
+
+      <!-- Control Buttons -->
+      <div class="flex gap-4 justify-center">
+        <UButton @click="resetExercise" variant="outline">
+          Reset
+        </UButton>
+        <UButton @click="nextExercise" :disabled="!isComplete">
+          Next Exercise
+        </UButton>
       </div>
     </div>
 
@@ -97,26 +63,18 @@
     <UModal v-model="showModal">
       <UCard>
         <template #header>
-          <h3 class="text-lg font-semibold">Exercise Complete! 🎉</h3>
+          <h3 class="text-xl font-bold">Exercise Complete!</h3>
         </template>
         
         <div class="space-y-4">
-          <div class="text-center">
-            <p class="text-gray-600 dark:text-gray-300 mb-4">Great job completing the {{ currentExercise.title }} exercise!</p>
-          </div>
-          
-          <div class="grid grid-cols-3 gap-4">
-            <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center">
+          <div class="grid grid-cols-2 gap-4 text-center">
+            <div>
               <div class="text-2xl font-bold text-blue-600">{{ finalWpm }}</div>
-              <div class="text-sm text-gray-600 dark:text-gray-300">Words Per Minute</div>
+              <div class="text-sm text-gray-600">Final WPM</div>
             </div>
-            <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg text-center">
+            <div>
               <div class="text-2xl font-bold text-green-600">{{ finalAccuracy.toFixed(1) }}%</div>
-              <div class="text-sm text-gray-600 dark:text-gray-300">Accuracy</div>
-            </div>
-            <div class="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg text-center">
-              <div class="text-2xl font-bold text-orange-600">{{ Math.round(timeElapsed * 60) }}s</div>
-              <div class="text-sm text-gray-600 dark:text-gray-300">Time Taken</div>
+              <div class="text-sm text-gray-600">Final Accuracy</div>
             </div>
           </div>
         </div>
@@ -133,454 +91,159 @@
 </template>
 
 <script setup>
-// Full-Stack Interview Coding Exercises
+import { ref, computed, watch, onMounted } from 'vue'
+
+// Reactive data
+const userInput = ref('')
+const targetText = ref('')
+const startTime = ref(null)
+const endTime = ref(null)
+const errors = ref(0)
+const showModal = ref(false)
+const currentExercise = ref(null)
+
+// Sample exercises
 const exercises = [
   {
-    id: 1,
-    title: "Express API: Filter & Paginate",
-    category: "Backend",
-    difficulty: "easy",
-    language: "javascript",
-    description: "Create an Express route that filters items by status and implements pagination",
-    code: `app.get('/api/items', (req, res) => {
-  const { status, page = 1, limit = 10 } = req.query;
-  
-  let filtered = items;
-  if (status) {
-    filtered = items.filter(item => item.status === status);
-  }
-  
-  const offset = (page - 1) * limit;
-  const paginatedItems = filtered.slice(offset, offset + parseInt(limit));
-  
-  res.json({
-    items: paginatedItems,
-    total: filtered.length,
-    page: parseInt(page),
-    totalPages: Math.ceil(filtered.length / limit)
-  });
-});`
+    title: 'Basic JavaScript',
+    description: 'Simple variable declarations and functions',
+    difficulty: 'easy',
+    category: 'javascript',
+    language: 'javascript',
+    code: 'const message = "Hello World";\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}'
   },
   {
-    id: 2,
-    title: "Vue Composable: useItems",
-    category: "Frontend",
-    difficulty: "easy",
-    language: "javascript",
-    description: "Create a Vue 3 composable for fetching and managing a list of items",
-    code: `export function useItems() {
-  const items = ref([]);
-  const loading = ref(false);
-  const error = ref(null);
-  
-  const fetchItems = async (filters = {}) => {
-    loading.value = true;
-    error.value = null;
-    
-    try {
-      const query = new URLSearchParams(filters).toString();
-      const response = await fetch('/api/items?' + query);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch items');
-      }
-      
-      const data = await response.json();
-      items.value = data.items;
-    } catch (err) {
-      error.value = err.message;
-    } finally {
-      loading.value = false;
-    }
-  };
-  
-  const addItem = async (item) => {
-    const response = await fetch('/api/items', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(item)
-    });
-    
-    if (response.ok) {
-      const newItem = await response.json();
-      items.value.push(newItem);
-    }
-  };
-  
-  return {
-    items: readonly(items),
-    loading: readonly(loading),
-    error: readonly(error),
-    fetchItems,
-    addItem
-  };
-}`
+    title: 'Array Methods',
+    description: 'Working with JavaScript array methods',
+    difficulty: 'medium',
+    category: 'javascript',
+    language: 'javascript',
+    code: 'const numbers = [1, 2, 3, 4, 5];\nconst doubled = numbers.map(n => n * 2);\nconst sum = numbers.reduce((acc, n) => acc + n, 0);'
   },
   {
-    id: 3,
-    title: "Express Middleware: Request Validation",
-    category: "Backend",
-    difficulty: "medium",
-    language: "javascript",
-    description: "Create Express middleware for validating request data with error handling",
-    code: `const validateItem = (req, res, next) => {
-  const { title, description, status } = req.body;
-  const errors = [];
-  
-  if (!title || title.trim().length === 0) {
-    errors.push('Title is required');
+    title: 'Async Operations',
+    description: 'Promise and async/await patterns',
+    difficulty: 'hard',
+    category: 'javascript',
+    language: 'javascript',
+    code: 'async function fetchData(url) {\n  try {\n    const response = await fetch(url);\n    return await response.json();\n  } catch (error) {\n    console.error("Error:", error);\n  }\n}'
   }
-  
-  if (title && title.length > 100) {
-    errors.push('Title must be less than 100 characters');
-  }
-  
-  if (!description || description.trim().length === 0) {
-    errors.push('Description is required');
-  }
-  
-  if (status && !['active', 'inactive', 'pending'].includes(status)) {
-    errors.push('Status must be active, inactive, or pending');
-  }
-  
-  if (errors.length > 0) {
-    return res.status(400).json({
-      error: 'Validation failed',
-      details: errors
-    });
-  }
-  
-  // Sanitize input
-  req.body.title = title.trim();
-  req.body.description = description.trim();
-  req.body.status = status || 'pending';
-  
-  next();
-};
-
-app.post('/api/items', validateItem, (req, res) => {
-  const newItem = {
-    id: Date.now(),
-    ...req.body,
-    createdAt: new Date().toISOString()
-  };
-  
-  items.push(newItem);
-  res.status(201).json(newItem);
-});`
-  },
-  {
-    id: 4,
-    title: "Vue Component: Optimistic Updates",
-    category: "Frontend",
-    difficulty: "medium",
-    language: "javascript",
-    description: "Implement optimistic UI updates with rollback on failure",
-    code: `<template>
-  <div class="item-list">
-    <div v-for="item in items" :key="item.id" class="item">
-      <span :class="{ 'pending': item.pending }">{{ item.title }}</span>
-      <button @click="toggleStatus(item)" :disabled="item.pending">
-        {{ item.status }}
-      </button>
-      <button @click="deleteItem(item)" :disabled="item.pending">
-        Delete
-      </button>
-    </div>
-  </div>
-</template>
-
-<script setup>
-const { items, fetchItems } = useItems();
-
-const toggleStatus = async (item) => {
-  const originalStatus = item.status;
-  const newStatus = item.status === 'active' ? 'inactive' : 'active';
-  
-  // Optimistic update
-  item.status = newStatus;
-  item.pending = true;
-  
-  try {
-    const response = await fetch('/api/items/' + item.id, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to update item');
-    }
-  } catch (error) {
-    // Rollback on failure
-    item.status = originalStatus;
-    alert('Failed to update item: ' + error.message);
-  } finally {
-    item.pending = false;
-  }
-};
-
-const deleteItem = async (item) => {
-  const index = items.value.indexOf(item);
-  
-  // Optimistic removal
-  items.value.splice(index, 1);
-  
-  try {
-    const response = await fetch('/api/items/' + item.id, {
-      method: 'DELETE'
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to delete item');
-    }
-  } catch (error) {
-    // Rollback on failure
-    items.value.splice(index, 0, item);
-    alert('Failed to delete item: ' + error.message);
-  }
-};
-<\/script>\`
-  },
-  {
-    id: 5,
-    title: "Node.js: Async Data Processing",
-    category: "Backend",
-    difficulty: "hard",
-    language: "javascript",
-    description: "Process large dataset with async operations and error handling",
-    code: `const processItems = async (items, batchSize = 10) => {
-  const results = [];
-  const errors = [];
-  
-  // Process in batches to avoid overwhelming the system
-  for (let i = 0; i < items.length; i += batchSize) {
-    const batch = items.slice(i, i + batchSize);
-    
-    const batchPromises = batch.map(async (item) => {
-      try {
-        // Simulate async processing (API call, DB operation, etc.)
-        const processed = await processItem(item);
-        return { success: true, data: processed };
-      } catch (error) {
-        return { success: false, error: error.message, item };
-      }
-    });
-    
-    const batchResults = await Promise.all(batchPromises);
-    
-    batchResults.forEach(result => {
-      if (result.success) {
-        results.push(result.data);
-      } else {
-        errors.push(result);
-      }
-    });
-    
-    // Optional: Add delay between batches to prevent rate limiting
-    if (i + batchSize < items.length) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
-  }
-  
-  return {
-    processed: results,
-    errors: errors,
-    successCount: results.length,
-    errorCount: errors.length
-  };
-};
-
-const processItem = async (item) => {
-  // Simulate async processing
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() < 0.1) { // 10% failure rate
-        reject(new Error('Processing failed for item ' + item.id));
-      } else {
-        resolve({
-          ...item,
-          processed: true,
-          processedAt: new Date().toISOString()
-        });
-      }
-    }, Math.random() * 1000);
-  });
-};`
-  }
-];
-
-// Reactive state
-const currentExerciseIndex = ref(0)
-const userInput = ref('')
-const startTime = ref(null)
-const isComplete = ref(false)
-const showModal = ref(false)
+]
 
 // Computed properties
-const currentExercise = computed(() => exercises[currentExerciseIndex.value])
-const targetText = computed(() => currentExercise.value.code)
-
-// Monaco Editor Options
-const editorOptions = computed(() => ({
-  theme: 'vs-dark',
-  fontSize: 14,
-  lineNumbers: 'on',
-  wordWrap: 'on',
-  minimap: { enabled: false },
-  scrollBeyondLastLine: false,
-  renderLineHighlight: 'none',
-  overviewRulerBorder: false,
-  hideCursorInOverviewRuler: true,
-  scrollbar: {
-    vertical: 'auto',
-    horizontal: 'auto'
-  },
-  suggest: { showStatusBar: false },
-  quickSuggestions: false,
-  parameterHints: { enabled: false },
-  ordBasedSuggestions: false,
-  wordBasedSuggestions: false,
-  occurrencesHighlight: false,
-  selectionHighlight: false,
-  renderWhitespace: 'selection',
-  contextmenu: false,
-  automaticLayout: true,
-  tabSize: 2,
-  insertSpaces: true
-}))
-
-const progress = computed(() => {
-  if (!targetText.value) return 0
-  return (userInput.value.length / targetText.value.length) * 100
-})
-
-const correctChars = computed(() => {
-  let correct = 0
-  for (let i = 0; i < userInput.value.length; i++) {
-    if (userInput.value[i] === targetText.value[i]) {
-      correct++
-    }
-  }
-  return correct
-})
-
-const errors = computed(() => {
-  return userInput.value.length - correctChars.value
+const wpm = computed(() => {
+  if (!startTime.value) return 0
+  
+  const timeElapsed = (Date.now() - startTime.value) / 1000 / 60 // minutes
+  const wordsTyped = userInput.value.trim().split(/\s+/).length
+  
+  return timeElapsed > 0 ? Math.round(wordsTyped / timeElapsed) : 0
 })
 
 const accuracy = computed(() => {
   if (userInput.value.length === 0) return 100
-  return (correctChars.value / userInput.value.length) * 100
+  
+  const correct = userInput.value.split('').reduce((acc, char, index) => {
+    return char === targetText.value[index] ? acc + 1 : acc
+  }, 0)
+  
+  return (correct / userInput.value.length) * 100
 })
 
-const timeElapsed = computed(() => {
-  if (!startTime.value) return 0
-  return (Date.now() - startTime.value) / 1000 / 60 // in minutes
+const progress = computed(() => {
+  if (targetText.value.length === 0) return 0
+  return Math.min((userInput.value.length / targetText.value.length) * 100, 100)
 })
 
-const wpm = computed(() => {
-  if (timeElapsed.value === 0) return 0
-  return Math.round((correctChars.value / 5) / timeElapsed.value)
+const isComplete = computed(() => {
+  return userInput.value === targetText.value && userInput.value.length > 0
 })
 
-const finalWpm = ref(0)
-const finalAccuracy = ref(0)
+const finalWpm = computed(() => {
+  if (!endTime.value || !startTime.value) return wpm.value
+  
+  const timeElapsed = (endTime.value - startTime.value) / 1000 / 60 // minutes
+  const wordsTyped = targetText.value.trim().split(/\s+/).length
+  
+  return timeElapsed > 0 ? Math.round(wordsTyped / timeElapsed) : 0
+})
+
+const finalAccuracy = computed(() => accuracy.value)
+
+const highlightedText = computed(() => {
+  if (!targetText.value) return ''
+  
+  return targetText.value.split('').map((char, index) => {
+    if (index < userInput.value.length) {
+      const userChar = userInput.value[index]
+      if (userChar === char) {
+        return `<span class="text-green-600">${char}</span>`
+      } else {
+        return `<span class="text-red-600">${char}</span>`
+      }
+    } else if (index === userInput.value.length) {
+      return `<span class="bg-blue-200 dark:bg-blue-800">${char}</span>`
+    }
+    return char
+  }).join('')
+})
 
 // Methods
-const getCharClass = (char, index) => {
-  const userChar = userInput.value[index]
-  const isTyped = index < userInput.value.length
-  const isCurrent = index === userInput.value.length
-  const isCorrect = isTyped && userChar === char
-  const isError = isTyped && userChar !== char
-
-  return {
-    'char': true,
-    'text-gray-600 dark:text-gray-300': !isTyped && !isCurrent,
-    'bg-blue-200 dark:bg-blue-800 text-blue-900 dark:text-blue-100': isCurrent,
-    'text-green-600 bg-green-100 dark:bg-green-900/30': isCorrect,
-    'text-red-600 bg-red-100 dark:bg-red-900/30': isError,
-    'whitespace': char === ' ' || char === '\t'
-  }
-}
-
-const handleInput = () => {
-  if (!startTime.value && userInput.value.length > 0) {
+function handleInput(event) {
+  if (!startTime.value) {
     startTime.value = Date.now()
   }
   
-  if (userInput.value.length >= targetText.value.length) {
-    completeExercise()
+  // Count errors
+  let currentErrors = 0
+  for (let i = 0; i < userInput.value.length; i++) {
+    if (userInput.value[i] !== targetText.value[i]) {
+      currentErrors++
+    }
+  }
+  errors.value = currentErrors
+}
+
+function handleKeydown(event) {
+  // Handle special keys like backspace, tab, etc.
+  if (event.key === 'Tab') {
+    event.preventDefault()
+    const start = event.target.selectionStart
+    const end = event.target.selectionEnd
+    
+    userInput.value = userInput.value.substring(0, start) + '  ' + userInput.value.substring(end)
+    event.target.selectionStart = event.target.selectionEnd = start + 2
   }
 }
 
-const handleKeydown = (e) => {
-  // Prevent going beyond target text length
-  if (userInput.value.length >= targetText.value.length && 
-      e.key !== 'Backspace' && e.key !== 'Delete') {
-    e.preventDefault()
-  }
-}
-
-const completeExercise = () => {
-  isComplete.value = true
-  finalWpm.value = wpm.value
-  finalAccuracy.value = accuracy.value
-  showModal.value = true
-}
-
-const resetTyping = () => {
+function resetExercise() {
   userInput.value = ''
   startTime.value = null
-  isComplete.value = false
+  endTime.value = null
+  errors.value = 0
   showModal.value = false
 }
 
-const nextExercise = () => {
-  currentExerciseIndex.value = (currentExerciseIndex.value + 1) % exercises.length
-  resetTyping()
-  showModal.value = false
+function nextExercise() {
+  const currentIndex = exercises.findIndex(ex => ex === currentExercise.value)
+  const nextIndex = (currentIndex + 1) % exercises.length
+  
+  currentExercise.value = exercises[nextIndex]
+  targetText.value = currentExercise.value.code
+  resetExercise()
 }
 
-// Page meta
-useHead({
-  title: 'Typing Tutor - Practice Your Typing Skills',
-  meta: [
-    {
-      name: 'description',
-      content: 'Improve your typing speed and accuracy with our interactive typing tutor.'
-    }
-  ]
+// Watch for completion
+watch(isComplete, (newValue) => {
+  if (newValue && !endTime.value) {
+    endTime.value = Date.now()
+    showModal.value = true
+  }
+})
+
+// Initialize
+onMounted(() => {
+  currentExercise.value = exercises[0]
+  targetText.value = currentExercise.value.code
 })
 </script>
-
-<style scoped>
-.char {
-  @apply inline-block relative;
-  position: relative;
-}
-
-.char.whitespace {
-  @apply min-w-[0.5rem];
-}
-
-/* Syntax highlighting hints */
-pre code {
-  @apply text-sm;
-}
-
-.char:hover {
-  @apply bg-gray-100 dark:bg-gray-700;
-}
-
-/* Animation for current character */
-.bg-blue-200 {
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-</style>
