@@ -120,6 +120,53 @@ export default defineNuxtConfig({
     'nuxt-monaco-editor'
   ],
 
+  // Performance optimizations
+  experimental: {
+    payloadExtraction: false, // Reduce payload size
+    treeshakeClientOnly: true // Enable client-side tree shaking
+  },
+
+  // Build optimizations
+  build: {
+    // Split chunks for better caching
+    splitChunks: {
+      layouts: true,
+      pages: true,
+      commons: true
+    }
+  },
+
+  // Vite optimizations for tree shaking
+  vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Separate Monaco Editor for lazy loading
+            'monaco': ['monaco-editor'],
+            // Separate typing utilities
+            'typing-utils': ['./app/composables/useTypingMetrics.js', './app/utils/adaptiveDifficulty.js'],
+            // Separate performance utils
+            'performance': ['./app/utils/performanceOptimizer.js', './app/composables/usePerformanceOptimization.js']
+          }
+        }
+      },
+      target: 'esnext', // Better tree shaking for modern browsers
+      minify: 'terser', // Better minification
+      terserOptions: {
+        compress: {
+          drop_console: true, // Remove console.logs in production
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info', 'console.debug']
+        }
+      }
+    },
+    optimizeDeps: {
+      include: ['vue', '@vue/runtime-core'],
+      exclude: ['monaco-editor'] // Load Monaco dynamically
+    }
+  },
+
   devtools: {
     enabled: true
   },

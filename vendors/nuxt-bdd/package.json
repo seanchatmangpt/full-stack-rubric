@@ -1,0 +1,112 @@
+{
+  "name": "nuxt-bdd-testing",
+  "version": "1.0.0",
+  "description": "Enhanced BDD testing utilities for Nuxt applications with vitest-cucumber integration",
+  "author": "Nuxt BDD Team",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./bdd": {
+      "import": "./dist/bdd/index.mjs",
+      "require": "./dist/bdd/index.cjs",
+      "types": "./dist/bdd/index.d.ts"
+    },
+    "./nuxt": {
+      "import": "./dist/nuxt/index.mjs",
+      "require": "./dist/nuxt/index.cjs",
+      "types": "./dist/nuxt/index.d.ts"
+    },
+    "./config": {
+      "import": "./dist/config/index.mjs",
+      "require": "./dist/config/index.cjs",
+      "types": "./dist/config/index.d.ts"
+    },
+    "./core": {
+      "import": "./dist/core/index.mjs",
+      "require": "./dist/core/index.cjs",
+      "types": "./dist/core/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "build:dev": "unbuild --stub",
+    "dev": "unbuild --stub --watch",
+    "prepack": "npm run build",
+    "test": "vitest",
+    "test:types": "tsc --noEmit",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "size": "size-limit",
+    "analyze": "pnpm build && npx bundlephobia",
+    "clean": "rm -rf dist .unbuild"
+  },
+  "keywords": [
+    "nuxt",
+    "bdd",
+    "testing",
+    "vitest",
+    "cucumber",
+    "gherkin",
+    "vue",
+    "test-utils"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nuxt/bdd.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nuxt/bdd/issues"
+  },
+  "homepage": "https://github.com/nuxt/bdd#readme",
+  "peerDependencies": {
+    "@amiceli/vitest-cucumber": ">=5.0.0",
+    "@vue/test-utils": ">=2.0.0",
+    "vitest": ">=1.0.0",
+    "vue": ">=3.0.0"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.0.3",
+    "defu": "^6.1.4",
+    "pathe": "^1.1.2",
+    "unconfig": "^0.5.5"
+  },
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^11.1.6",
+    "@types/node": "^22.9.1",
+    "eslint": "^9.34.0",
+    "nuxt-bdd-testing": "^1.0.0",
+    "size-limit": "^11.1.6",
+    "typescript": "^5.7.2",
+    "unbuild": "^2.0.0",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "size-limit": [
+    {
+      "path": "dist/index.mjs",
+      "limit": "50 KB"
+    },
+    {
+      "path": "dist/bdd/index.mjs",
+      "limit": "40 KB"
+    }
+  ],
+  "packageManager": "pnpm@10.15.0"
+}

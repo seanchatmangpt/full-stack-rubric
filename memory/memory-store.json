@@ -1,0 +1,10 @@
+{
+  "default": [
+    {
+      "key": "docs/architecture-strategy",
+      "value": "Complete documentation architecture designed for Full-Stack Interview Cookbook Library with 10 comprehensive sections: 1) Documentation Structure (6-level hierarchy with getting-started, api-reference, guides, examples, cookbook, migration), 2) Content Strategy (user journey mapping for 4 personas, 3 content levels), 3) API Documentation Templates (component & composable templates with TypeScript support), 4) Interactive Documentation System (Monaco playground, progressive disclosure tutorials), 5) Migration Guides Framework (automated migration tools with v1-to-v2 scripts), 6) Performance Analytics (page load KPIs, content quality metrics), 7) Content Management System (YAML front matter workflow, multi-format export HTML/PDF/EPUB/JSON), 8) Search and Navigation (semantic AI search, contextual sidebar, intelligent recommendations), 9) Accessibility and i18n (WCAG 2.1 AA compliance, keyboard navigation, 4-language support EN/ES/ZH/JA), 10) Deployment and Maintenance (GitHub Actions CI/CD pipeline, automated quality checks, real-time monitoring). Implementation roadmap: 4 phases over 12 weeks. Key technologies: Nuxt Content, Monaco Editor, Vue 3 Composition API, AI semantic search. Core features: Interactive code playground with real-time metrics, progressive tutorial system, automated migration assistance, comprehensive accessibility, multi-format content export.",
+      "namespace": "default",
+      "timestamp": 1757287273864
+    }
+  ]
+}

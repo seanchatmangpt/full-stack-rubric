@@ -1,0 +1,240 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  release:
+    types: [published]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Quality checks and testing
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+          
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Run linting
+        run: pnpm lint
+        
+      - name: Run type checking
+        run: pnpm test:types
+        
+      - name: Run tests
+        run: pnpm test --coverage
+        
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-${{ matrix.node-version }}
+
+  # Build and bundle analysis
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Build library
+        run: pnpm build
+        
+      - name: Check bundle size
+        run: pnpm size
+        
+      - name: Run bundle analysis
+        run: pnpm analyze
+        
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            dist/
+            !dist/**/*.map
+          retention-days: 7
+
+  # Security and dependency scanning  
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # Integration tests
+  integration:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/
+          
+      - name: Test ESM imports
+        run: node -e "import('./dist/index.mjs').then(m => console.log('ESM import success:', Object.keys(m)))"
+        
+      - name: Test CommonJS imports  
+        run: node -e "const m = require('./dist/index.cjs'); console.log('CJS import success:', Object.keys(m))"
+        
+      - name: Test tree-shaking
+        run: |
+          echo "import { bddBridge } from './dist/index.mjs'; console.log(bddBridge)" > test-treeshake.mjs
+          node test-treeshake.mjs
+
+  # Performance benchmarks
+  performance:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/
+          
+      - name: Run performance benchmarks
+        run: |
+          node -e "
+            import('./dist/index.mjs').then(async (m) => {
+              const start = performance.now();
+              const bridge = m.createBDDBridge?.();
+              const end = performance.now();
+              console.log(\`Library initialization time: \${end - start}ms\`);
+            })
+          "
+
+  # Release and publish (only on release)
+  publish:
+    runs-on: ubuntu-latest
+    needs: [test, build, integration, security, performance]
+    if: github.event_name == 'release'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Build for production
+        run: pnpm build
+        
+      - name: Publish to NPM
+        run: pnpm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false

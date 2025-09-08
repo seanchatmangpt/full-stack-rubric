@@ -1,0 +1,64 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/bdd/*": ["./src/bdd/*"],
+      "@/core/*": ["./src/core/*"],
+      "@/config/*": ["./src/config/*"],
+      "@/nuxt/*": ["./src/nuxt/*"]
+    }
+  },
+  "include": [
+    "src/**/*.js",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.json"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".unbuild",
+    "coverage",
+    "examples",
+    "tests"
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
+}

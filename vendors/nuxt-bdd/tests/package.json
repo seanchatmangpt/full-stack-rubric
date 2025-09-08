@@ -1,0 +1,54 @@
+{
+  "name": "nuxt-bdd-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive test suite for nuxt-bdd library",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "test:unit": "vitest unit/",
+    "test:integration": "vitest integration/",
+    "test:bdd": "vitest bdd/",
+    "test:performance": "vitest performance/",
+    "test:compatibility": "vitest compatibility/",
+    "test:examples": "vitest examples/",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:performance:only": "vitest run performance/ --reporter=verbose",
+    "test:benchmark": "vitest bench",
+    "test:ci": "vitest run --coverage --reporter=verbose --reporter=json --outputFile=reports/test-results.json",
+    "test:debug": "vitest --inspect-brk --no-coverage",
+    "coverage:view": "open coverage/index.html",
+    "reports:view": "open reports/test-results.html",
+    "clean": "rimraf coverage reports node_modules/.vite",
+    "validate": "npm run test:ci && npm run test:performance:only"
+  },
+  "dependencies": {
+    "@amiceli/vitest-cucumber": "^5.2.1",
+    "@vue/test-utils": "^2.4.6",
+    "vitest": "^3.2.4",
+    "jsdom": "^26.1.0"
+  },
+  "devDependencies": {
+    "@nuxt/test-utils": "^3.19.2",
+    "@vitest/ui": "^3.2.4",
+    "rimraf": "^6.0.1",
+    "happy-dom": "^12.10.3"
+  },
+  "peerDependencies": {
+    "nuxt-bdd": "file:../"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [
+    "nuxt",
+    "bdd", 
+    "testing",
+    "vitest",
+    "cucumber",
+    "vue",
+    "test-suite"
+  ]
+}

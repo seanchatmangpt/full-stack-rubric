@@ -1,0 +1,40 @@
+{
+  "name": "nuxt-bdd-advanced-example",
+  "version": "1.0.0",
+  "description": "Advanced Nuxt BDD example with complex scenarios, API testing, and component testing",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "test": "vitest",
+    "test:bdd": "cucumber-js",
+    "test:bdd:parallel": "cucumber-js --parallel 4",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:component": "vitest --config vitest.component.config.js"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxt/test-utils": "^3.9.0",
+    "@playwright/test": "^1.40.1",
+    "@vitest/ui": "^1.0.4",
+    "@cucumber/cucumber": "^10.2.1",
+    "@cucumber/pretty-formatter": "^1.0.1",
+    "@vue/test-utils": "^2.4.3",
+    "happy-dom": "^12.10.3",
+    "nuxt": "^3.9.0",
+    "playwright": "^1.40.1",
+    "vitest": "^1.0.4",
+    "msw": "^2.0.11"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "^0.5.1",
+    "@nuxtjs/tailwindcss": "^6.8.4",
+    "pinia": "^2.1.7",
+    "nuxt-bdd": "file:../../"
+  }
+}

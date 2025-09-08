@@ -1,0 +1,32 @@
+{
+  "name": "nuxt-bdd-migration-example",
+  "version": "1.0.0", 
+  "description": "Migration example showing how to convert existing tests to BDD patterns",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev", 
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "test": "vitest",
+    "test:old": "vitest --config vitest.old.config.js",
+    "test:bdd": "cucumber-js",
+    "test:migration": "npm run test:old && npm run test:bdd",
+    "migrate:convert": "node scripts/convert-to-bdd.js"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxt/test-utils": "^3.9.0", 
+    "@playwright/test": "^1.40.1",
+    "@vitest/ui": "^1.0.4",
+    "@cucumber/cucumber": "^10.2.1",
+    "happy-dom": "^12.10.3",
+    "nuxt": "^3.9.0",
+    "playwright": "^1.40.1",
+    "vitest": "^1.0.4"
+  },
+  "dependencies": {
+    "nuxt-bdd": "file:../../"
+  }
+}
