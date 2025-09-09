@@ -4,10 +4,9 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { scenario } from '../framework/core/index.js'
+import { scenario, usePlugin, config } from '../framework/core/index.js'
 import { mountWithExpectations } from '../framework/core-utils.js'
 import { pluginSystem } from '../framework/config/plugin-system.js'
-import { usePlugin, config } from '../framework/core/index.js'
 
 describe('Framework Extensibility Validation', () => {
   let originalPlugins
@@ -131,7 +130,7 @@ describe('Framework Extensibility Validation', () => {
         install(config) {
           // Add custom assertion methods to the framework
           config.customAssertions = {
-            toHaveCorrectStructure: function(received, expected) {
+            toHaveCorrectStructure: function (received, expected) {
               const pass = JSON.stringify(Object.keys(received).sort()) === 
                           JSON.stringify(Object.keys(expected).sort())
               return {
@@ -140,7 +139,7 @@ describe('Framework Extensibility Validation', () => {
               }
             },
 
-            toBeAccessible: function(received) {
+            toBeAccessible: function (received) {
               // Simplified accessibility check
               const hasAriaLabel = received.getAttribute('aria-label') || 
                                  received.querySelector('[aria-label]')
@@ -309,7 +308,7 @@ describe('Framework Extensibility Validation', () => {
         
         install(config) {
           config.customWrappers = {
-            'test-harness': (component) => ({
+            'test-harness': component => ({
               template: `
                 <div class="test-harness" data-testid="harness">
                   <div class="test-metadata">
@@ -762,11 +761,13 @@ describe('Framework Extensibility Validation', () => {
             mockLocalStorage() {
               const store = new Map()
               return {
-                getItem: (key) => store.get(key) || null,
+                getItem: key => store.get(key) || null,
                 setItem: (key, value) => store.set(key, value),
-                removeItem: (key) => store.delete(key),
+                removeItem: key => store.delete(key),
                 clear: () => store.clear(),
-                get length() { return store.size }
+                get length() {
+ return store.size 
+}
               }
             },
 
@@ -981,7 +982,9 @@ describe('Framework Extensibility Validation', () => {
       const plugin1 = {
         name: 'ecosystem-plugin-1',
         provides: ['feature-a'],
-        install(config) { config.featureA = true }
+        install(config) {
+ config.featureA = true 
+}
       }
 
       const plugin2 = {
@@ -999,7 +1002,9 @@ describe('Framework Extensibility Validation', () => {
       const plugin3 = {
         name: 'ecosystem-plugin-3',
         provides: ['feature-c'],
-        install(config) { config.featureC = true }
+        install(config) {
+ config.featureC = true 
+}
       }
 
       // Install plugins in order

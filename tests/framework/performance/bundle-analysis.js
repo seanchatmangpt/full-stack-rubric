@@ -15,9 +15,9 @@ export class BundleAnalyzer {
     this.basePath = options.basePath || process.cwd();
     this.thresholds = {
       maxBundleSize: 250 * 1024, // 250KB
-      maxGzipSize: 70 * 1024,    // 70KB
-      maxChunkSize: 50 * 1024,   // 50KB per chunk
-      compressionRatio: 0.3      // Should compress to <30% of original
+      maxGzipSize: 70 * 1024, // 70KB
+      maxChunkSize: 50 * 1024, // 50KB per chunk
+      compressionRatio: 0.3 // Should compress to <30% of original
     };
     this.history = [];
     this.chunks = new Map();
@@ -183,7 +183,8 @@ export class BundleAnalyzer {
     const totalExports = expectedExports.length;
     const unusedCount = analysis.unusedExports.length;
     analysis.treeShakingScore = totalExports > 0 ? 
-      ((totalExports - unusedCount) / totalExports) * 100 : 100;
+        ((totalExports - unusedCount) / totalExports) * 100
+      : 100;
 
     return analysis;
   }
@@ -307,13 +308,13 @@ export class BundleAnalyzer {
     const frameworks = [];
     
     const detectionPatterns = {
-      'React': /react/i,
-      'Vue': /vue/i,
-      'Angular': /angular/i,
-      'Lodash': /lodash/i,
-      'Moment': /moment/i,
-      'jQuery': /jquery|\$/i,
-      'Axios': /axios/i
+      React: /react/i,
+      Vue: /vue/i,
+      Angular: /angular/i,
+      Lodash: /lodash/i,
+      Moment: /moment/i,
+      jQuery: /jquery|\$/i,
+      Axios: /axios/i
     };
 
     for (const [name, pattern] of Object.entries(detectionPatterns)) {
@@ -487,9 +488,9 @@ export class BundleAnalyzer {
 }
 
 /**
- * Global bundle analyzer instance
+ * Global bundle analyzer instance (renamed to avoid conflicts)
  */
-export const bundleAnalyzer = new BundleAnalyzer();
+export const testBundleAnalyzer = new BundleAnalyzer();
 
 /**
  * Vitest integration for bundle size testing

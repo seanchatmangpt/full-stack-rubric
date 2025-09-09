@@ -261,7 +261,7 @@ export class BDDTestRunner {
    * @returns {boolean} True if step definition exists
    */
   hasStepDefinition(step) {
-    return this.stepDefinitions.some(stepDef => {
+    return this.stepDefinitions.some((stepDef) => {
       // Simple pattern matching - in real implementation would use regex matching
       const pattern = stepDef.pattern
       
@@ -401,7 +401,7 @@ export async function runBDDValidation() {
   const runner = createBDDTestRunner()
   
   console.log('🚀 Starting BDD validation suite...')
-  console.log('=' .repeat(50))
+  console.log('='.repeat(50))
   
   try {
     // Step 1: Validate step coverage
@@ -415,7 +415,7 @@ export async function runBDDValidation() {
     const report = await runner.generateReport()
     report.testResults = testResults
     
-    console.log('=' .repeat(50))
+    console.log('='.repeat(50))
     console.log('✅ BDD validation completed successfully!')
     
     return {

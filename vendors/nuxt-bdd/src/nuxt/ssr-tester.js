@@ -23,7 +23,7 @@ export class NuxtSSRTester {
       checkAccessibility: true,
       ...options
     }
-    
+
     this.nuxtContext = null
     this.renderer = null
     this.serverResults = new Map()
@@ -69,10 +69,10 @@ export class NuxtSSRTester {
     try {
       // Get server-rendered HTML
       const serverResult = await this.renderRoute(route, testOptions)
-      
+
       // Analyze server result
       const analysis = await this.analyzeServerRender(serverResult, testOptions)
-      
+
       // Test hydration if enabled
       let hydrationResult = null
       if (this.options.enableHydration) {
@@ -98,7 +98,6 @@ export class NuxtSSRTester {
       this.serverResults.set(route, result)
 
       return result
-
     } catch (error) {
       return {
         success: false,
@@ -138,7 +137,7 @@ export class NuxtSSRTester {
 
     try {
       let html = ''
-      
+
       if (this.nuxtContext?.renderRoute) {
         // Use Nuxt's built-in route rendering
         const renderResult = await this.nuxtContext.renderRoute(route, ssrContext)
@@ -158,7 +157,6 @@ export class NuxtSSRTester {
         route,
         timestamp: Date.now()
       }
-
     } catch (error) {
       throw new Error(`SSR rendering failed for route ${route}: ${error.message}`)
     }
@@ -196,7 +194,7 @@ export class NuxtSSRTester {
         </body>
       </html>
     `
-    
+
     return mockHtml.trim()
   }
 
@@ -250,7 +248,6 @@ export class NuxtSSRTester {
 
       // Check for structured data
       analysis.hasStructuredData = this.checkStructuredData(document)
-
     } catch (error) {
       analysis.errors.push(`Analysis error: ${error.message}`)
     }
@@ -277,7 +274,7 @@ export class NuxtSSRTester {
 
     // Check for required elements
     const requiredElements = ['html', 'head', 'title', 'body']
-    requiredElements.forEach(tag => {
+    requiredElements.forEach((tag) => {
       if (!document.querySelector(tag)) {
         errors.push(`Missing required element: <${tag}>`)
         isValid = false
@@ -293,10 +290,10 @@ export class NuxtSSRTester {
 
     // Check for proper nesting
     const bodyChildren = Array.from(document.body.children)
-    const hasNonScriptElements = bodyChildren.some(el => 
+    const hasNonScriptElements = bodyChildren.some(el =>
       el.tagName !== 'SCRIPT' && el.tagName !== 'NOSCRIPT'
     )
-    
+
     if (!hasNonScriptElements) {
       errors.push('Body contains only script elements')
       isValid = false
@@ -325,7 +322,7 @@ export class NuxtSSRTester {
     }
 
     const warnings = []
-    
+
     if (!metaTags.title) warnings.push('Missing <title> tag')
     if (!metaTags.description) warnings.push('Missing meta description')
     if (!metaTags.viewport) warnings.push('Missing viewport meta tag')
@@ -347,20 +344,20 @@ export class NuxtSSRTester {
    */
   checkAccessibility(document, analysis) {
     const accessibilityIssues = []
-    
+
     // Check for alt text on images
     const images = Array.from(document.querySelectorAll('img'))
-    const imagesWithoutAlt = images.filter(img => 
+    const imagesWithoutAlt = images.filter(img =>
       !img.getAttribute('alt') && !img.getAttribute('aria-label')
     )
-    
+
     if (imagesWithoutAlt.length > 0) {
       accessibilityIssues.push(`${imagesWithoutAlt.length} images missing alt text`)
     }
 
     // Check for form labels
     const inputs = Array.from(document.querySelectorAll('input, select, textarea'))
-    const inputsWithoutLabels = inputs.filter(input => {
+    const inputsWithoutLabels = inputs.filter((input) => {
       const id = input.getAttribute('id')
       const hasLabel = id && document.querySelector(`label[for="${id}"]`)
       const hasAriaLabel = input.getAttribute('aria-label')
@@ -374,7 +371,7 @@ export class NuxtSSRTester {
     // Check for heading structure
     const headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'))
     const h1Count = headings.filter(h => h.tagName === 'H1').length
-    
+
     if (h1Count === 0) {
       accessibilityIssues.push('No H1 heading found')
     } else if (h1Count > 1) {
@@ -388,7 +385,7 @@ export class NuxtSSRTester {
     }
 
     analysis.accessibility.issues = accessibilityIssues
-    
+
     return accessibilityIssues.length === 0
   }
 
@@ -422,7 +419,7 @@ export class NuxtSSRTester {
       'img[loading="eager"]'
     ]
 
-    criticalSelectors.forEach(selector => {
+    criticalSelectors.forEach((selector) => {
       const elements = Array.from(document.querySelectorAll(selector))
       performance.criticalResources.push(...elements.map(el => ({
         type: el.tagName.toLowerCase(),
@@ -451,14 +448,14 @@ export class NuxtSSRTester {
     }
 
     // Analyze heading structure
-    ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].forEach(tag => {
-      const elements = Array.from(document.querySelectorAll(tag))
-      seo.headings[tag] = elements.map(el => el.textContent.trim())
-    })
+      ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].forEach((tag) => {
+        const elements = Array.from(document.querySelectorAll(tag))
+        seo.headings[tag] = elements.map(el => el.textContent.trim())
+      })
 
     // Count links
     const links = Array.from(document.querySelectorAll('a[href]'))
-    links.forEach(link => {
+    links.forEach((link) => {
       const href = link.getAttribute('href')
       if (href.startsWith('http')) {
         seo.externalLinks++
@@ -479,7 +476,7 @@ export class NuxtSSRTester {
   checkStructuredData(document) {
     const jsonLd = document.querySelectorAll('script[type="application/ld+json"]')
     const microdata = document.querySelectorAll('[itemscope]')
-    
+
     return jsonLd.length > 0 || microdata.length > 0
   }
 
@@ -522,7 +519,6 @@ export class NuxtSSRTester {
       this.hydrationResults.set(route, result)
 
       return result
-
     } catch (error) {
       return {
         success: false,
@@ -567,10 +563,10 @@ export class NuxtSSRTester {
 
       // Simulate component hydration
       const components = Array.from(document.querySelectorAll('[data-server-rendered]'))
-      
+
       for (const component of components) {
         const hydrationCheck = this.checkComponentHydration(component, nuxtData)
-        
+
         if (!hydrationCheck.success) {
           result.mismatches.push({
             component: component.tagName,
@@ -583,7 +579,6 @@ export class NuxtSSRTester {
       if (result.mismatches.length > 0) {
         result.warnings.push(`${result.mismatches.length} hydration mismatches detected`)
       }
-
     } catch (error) {
       result.errors.push(`Hydration simulation error: ${error.message}`)
       result.success = false
@@ -601,7 +596,7 @@ export class NuxtSSRTester {
    */
   checkComponentHydration(component, nuxtData) {
     const issues = []
-    
+
     // Check for dynamic content that might cause mismatches
     const timeElements = component.querySelectorAll('[data-time], .timestamp')
     if (timeElements.length > 0) {
@@ -634,7 +629,7 @@ export class NuxtSSRTester {
    */
   async compareRoutes(routes, options = {}) {
     const results = []
-    
+
     for (const route of routes) {
       const result = await this.testSSR(route, options)
       results.push(result)
@@ -665,7 +660,7 @@ export class NuxtSSRTester {
     }
 
     // Check structure consistency
-    const structures = results.map(r => {
+    const structures = results.map((r) => {
       if (!r.success) return null
       const dom = new JSDOM(r.serverRender.html)
       return Array.from(dom.window.document.querySelectorAll('*')).map(el => el.tagName)
@@ -692,7 +687,7 @@ export class NuxtSSRTester {
    */
   compareRoutePerformance(results) {
     const successful = results.filter(r => r.success)
-    
+
     if (successful.length === 0) {
       return { error: 'No successful renders to compare' }
     }
@@ -739,8 +734,8 @@ export class NuxtSSRTester {
     // Calculate averages
     const successful = testResults.filter(r => r.success)
     if (successful.length > 0) {
-      report.summary.averageRenderTime = 
-        successful.reduce((sum, r) => sum + r.performance.serverRenderTime, 0) / successful.length
+      report.summary.averageRenderTime
+        = successful.reduce((sum, r) => sum + r.performance.serverRenderTime, 0) / successful.length
 
       // Hydration statistics
       const withHydration = successful.filter(r => r.hydration)

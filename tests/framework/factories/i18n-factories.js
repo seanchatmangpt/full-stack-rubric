@@ -198,7 +198,7 @@ export class I18nFactory {
   static createMultipleTranslations(locales = ['en', 'es', 'fr', 'de']) {
     const translations = {}
     
-    locales.forEach(locale => {
+    locales.forEach((locale) => {
       translations[locale] = this.createTranslations(locale)
     })
     
@@ -606,7 +606,7 @@ export class I18nFactory {
       ar: 6, // Saturday
       he: 0, // Sunday
       fa: 6, // Saturday
-      ur: 1  // Monday
+      ur: 1 // Monday
     }
     return firstDays[locale] || 0
   }
@@ -736,7 +736,7 @@ export class I18nFactory {
     return {
       locales,
       totalKeys: baseKeys.length,
-      missing: locales.map(locale => {
+      missing: locales.map((locale) => {
         const missingCount = faker.number.int({ min: 0, max: Math.floor(baseKeys.length * 0.3) })
         const missingKeys = faker.helpers.arrayElements(baseKeys, missingCount)
         

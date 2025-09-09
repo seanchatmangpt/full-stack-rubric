@@ -1,29 +1,29 @@
 {
-  "timestamp": "2025-09-08T04:35:08.053Z",
+  "timestamp": "2025-09-08T06:18:57.246Z",
   "summary": {
     "features": {
       "total": 29,
-      "executed": 26,
-      "coverage": 89.65517241379311
+      "executed": 28,
+      "coverage": 96.55172413793103
     },
     "scenarios": {
       "total": 380,
-      "executed": 314,
-      "passed": 283,
-      "failed": 31,
-      "coverage": 82.63157894736842,
-      "successRate": 90.12738853503186
+      "executed": 328,
+      "passed": 296,
+      "failed": 32,
+      "coverage": 86.31578947368422,
+      "successRate": 90.2439024390244
     },
     "steps": {
       "total": 2271,
-      "executed": 1832,
-      "passed": 1729,
-      "failed": 103,
-      "coverage": 80.66930867459268,
-      "successRate": 94.37772925764192
+      "executed": 1816,
+      "passed": 1714,
+      "failed": 102,
+      "coverage": 79.96477322765301,
+      "successRate": 94.38325991189427
     },
     "execution": {
-      "duration": 10257,
+      "duration": 9817,
       "errors": 134
     }
   },

@@ -396,7 +396,7 @@ describe('Library Validation: Real-World Usage Patterns', () => {
         'recordKeystroke'
       ]
       
-      expectedMethods.forEach(method => {
+      expectedMethods.forEach((method) => {
         expect(typingMetrics[method]).toBeDefined()
         expect(typeof typingMetrics[method]).toBe('function')
       })

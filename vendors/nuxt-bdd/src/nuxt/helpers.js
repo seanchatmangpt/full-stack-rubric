@@ -12,31 +12,31 @@ export function createNuxtTestingHelpers(config = {}) {
   const helpers = {
     // Component helpers
     component: createComponentHelpers(config),
-    
+
     // Server helpers
     server: createServerHelpers(config),
-    
+
     // Composable helpers
     composable: createComposableHelpers(config),
-    
+
     // SSR helpers
     ssr: createSSRHelpers(config),
-    
+
     // Nitro helpers
     nitro: createNitroHelpers(config),
-    
+
     // Authentication helpers
     auth: createAuthHelpers(config),
-    
+
     // Form helpers
     form: createFormHelpers(config),
-    
+
     // Navigation helpers
     navigation: createNavigationHelpers(config),
-    
+
     // State helpers
     state: createStateHelpers(config),
-    
+
     // Utility helpers
     utils: createUtilityHelpers(config)
   }
@@ -138,8 +138,8 @@ function createServerHelpers(config) {
     testEndpoints: async (endpoints, parallel = false) => {
       const { getServerTester } = await import('./server-tester.js')
       const tester = getServerTester()
-      
-      return parallel 
+
+      return parallel
         ? await tester.testApiEndpointsParallel(endpoints)
         : await tester.testApiEndpoints(endpoints)
     },
@@ -357,7 +357,7 @@ function createAuthHelpers(config) {
      * @param {string} token - Auth token
      * @returns {Object} Headers
      */
-    createAuthHeaders: (token) => ({
+    createAuthHeaders: token => ({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     }),
@@ -381,11 +381,11 @@ function createAuthHelpers(config) {
     testAuthMiddleware: async (endpoint) => {
       // Test without token (should fail)
       const unauthorizedResult = await createServerHelpers().testAPI(endpoint)
-      
+
       // Test with token (should succeed)
       const token = 'mock-token'
       const authorizedResult = await createAuthHelpers().testProtectedRoute(endpoint, token)
-      
+
       return {
         unauthorized: unauthorizedResult,
         authorized: authorizedResult,
@@ -441,16 +441,16 @@ function createFormHelpers(config) {
      */
     testValidation: async (component, testCases) => {
       const results = []
-      
+
       for (const testCase of testCases) {
         const wrapper = await createComponentHelpers().mount(component)
-        
+
         await createFormHelpers().fillForm(wrapper, testCase.data)
         await createFormHelpers().submitForm(wrapper)
-        
+
         const hasErrors = wrapper.findAll('.error, .invalid').length > 0
         const expectedErrors = testCase.expectedErrors || false
-        
+
         results.push({
           name: testCase.name,
           data: testCase.data,
@@ -459,7 +459,7 @@ function createFormHelpers(config) {
           expectedErrors
         })
       }
-      
+
       return results
     }
   }
@@ -490,7 +490,7 @@ function createNavigationHelpers(config) {
      */
     testRoutes: async (routes) => {
       const results = []
-      
+
       for (const route of routes) {
         try {
           const result = await createSSRHelpers().testRender(route)
@@ -509,7 +509,7 @@ function createNavigationHelpers(config) {
           })
         }
       }
-      
+
       return results
     },
 
@@ -521,10 +521,10 @@ function createNavigationHelpers(config) {
     testLinks: async (wrapper) => {
       const links = wrapper.findAll('a[href], nuxt-link')
       const results = []
-      
+
       for (const link of links) {
         const href = link.attributes('to') || link.attributes('href')
-        
+
         results.push({
           href,
           text: link.text(),
@@ -533,7 +533,7 @@ function createNavigationHelpers(config) {
           isExternal: href && href.startsWith('http')
         })
       }
-      
+
       return results
     }
   }
@@ -569,11 +569,11 @@ function createStateHelpers(config) {
      */
     testStoreActions: async (store, actions) => {
       const results = []
-      
+
       for (const action of actions) {
         try {
           const result = await store[action.name](...(action.args || []))
-          
+
           results.push({
             action: action.name,
             args: action.args,
@@ -589,7 +589,7 @@ function createStateHelpers(config) {
           })
         }
       }
-      
+
       return results
     },
 
@@ -604,30 +604,30 @@ function createStateHelpers(config) {
         mutations: [],
         allReactive: true
       }
-      
+
       for (const mutation of mutations) {
         const before = JSON.stringify(store.state)
-        
+
         // Apply mutation
         if (typeof mutation === 'function') {
           mutation(store.state)
         } else {
           Object.assign(store.state, mutation)
         }
-        
+
         const after = JSON.stringify(store.state)
         const changed = before !== after
-        
+
         results.mutations.push({
           mutation,
           changed
         })
-        
+
         if (!changed) {
           results.allReactive = false
         }
       }
-      
+
       return results
     }
   }
@@ -648,14 +648,14 @@ function createUtilityHelpers(config) {
      */
     waitFor: async (condition, timeout = 5000) => {
       const start = Date.now()
-      
+
       while (Date.now() - start < timeout) {
         if (await condition()) {
           return true
         }
         await new Promise(resolve => setTimeout(resolve, 50))
       }
-      
+
       return false
     },
 
@@ -681,7 +681,7 @@ function createUtilityHelpers(config) {
           createdAt: new Date().toISOString()
         })
       }
-      
+
       const generator = generators[type] || generators.user
       return Array.from({ length: count }, generator)
     },
@@ -697,7 +697,7 @@ function createUtilityHelpers(config) {
       if (obj instanceof Array) return obj.map(createUtilityHelpers().deepClone)
       if (typeof obj === 'object') {
         const cloned = {}
-        Object.keys(obj).forEach(key => {
+        Object.keys(obj).forEach((key) => {
           cloned[key] = createUtilityHelpers().deepClone(obj[key])
         })
         return cloned
@@ -723,7 +723,7 @@ function createUtilityHelpers(config) {
      * @param {number} ms - Duration in milliseconds
      * @returns {Promise<void>}
      */
-    sleep: (ms) => new Promise(resolve => setTimeout(resolve, ms))
+    sleep: ms => new Promise(resolve => setTimeout(resolve, ms))
   }
 }
 
@@ -735,20 +735,20 @@ function createUtilityHelpers(config) {
  */
 export function withNuxtTesting(nuxtContext, config = {}) {
   const helpers = createNuxtTestingHelpers(config)
-  
+
   // Initialize all testers with context
   const { initializeComponentTesting } = require('./component-tester.js')
-  const { initializeServerTesting } = require('./server-tester.js') 
+  const { initializeServerTesting } = require('./server-tester.js')
   const { initializeComposableTesting } = require('./composable-tester.js')
   const { initializeSSRTesting } = require('./ssr-tester.js')
   const { initializeNitroTesting } = require('./nitro-runner.js')
-  
+
   initializeComponentTesting(nuxtContext, config)
   initializeServerTesting(nuxtContext, config)
   initializeComposableTesting(nuxtContext, config)
   initializeSSRTesting(nuxtContext, config)
   initializeNitroTesting(nuxtContext, config)
-  
+
   return {
     ...helpers,
     context: nuxtContext,

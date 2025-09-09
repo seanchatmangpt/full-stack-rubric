@@ -438,10 +438,10 @@ describe('Framework vs Standard Testing Comparison', () => {
         
         await wrapper.interact
           .click('.controls button:first-child') // Add counter
-          .waitFor((w) => w.findAll('.counter').length === 3)
+          .waitFor(w => w.findAll('.counter').length === 3)
           .click('.controls button:last-child') // Remove all
           
-        await wrapper.interact.waitFor((w) => w.findAll('.counter').length === 0)
+        await wrapper.interact.waitFor(w => w.findAll('.counter').length === 0)
         
         wrapper.unmount()
       })
@@ -633,7 +633,7 @@ describe('Framework vs Standard Testing Comparison', () => {
         
         await interactiveWrapper.interact
           .click('.controls button:first-child')
-          .waitFor((w) => w.findAll('.counter').length === initialCounters + 1)
+          .waitFor(w => w.findAll('.counter').length === initialCounters + 1)
         
         interactiveWrapper.unmount()
       })
@@ -846,9 +846,11 @@ describe('Framework vs Standard Testing Comparison', () => {
         maintainabilityScore: `${metrics.maintainability.score}/10`,
         extensibilityScore: `${metrics.extensibility.score}/10`,
         overallScore: `${overallScore.toFixed(1)}/10`,
-        recommendation: overallScore >= 8 ? 'Highly recommended' : 
-                      overallScore >= 6 ? 'Recommended with reservations' : 
-                      'Needs improvement',
+        recommendation: overallScore >= 8
+          ? 'Highly recommended' : 
+          overallScore >= 6
+            ? 'Recommended with reservations' : 
+            'Needs improvement',
         keyAdvantages: [
           'Fluent API reduces code complexity',
           'Built-in BDD scenario support',

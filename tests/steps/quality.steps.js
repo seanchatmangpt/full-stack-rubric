@@ -28,7 +28,7 @@ const mockAccessibilityValidator = createMockAccessibilityValidator();
 const testRunner = new BDDTestRunner('quality');
 
 // Code Quality Analysis
-Given('a codebase with {int} files', async function(fileCount) {
+Given('a codebase with {int} files', async function (fileCount) {
   this.fileCount = fileCount;
   this.mockCodebase = Array.from({ length: fileCount }, (_, i) => ({
     path: `src/file${i + 1}.js`,
@@ -46,7 +46,7 @@ Given('a codebase with {int} files', async function(fileCount) {
   expect(mockCodeQualityChecker.initializeScan).toHaveBeenCalled();
 });
 
-Given('code quality standards are configured', async function() {
+Given('code quality standards are configured', async function () {
   this.qualityStandards = {
     maxComplexity: 8,
     maxFunctionLength: 50,
@@ -63,7 +63,7 @@ Given('code quality standards are configured', async function() {
   expect(mockCodeQualityChecker.setStandards).toHaveBeenCalledWith(this.qualityStandards);
 });
 
-When('code quality analysis is performed', async function() {
+When('code quality analysis is performed', async function () {
   mockQualityAnalyzer.analyzeCode.mockResolvedValue({
     overallScore: 85,
     issues: [
@@ -83,7 +83,7 @@ When('code quality analysis is performed', async function() {
   expect(mockQualityAnalyzer.analyzeCode).toHaveBeenCalledWith(this.mockCodebase);
 });
 
-Then('quality metrics should be generated', async function() {
+Then('quality metrics should be generated', async function () {
   expect(this.qualityResult.overallScore).toBeGreaterThan(0);
   expect(this.qualityResult.metrics).toEqual(
     expect.objectContaining({
@@ -96,11 +96,11 @@ Then('quality metrics should be generated', async function() {
   expect(mockQualityAnalyzer.generateMetrics).toHaveBeenCalledWith(this.qualityResult);
 });
 
-Then('issues should be categorized by severity', async function() {
+Then('issues should be categorized by severity', async function () {
   const severityCategories = ['error', 'warning', 'info'];
   const issueSeverities = this.qualityResult.issues.map(issue => issue.severity);
   
-  issueSeverities.forEach(severity => {
+  issueSeverities.forEach((severity) => {
     expect(severityCategories).toContain(severity);
   });
   
@@ -109,7 +109,7 @@ Then('issues should be categorized by severity', async function() {
 });
 
 // Performance Monitoring & Benchmarking
-Given('performance monitoring is enabled', async function() {
+Given('performance monitoring is enabled', async function () {
   this.performanceConfig = {
     enabled: true,
     metricsCollectionInterval: 1000,
@@ -129,7 +129,7 @@ Given('performance monitoring is enabled', async function() {
   expect(mockPerformanceMonitor.configure).toHaveBeenCalledWith(this.performanceConfig);
 });
 
-When('performance benchmarks are executed', async function() {
+When('performance benchmarks are executed', async function () {
   mockPerformanceMonitor.runBenchmarks.mockResolvedValue({
     benchmarkId: 'benchmark-123',
     results: {
@@ -150,7 +150,7 @@ When('performance benchmarks are executed', async function() {
   expect(mockPerformanceMonitor.runBenchmarks).toHaveBeenCalled();
 });
 
-Then('performance metrics should meet thresholds', async function() {
+Then('performance metrics should meet thresholds', async function () {
   const responseTime = this.benchmarkResults.results.responseTime.avg;
   const memoryUsage = this.benchmarkResults.results.resourceUsage.memory.used;
   
@@ -165,7 +165,7 @@ Then('performance metrics should meet thresholds', async function() {
 });
 
 // Test Coverage Analysis
-Given('test suite with {int} tests', async function(testCount) {
+Given('test suite with {int} tests', async function (testCount) {
   this.testCount = testCount;
   this.testSuite = {
     totalTests: testCount,
@@ -185,7 +185,7 @@ Given('test suite with {int} tests', async function(testCount) {
   expect(mockQualityAnalyzer.setupTestAnalysis).toHaveBeenCalled();
 });
 
-When('test coverage is analyzed', async function() {
+When('test coverage is analyzed', async function () {
   mockQualityAnalyzer.generateCoverageReport.mockResolvedValue({
     overall: this.testSuite.coverage,
     fileBreakdown: [
@@ -205,7 +205,7 @@ When('test coverage is analyzed', async function() {
   expect(mockQualityAnalyzer.generateCoverageReport).toHaveBeenCalled();
 });
 
-Then('coverage report should identify gaps', async function() {
+Then('coverage report should identify gaps', async function () {
   expect(this.coverageReport.uncoveredLines.length).toBeGreaterThan(0);
   expect(this.coverageReport.fileBreakdown).toEqual(
     expect.arrayContaining([
@@ -221,7 +221,7 @@ Then('coverage report should identify gaps', async function() {
 });
 
 // Accessibility Compliance
-Given('web application with accessibility requirements', async function() {
+Given('web application with accessibility requirements', async function () {
   this.accessibilityStandards = 'WCAG 2.1 AA';
   this.pageElements = [
     { type: 'button', id: 'submit-btn', hasLabel: true, hasRole: true },
@@ -238,7 +238,7 @@ Given('web application with accessibility requirements', async function() {
   expect(mockAccessibilityValidator.setStandards).toHaveBeenCalledWith(this.accessibilityStandards);
 });
 
-When('accessibility audit is performed', async function() {
+When('accessibility audit is performed', async function () {
   mockAccessibilityValidator.auditPage.mockResolvedValue({
     score: 78,
     violations: [
@@ -266,7 +266,7 @@ When('accessibility audit is performed', async function() {
   expect(mockAccessibilityValidator.auditPage).toHaveBeenCalledWith(this.pageElements);
 });
 
-Then('accessibility violations should be reported', async function() {
+Then('accessibility violations should be reported', async function () {
   expect(this.accessibilityResult.violations.length).toBeGreaterThan(0);
   expect(this.accessibilityResult.violations).toEqual(
     expect.arrayContaining([
@@ -285,7 +285,7 @@ Then('accessibility violations should be reported', async function() {
 });
 
 // Security Vulnerability Assessment
-Given('application with security configurations', async function() {
+Given('application with security configurations', async function () {
   this.securityConfig = {
     authentication: 'jwt',
     encryption: 'AES-256',
@@ -305,7 +305,7 @@ Given('application with security configurations', async function() {
   expect(mockQualityAnalyzer.configureSecurityScan).toHaveBeenCalledWith(this.securityConfig);
 });
 
-When('security vulnerability scan is performed', async function() {
+When('security vulnerability scan is performed', async function () {
   mockQualityAnalyzer.scanVulnerabilities.mockResolvedValue({
     totalVulnerabilities: 3,
     critical: 0,
@@ -336,11 +336,11 @@ When('security vulnerability scan is performed', async function() {
   expect(mockQualityAnalyzer.scanVulnerabilities).toHaveBeenCalled();
 });
 
-Then('vulnerabilities should be prioritized by severity', async function() {
+Then('vulnerabilities should be prioritized by severity', async function () {
   const severityOrder = ['critical', 'high', 'medium', 'low'];
   const findings = this.securityResult.findings;
   
-  findings.forEach(finding => {
+  findings.forEach((finding) => {
     expect(severityOrder).toContain(finding.severity);
   });
   
@@ -349,7 +349,7 @@ Then('vulnerabilities should be prioritized by severity', async function() {
 });
 
 // Cross-browser Compatibility Testing
-Given('application tested on {string} browsers', async function(browserList) {
+Given('application tested on {string} browsers', async function (browserList) {
   this.browsers = browserList.split(', ');
   this.compatibilityMatrix = this.browsers.map(browser => ({
     browser,
@@ -367,15 +367,17 @@ Given('application tested on {string} browsers', async function(browserList) {
   expect(mockQualityAnalyzer.setupBrowserTesting).toHaveBeenCalledWith(this.browsers);
 });
 
-When('cross-browser compatibility tests are run', async function() {
+When('cross-browser compatibility tests are run', async function () {
   mockQualityAnalyzer.runCompatibilityTests.mockResolvedValue({
     testResults: this.compatibilityMatrix.map(env => ({
       ...env,
       testsPassed: 95,
       testsFailed: 2,
-      issues: env.browser === 'Internet Explorer' ? [
-        { feature: 'CSS Grid', supported: false, fallback: 'Flexbox' }
-      ] : []
+      issues: env.browser === 'Internet Explorer'
+        ? [
+            { feature: 'CSS Grid', supported: false, fallback: 'Flexbox' }
+          ]
+        : []
     })),
     overallCompatibility: 92
   });
@@ -386,7 +388,7 @@ When('cross-browser compatibility tests are run', async function() {
   expect(mockQualityAnalyzer.runCompatibilityTests).toHaveBeenCalled();
 });
 
-Then('compatibility issues should be documented', async function() {
+Then('compatibility issues should be documented', async function () {
   const hasIssues = this.compatibilityResults.testResults.some(result => 
     result.issues && result.issues.length > 0
   );
@@ -402,7 +404,7 @@ Then('compatibility issues should be documented', async function() {
 });
 
 // Quality Gate Implementation
-Given('quality gates with thresholds', async function() {
+Given('quality gates with thresholds', async function () {
   this.qualityGates = {
     codeQuality: { threshold: 80, weight: 0.3 },
     testCoverage: { threshold: 85, weight: 0.3 },
@@ -419,7 +421,7 @@ Given('quality gates with thresholds', async function() {
   expect(mockQualityAnalyzer.configureQualityGates).toHaveBeenCalledWith(this.qualityGates);
 });
 
-When('quality gate evaluation is performed', async function() {
+When('quality gate evaluation is performed', async function () {
   const gateResults = {
     codeQuality: { score: 85, passed: true },
     testCoverage: { score: 82, passed: false },
@@ -440,7 +442,7 @@ When('quality gate evaluation is performed', async function() {
   expect(mockQualityAnalyzer.evaluateQualityGates).toHaveBeenCalled();
 });
 
-Then('deployment should be {string} based on gate results', async function(expectedAction) {
+Then('deployment should be {string} based on gate results', async function (expectedAction) {
   if (expectedAction === 'blocked') {
     expect(this.gateEvaluation.overallPassed).toBe(false);
     expect(this.gateEvaluation.failingGates.length).toBeGreaterThan(0);
@@ -456,7 +458,7 @@ Then('deployment should be {string} based on gate results', async function(expec
 /**
  * Cleanup and teardown
  */
-After(async function() {
+After(async function () {
   // Reset all quality mocks after each scenario
   jest.clearAllMocks();
   

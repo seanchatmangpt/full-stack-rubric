@@ -397,7 +397,7 @@ export class FormFactory {
   static createSubmission(form) {
     const submissionData = {}
     
-    form.fields.forEach(field => {
+    form.fields.forEach((field) => {
       submissionData[field.name] = this.generateFieldValue(field)
     })
 
@@ -446,11 +446,13 @@ export class FormFactory {
         return field.options ? faker.helpers.arrayElement(field.options).value : null
       
       case 'file':
-        return faker.datatype.boolean(0.7) ? {
-          filename: faker.system.fileName(),
-          size: faker.number.int({ min: 1000, max: 5000000 }),
-          type: field.allowedTypes ? faker.helpers.arrayElement(field.allowedTypes) : 'text/plain'
-        } : null
+        return faker.datatype.boolean(0.7)
+          ? {
+              filename: faker.system.fileName(),
+              size: faker.number.int({ min: 1000, max: 5000000 }),
+              type: field.allowedTypes ? faker.helpers.arrayElement(field.allowedTypes) : 'text/plain'
+            }
+          : null
       
       case 'date':
         return faker.date.recent().toISOString().split('T')[0]
@@ -520,11 +522,11 @@ export class FormFactory {
             requireUppercase: true, 
             requireNumbers: true, 
             requireSpecialChars: true 
-          }},
+          } },
           { ...this.generateField('email'), validationRules: { 
             required: true, 
             pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$' 
-          }}
+          } }
         ]
       }),
       'file-upload': () => this.create({
@@ -535,11 +537,13 @@ export class FormFactory {
       'conditional-fields': () => this.create({
         fields: this.generateFields(8).map(field => ({
           ...field,
-          conditionalLogic: faker.datatype.boolean(0.3) ? {
-            showIf: faker.lorem.word(),
-            operator: faker.helpers.arrayElement(['equals', 'not_equals', 'contains']),
-            value: faker.lorem.word()
-          } : null
+          conditionalLogic: faker.datatype.boolean(0.3)
+            ? {
+                showIf: faker.lorem.word(),
+                operator: faker.helpers.arrayElement(['equals', 'not_equals', 'contains']),
+                value: faker.lorem.word()
+              }
+            : null
         }))
       })
     }

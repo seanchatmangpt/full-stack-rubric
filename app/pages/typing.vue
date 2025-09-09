@@ -1,25 +1,55 @@
 <template>
   <div class="container mx-auto py-8 px-4">
     <div class="max-w-4xl mx-auto">
-      <h1 class="text-3xl font-bold mb-8 text-center">Typing Tutor</h1>
+      <h1 class="text-3xl font-bold mb-8 text-center">
+        Typing Tutor
+      </h1>
       
       <!-- Statistics Panel -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div class="bg-white p-4 rounded-lg shadow">
-          <div class="text-sm text-gray-600">WPM</div>
-          <div class="text-2xl font-bold text-blue-600">{{ wpm }}</div>
+          <div class="text-sm text-gray-600">
+            WPM
+          </div>
+          <div
+            class="text-2xl font-bold text-blue-600"
+            data-testid="wpm-stat"
+          >
+            {{ wpm }}
+          </div>
         </div>
         <div class="bg-white p-4 rounded-lg shadow">
-          <div class="text-sm text-gray-600">Accuracy</div>
-          <div class="text-2xl font-bold text-green-600">{{ accuracy.toFixed(1) }}%</div>
+          <div class="text-sm text-gray-600">
+            Accuracy
+          </div>
+          <div
+            class="text-2xl font-bold text-green-600"
+            data-testid="accuracy-stat"
+          >
+            {{ accuracy.toFixed(1) }}%
+          </div>
         </div>
         <div class="bg-white p-4 rounded-lg shadow">
-          <div class="text-sm text-gray-600">Errors</div>
-          <div class="text-2xl font-bold text-red-600">{{ errors }}</div>
+          <div class="text-sm text-gray-600">
+            Errors
+          </div>
+          <div
+            class="text-2xl font-bold text-red-600"
+            data-testid="errors-stat"
+          >
+            {{ errors }}
+          </div>
         </div>
         <div class="bg-white p-4 rounded-lg shadow">
-          <div class="text-sm text-gray-600">Progress</div>
-          <div class="text-2xl font-bold">{{ progress.toFixed(0) }}% complete</div>
+          <div class="text-sm text-gray-600">
+            Progress
+          </div>
+          <div
+            class="text-2xl font-bold"
+            data-testid="progress-stat"
+          >
+            {{ progress.toFixed(0) }}% complete
+          </div>
         </div>
       </div>
 
@@ -28,61 +58,93 @@
         <div 
           class="bg-blue-600 h-2 rounded-full transition-all duration-300"
           :style="{ width: `${progress}%` }"
-        ></div>
+        />
       </div>
 
       <!-- Code Display -->
       <div class="bg-gray-900 text-gray-100 p-6 rounded-lg font-mono text-lg mb-6 overflow-auto">
-        <pre><code v-html="highlightedText"></code></pre>
+        <pre><code v-html="highlightedText" /></pre>
       </div>
 
       <!-- Input Area -->
       <div class="mb-6">
         <textarea
           v-model="userInput"
-          @input="handleInput"
-          @keydown="handleKeydown"
           class="w-full h-32 p-4 border border-gray-300 rounded-lg font-mono text-lg resize-none"
           placeholder="Start typing here..."
           :disabled="isComplete"
-        ></textarea>
+          @input="handleInput"
+          @keydown="handleKeydown"
+        />
       </div>
 
       <!-- Control Buttons -->
       <div class="flex gap-4 justify-center">
-        <UButton @click="resetExercise" variant="outline">
+        <UButton
+          variant="outline"
+          @click="resetExercise"
+        >
           Reset
         </UButton>
-        <UButton @click="nextExercise" :disabled="!isComplete">
+        <UButton
+          :disabled="!isComplete"
+          @click="nextExercise"
+        >
           Next Exercise
         </UButton>
       </div>
     </div>
 
     <!-- Completion Modal -->
-    <UModal v-model="showModal">
+    <UModal
+      v-model="showModal"
+      data-testid="completion-modal"
+    >
       <UCard>
         <template #header>
-          <h3 class="text-xl font-bold">Exercise Complete!</h3>
+          <h3 class="text-xl font-bold">
+            Exercise Complete!
+          </h3>
         </template>
         
         <div class="space-y-4">
           <div class="grid grid-cols-2 gap-4 text-center">
             <div>
-              <div class="text-2xl font-bold text-blue-600">{{ finalWpm }}</div>
-              <div class="text-sm text-gray-600">Final WPM</div>
+              <div
+                class="text-2xl font-bold text-blue-600"
+                data-testid="final-wpm"
+              >
+                {{ finalWpm }}
+              </div>
+              <div class="text-sm text-gray-600">
+                Final WPM
+              </div>
             </div>
             <div>
-              <div class="text-2xl font-bold text-green-600">{{ finalAccuracy.toFixed(1) }}%</div>
-              <div class="text-sm text-gray-600">Final Accuracy</div>
+              <div
+                class="text-2xl font-bold text-green-600"
+                data-testid="final-accuracy"
+              >
+                {{ finalAccuracy.toFixed(1) }}%
+              </div>
+              <div class="text-sm text-gray-600">
+                Final Accuracy
+              </div>
             </div>
           </div>
         </div>
 
         <template #footer>
           <div class="flex gap-2 justify-end">
-            <UButton variant="outline" @click="nextExercise">Next Exercise</UButton>
-            <UButton @click="showModal = false">Close</UButton>
+            <UButton
+              variant="outline"
+              @click="nextExercise"
+            >
+              Next Exercise
+            </UButton>
+            <UButton @click="showModal = false">
+              Close
+            </UButton>
           </div>
         </template>
       </UCard>

@@ -113,7 +113,7 @@ function registerDefaultMocks() {
   mockDefaults.set('clearError', () => vi.fn())
 
   // Pinia store mocks
-  mockDefaults.set('useStore', (storeId) => ({
+  mockDefaults.set('useStore', storeId => ({
     $id: storeId,
     $state: {},
     $patch: vi.fn(),
@@ -124,9 +124,9 @@ function registerDefaultMocks() {
   }))
 
   // Vue composables
-  mockDefaults.set('ref', (value) => ({ value }))
-  mockDefaults.set('reactive', (value) => value)
-  mockDefaults.set('computed', (fn) => ({ value: fn() }))
+  mockDefaults.set('ref', value => ({ value }))
+  mockDefaults.set('reactive', value => value)
+  mockDefaults.set('computed', fn => ({ value: fn() }))
   mockDefaults.set('watch', () => vi.fn())
   mockDefaults.set('watchEffect', () => vi.fn())
   mockDefaults.set('onMounted', () => vi.fn())
@@ -228,7 +228,7 @@ export function mockVueComposables(overrides = {}) {
  */
 export function createSmartMock(type, config = {}) {
   const factories = {
-    'api-client': (config) => ({
+    'api-client': config => ({
       get: vi.fn().mockResolvedValue(config.responses?.get || { data: {} }),
       post: vi.fn().mockResolvedValue(config.responses?.post || { data: {} }),
       put: vi.fn().mockResolvedValue(config.responses?.put || { data: {} }),
@@ -236,7 +236,7 @@ export function createSmartMock(type, config = {}) {
       patch: vi.fn().mockResolvedValue(config.responses?.patch || { data: {} })
     }),
 
-    'store': (config) => ({
+    'store': config => ({
       state: config.initialState || {},
       getters: Object.fromEntries(
         Object.keys(config.getters || {}).map(key => [key, vi.fn()])
@@ -251,7 +251,7 @@ export function createSmartMock(type, config = {}) {
       dispatch: vi.fn().mockResolvedValue(undefined)
     }),
 
-    'database': (config) => ({
+    'database': config => ({
       select: vi.fn().mockResolvedValue(config.data?.select || []),
       insert: vi.fn().mockResolvedValue(config.data?.insert || { id: 1 }),
       update: vi.fn().mockResolvedValue(config.data?.update || 1),
@@ -260,7 +260,7 @@ export function createSmartMock(type, config = {}) {
       raw: vi.fn().mockResolvedValue([])
     }),
 
-    'auth-service': (config) => ({
+    'auth-service': config => ({
       login: vi.fn().mockResolvedValue(config.responses?.login || { token: 'mock-token' }),
       logout: vi.fn().mockResolvedValue(undefined),
       refresh: vi.fn().mockResolvedValue(config.responses?.refresh || { token: 'new-token' }),
@@ -268,7 +268,7 @@ export function createSmartMock(type, config = {}) {
       isAuthenticated: vi.fn().mockReturnValue(config.authenticated || false)
     }),
 
-    'validation': (config) => ({
+    'validation': config => ({
       validate: vi.fn().mockResolvedValue(config.valid ? { valid: true } : { valid: false, errors: ['Invalid'] }),
       sanitize: vi.fn().mockImplementation(data => data),
       rules: config.rules || {}

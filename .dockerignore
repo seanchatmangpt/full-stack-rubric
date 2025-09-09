@@ -1,0 +1,95 @@
+# Docker ignore file for production builds
+
+# Development files
+node_modules/
+.git/
+.gitignore
+README.md
+*.md
+
+# Development tools
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+
+# Build artifacts (keep .output for production)
+.nuxt/
+dist/
+
+# Test files
+tests/
+coverage/
+*.test.js
+*.spec.js
+__tests__/
+
+# Documentation
+docs/
+*.md
+
+# Temporary files
+.tmp/
+tmp/
+temp/
+
+# Log files
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Development dependencies
+cypress/
+playwright/
+jest.config.*
+vitest.config.*
+
+# Source maps
+*.map
+
+# Backup files
+*.bak
+*.backup
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Package manager cache
+.pnpm-store/
+.yarn/
+.npm/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Docker related
+Dockerfile*
+docker-compose*
+.dockerignore

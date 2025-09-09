@@ -13,7 +13,7 @@ export function useScenario(scenarioName) {
   const isActive = ref(false)
   const steps = reactive([])
   const context = reactive({})
-  
+
   /**
    * Adds a step to the scenario
    * @param {string} type - Step type (Given, When, Then)
@@ -28,7 +28,7 @@ export function useScenario(scenarioName) {
       status: 'pending'
     })
   }
-  
+
   /**
    * Executes the scenario
    * @returns {Promise<Object>} Execution result
@@ -36,7 +36,7 @@ export function useScenario(scenarioName) {
   async function execute() {
     isActive.value = true
     const results = []
-    
+
     for (const step of steps) {
       try {
         step.status = 'running'
@@ -49,7 +49,7 @@ export function useScenario(scenarioName) {
         break
       }
     }
-    
+
     isActive.value = false
     return {
       scenario: scenarioName,
@@ -58,7 +58,7 @@ export function useScenario(scenarioName) {
       failed: results.filter(r => r.status === 'failed').length
     }
   }
-  
+
   return {
     isActive,
     steps,

@@ -12,7 +12,7 @@ import { generateTestData } from '../utils/test-helpers.js'
 export function useTestData() {
   const testData = reactive(new Map())
   const isLoading = ref(false)
-  
+
   /**
    * Creates test data
    * @param {string} type - Data type
@@ -25,7 +25,7 @@ export function useTestData() {
     testData.set(key, data)
     return data
   }
-  
+
   /**
    * Gets test data by key
    * @param {string} key - Data key
@@ -34,14 +34,14 @@ export function useTestData() {
   function getTestData(key) {
     return testData.get(key)
   }
-  
+
   /**
    * Clears all test data
    */
   function clearTestData() {
     testData.clear()
   }
-  
+
   return {
     testData,
     isLoading,

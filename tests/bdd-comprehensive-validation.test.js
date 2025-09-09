@@ -34,7 +34,7 @@ describe('BDD Comprehensive Validation Suite', () => {
       console.log(`📊 Discovered ${features.length} feature files`)
       
       // Validate each feature has required properties
-      features.forEach(feature => {
+      features.forEach((feature) => {
         expect(feature).toHaveProperty('path')
         expect(feature).toHaveProperty('name')
         expect(feature).toHaveProperty('content')
@@ -48,9 +48,9 @@ describe('BDD Comprehensive Validation Suite', () => {
       let totalScenarios = 0
       let totalSteps = 0
 
-      features.forEach(feature => {
+      features.forEach((feature) => {
         totalScenarios += feature.scenarios.length
-        feature.scenarios.forEach(scenario => {
+        feature.scenarios.forEach((scenario) => {
           totalSteps += scenario.steps.length
           
           // Validate scenario structure
@@ -71,8 +71,8 @@ describe('BDD Comprehensive Validation Suite', () => {
       const features = await testRunner.discoverFeatures()
       const scenarioTypes = new Set()
       
-      features.forEach(feature => {
-        feature.scenarios.forEach(scenario => {
+      features.forEach((feature) => {
+        feature.scenarios.forEach((scenario) => {
           scenarioTypes.add(scenario.type)
         })
       })
@@ -93,7 +93,7 @@ describe('BDD Comprehensive Validation Suite', () => {
       console.log(`📊 Discovered ${stepDefinitions.length} step definitions`)
       
       // Validate step definition structure
-      stepDefinitions.forEach(stepDef => {
+      stepDefinitions.forEach((stepDef) => {
         expect(stepDef).toHaveProperty('pattern')
         expect(stepDef).toHaveProperty('type')
         expect(stepDef).toHaveProperty('file')
@@ -110,7 +110,7 @@ describe('BDD Comprehensive Validation Suite', () => {
         Then: 0
       }
 
-      stepDefinitions.forEach(stepDef => {
+      stepDefinitions.forEach((stepDef) => {
         stepTypes[stepDef.type]++
       })
 
@@ -151,7 +151,7 @@ describe('BDD Comprehensive Validation Suite', () => {
       
       if (validation.missingSteps.length > 0) {
         console.log(`⚠️  ${validation.missingSteps.length} missing step definitions`)
-        validation.missingSteps.slice(0, 5).forEach(step => {
+        validation.missingSteps.slice(0, 5).forEach((step) => {
           console.log(`   - ${step}`)
         })
       }
@@ -162,7 +162,7 @@ describe('BDD Comprehensive Validation Suite', () => {
       
       if (validation.missingSteps.length > 0) {
         // Validate missing steps are properly identified
-        validation.missingSteps.forEach(step => {
+        validation.missingSteps.forEach((step) => {
           expect(typeof step).toBe('string')
           expect(step.length).toBeGreaterThan(0)
         })
@@ -201,7 +201,7 @@ describe('BDD Comprehensive Validation Suite', () => {
       console.log(`📊 Executed ${testResults.length} sample scenarios`)
       
       // Validate test result structure
-      testResults.forEach(result => {
+      testResults.forEach((result) => {
         expect(result).toHaveProperty('feature')
         expect(result).toHaveProperty('scenario')
         expect(result).toHaveProperty('status')
@@ -216,8 +216,8 @@ describe('BDD Comprehensive Validation Suite', () => {
       let passedSteps = 0
       let pendingSteps = 0
       
-      testResults.forEach(result => {
-        result.steps.forEach(step => {
+      testResults.forEach((result) => {
+        result.steps.forEach((step) => {
           if (step.status === 'passed') passedSteps++
           if (step.status === 'pending') pendingSteps++
         })
@@ -271,7 +271,7 @@ describe('BDD Comprehensive Validation Suite', () => {
       
       if (report.recommendations.length > 0) {
         console.log('💡 Recommendations:')
-        report.recommendations.forEach(rec => {
+        report.recommendations.forEach((rec) => {
           console.log(`   - ${rec}`)
           expect(typeof rec).toBe('string')
           expect(rec.length).toBeGreaterThan(10)
@@ -283,7 +283,7 @@ describe('BDD Comprehensive Validation Suite', () => {
       const report = await testRunner.generateReport()
       
       expect(Array.isArray(report.features)).toBe(true)
-      report.features.forEach(feature => {
+      report.features.forEach((feature) => {
         expect(feature).toHaveProperty('name')
         expect(feature).toHaveProperty('path')
         expect(feature).toHaveProperty('scenarioCount')
@@ -307,7 +307,7 @@ describe('BDD Comprehensive Validation Suite', () => {
       const features = await testRunner.discoverFeatures()
       
       // Ensure all feature files are accessible
-      features.forEach(feature => {
+      features.forEach((feature) => {
         expect(fs.existsSync(feature.path)).toBe(true)
         expect(feature.content.length).toBeGreaterThan(0)
       })
@@ -320,7 +320,7 @@ describe('BDD Comprehensive Validation Suite', () => {
       const stepFiles = [...new Set(stepDefinitions.map(sd => sd.file))]
       
       // Ensure all step files are accessible
-      stepFiles.forEach(file => {
+      stepFiles.forEach((file) => {
         expect(fs.existsSync(file)).toBe(true)
       })
       
@@ -346,9 +346,9 @@ describe('BDD Comprehensive Validation Suite', () => {
       
       // Calculate coverage metrics
       const totalUniqueSteps = new Set()
-      validation.features.forEach(feature => {
-        feature.scenarios.forEach(scenario => {
-          scenario.steps.forEach(step => {
+      validation.features.forEach((feature) => {
+        feature.scenarios.forEach((scenario) => {
+          scenario.steps.forEach((step) => {
             totalUniqueSteps.add(testRunner.normalizeStep(step))
           })
         })

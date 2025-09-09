@@ -44,12 +44,12 @@ export class StepHelpers {
     async navigateToPage(pageName, wrapper) {
       setBDDState('currentPage', pageName)
       setBDDState('navigationTime', performance.now())
-      
+
       await nextTick()
       if (this.config.autoAssert) {
         expect(wrapper.exists()).toBe(true)
       }
-      
+
       return wrapper
     },
 
@@ -61,7 +61,7 @@ export class StepHelpers {
     verifyElementsVisible(selectors, wrapper) {
       const visible = []
       const missing = []
-      
+
       for (const selector of selectors) {
         const element = wrapper.find(selector)
         if (element.exists()) {
@@ -70,14 +70,14 @@ export class StepHelpers {
           missing.push(selector)
         }
       }
-      
+
       setBDDState('visibleElements', visible)
       setBDDState('missingElements', missing)
-      
+
       if (this.config.autoAssert && missing.length > 0) {
         expect(missing).toEqual([])
       }
-      
+
       return { visible, missing }
     },
 
@@ -89,23 +89,23 @@ export class StepHelpers {
     verifyInitialState(expectedState, wrapper) {
       const actualState = {}
       const mismatches = []
-      
+
       for (const [key, expectedValue] of Object.entries(expectedState)) {
         const actualValue = wrapper.vm[key]
         actualState[key] = actualValue
-        
+
         if (actualValue !== expectedValue) {
           mismatches.push({ key, expected: expectedValue, actual: actualValue })
         }
       }
-      
+
       setBDDState('initialState', actualState)
       setBDDState('stateMismatches', mismatches)
-      
+
       if (this.config.autoAssert) {
         expect(mismatches).toEqual([])
       }
-      
+
       return { actualState, mismatches }
     }
   }
@@ -125,14 +125,14 @@ export class StepHelpers {
     async inputText(text, options = {}, wrapper) {
       const { delayBetweenKeys = 100, errorsToMake = 0 } = options
       const textarea = wrapper.find('textarea, input[type="text"]')
-      
+
       if (!textarea.exists()) {
         throw new Error('Text input element not found')
       }
 
       let currentText = ''
       const errors = []
-      
+
       // Randomly select positions for errors
       if (errorsToMake > 0) {
         const errorPositions = new Set()
@@ -151,7 +151,7 @@ export class StepHelpers {
           currentText += wrongChar
           textarea.setValue(currentText)
           await nextTick()
-          
+
           // Simulate backspace to correct
           await nextTick()
           currentText = currentText.slice(0, -1)
@@ -183,27 +183,27 @@ export class StepHelpers {
      */
     async rapidType(text, intervalMs = 10, wrapper) {
       const textarea = wrapper.find('textarea, input[type="text"]')
-      
+
       if (!textarea.exists()) {
         throw new Error('Text input element not found')
       }
 
       let currentText = ''
       const startTime = performance.now()
-      
+
       for (const char of text) {
         currentText += char
         textarea.setValue(currentText)
         await textarea.trigger('input')
         await nextTick()
       }
-      
+
       const endTime = performance.now()
       const totalTime = endTime - startTime
-      
+
       setBDDState('rapidTypingTime', totalTime)
       setBDDState('rapidTypingSpeed', text.length / (totalTime / 1000))
-      
+
       return {
         finalText: currentText,
         totalTime,
@@ -219,26 +219,26 @@ export class StepHelpers {
      */
     async simulateCorrections(backspaces, delayMs = 50, wrapper) {
       const textarea = wrapper.find('textarea, input[type="text"]')
-      
+
       if (!textarea.exists()) {
         throw new Error('Text input element not found')
       }
 
       let currentText = textarea.element.value
       const startTime = performance.now()
-      
+
       for (let i = 0; i < backspaces; i++) {
         currentText = currentText.slice(0, -1)
         textarea.setValue(currentText)
         await textarea.trigger('input')
         await nextTick()
       }
-      
+
       const endTime = performance.now()
-      
+
       setBDDState('correctionTime', endTime - startTime)
       setBDDState('correctionsApplied', backspaces)
-      
+
       return {
         finalText: currentText,
         backspacesApplied: backspaces,
@@ -253,21 +253,21 @@ export class StepHelpers {
      */
     async clickByText(buttonText, wrapper) {
       const buttons = wrapper.findAll('button, a, [role="button"]')
-      const targetElement = buttons.find(element => 
-        element.text().includes(buttonText) || 
-        element.attributes('aria-label')?.includes(buttonText)
+      const targetElement = buttons.find(element =>
+        element.text().includes(buttonText)
+        || element.attributes('aria-label')?.includes(buttonText)
       )
-      
+
       if (!targetElement) {
         throw new Error(`Element with text "${buttonText}" not found`)
       }
-      
+
       await targetElement.trigger('click')
       await nextTick()
-      
+
       setBDDState('lastClickedElement', buttonText)
       setBDDState('clickTime', performance.now())
-      
+
       return targetElement
     }
   }
@@ -286,28 +286,28 @@ export class StepHelpers {
      */
     verifyHighlighting(expectations, wrapper) {
       const results = {}
-      
+
       if (expectations.correct) {
         results.correctElements = wrapper.findAll(expectations.correct.join(', '))
         if (this.config.autoAssert) {
           expect(results.correctElements.length).toBeGreaterThan(0)
         }
       }
-      
+
       if (expectations.incorrect) {
         results.incorrectElements = wrapper.findAll(expectations.incorrect.join(', '))
         if (this.config.autoAssert) {
           expect(results.incorrectElements.length).toBeGreaterThan(0)
         }
       }
-      
+
       if (expectations.current) {
         results.currentElements = wrapper.findAll(expectations.current.join(', '))
         if (this.config.autoAssert) {
           expect(results.currentElements.length).toBeGreaterThan(0)
         }
       }
-      
+
       setBDDState('highlightingResults', results)
       return results
     },
@@ -320,33 +320,33 @@ export class StepHelpers {
     verifyMetrics(expectedMetrics, wrapper) {
       const actualMetrics = {}
       const mismatches = []
-      
+
       for (const [metric, expectedValue] of Object.entries(expectedMetrics)) {
         const actualValue = wrapper.vm[metric]
         actualMetrics[metric] = actualValue
-        
+
         if (typeof expectedValue === 'number') {
           // For numeric values, allow small tolerance
           const tolerance = expectedValue * 0.1 // 10% tolerance
           if (Math.abs(actualValue - expectedValue) > tolerance) {
-            mismatches.push({ 
-              metric, 
-              expected: expectedValue, 
+            mismatches.push({
+              metric,
+              expected: expectedValue,
               actual: actualValue,
-              tolerance 
+              tolerance
             })
           }
         } else if (actualValue !== expectedValue) {
           mismatches.push({ metric, expected: expectedValue, actual: actualValue })
         }
       }
-      
+
       setBDDState('metricResults', { actualMetrics, mismatches })
-      
+
       if (this.config.autoAssert && mismatches.length > 0) {
         throw new Error(`Metric mismatches: ${JSON.stringify(mismatches, null, 2)}`)
       }
-      
+
       return { actualMetrics, mismatches }
     },
 
@@ -360,20 +360,20 @@ export class StepHelpers {
     verifyProgress(expectedProgress, options = {}, wrapper) {
       const { tolerance = 1 } = options
       const actualProgress = wrapper.vm.progress
-      
+
       const isWithinTolerance = Math.abs(actualProgress - expectedProgress) <= tolerance
-      
+
       setBDDState('progressCheck', {
         expected: expectedProgress,
         actual: actualProgress,
         tolerance,
         isValid: isWithinTolerance
       })
-      
+
       if (this.config.autoAssert) {
         expect(actualProgress).toBeCloseTo(expectedProgress, tolerance)
       }
-      
+
       return {
         expected: expectedProgress,
         actual: actualProgress,
@@ -397,30 +397,30 @@ export class StepHelpers {
         text: modal.exists() ? modal.text() : '',
         buttons: []
       }
-      
+
       if (modal.exists()) {
         const buttons = modal.findAll('button')
         results.buttons = buttons.map(btn => btn.text())
       }
-      
+
       if (this.config.autoAssert) {
         if (modalExpectations.visible !== undefined) {
           expect(results.visible).toBe(modalExpectations.visible)
         }
-        
+
         if (modalExpectations.containsText) {
           for (const text of modalExpectations.containsText) {
             expect(results.text).toContain(text)
           }
         }
-        
+
         if (modalExpectations.hasButtons) {
           for (const buttonText of modalExpectations.hasButtons) {
             expect(results.buttons.some(btn => btn.includes(buttonText))).toBe(true)
           }
         }
       }
-      
+
       setBDDState('modalResults', results)
       return results
     }
@@ -441,13 +441,13 @@ export class StepHelpers {
       const result = await operation()
       const endTime = performance.now()
       const duration = endTime - startTime
-      
+
       setBDDState('lastOperationTime', duration)
-      
+
       if (expectations.maxTime && this.config.autoAssert) {
         expect(duration).toBeLessThan(expectations.maxTime)
       }
-      
+
       return { result, duration }
     },
 
@@ -459,27 +459,27 @@ export class StepHelpers {
      */
     async trackMemoryUsage(operation, expectations = {}) {
       const initialMemory = performance.memory?.usedJSHeapSize || 0
-      
+
       const result = await operation()
-      
+
       // Force garbage collection if available
       if (global.gc) {
         global.gc()
       }
-      
+
       const finalMemory = performance.memory?.usedJSHeapSize || 0
       const memoryIncrease = finalMemory - initialMemory
-      
+
       setBDDState('memoryTracking', {
         initial: initialMemory,
         final: finalMemory,
         increase: memoryIncrease
       })
-      
+
       if (expectations.maxIncrease && this.config.autoAssert) {
         expect(memoryIncrease).toBeLessThan(expectations.maxIncrease)
       }
-      
+
       return { result, memoryIncrease }
     },
 
@@ -494,15 +494,15 @@ export class StepHelpers {
         metricsValid: wrapper.vm.wpm >= 0,
         accuracyValid: wrapper.vm.accuracy >= 0 && wrapper.vm.accuracy <= 100
       }
-      
+
       const isResponsive = Object.values(checks).every(check => check === true)
-      
+
       setBDDState('responsivenessCheck', { checks, isResponsive })
-      
+
       if (this.config.autoAssert) {
         expect(isResponsive).toBe(true)
       }
-      
+
       return { checks, isResponsive }
     }
   }
@@ -528,10 +528,10 @@ export class StepHelpers {
         language: 'javascript',
         ...exerciseConfig
       }
-      
+
       wrapper.vm.currentExercise = defaultExercise
       await nextTick()
-      
+
       setBDDState('currentExercise', defaultExercise)
       return defaultExercise
     },
@@ -549,13 +549,13 @@ export class StepHelpers {
         progress: 0,
         isComplete: false
       }
-      
+
       Object.assign(wrapper.vm, initialState)
       await nextTick()
-      
+
       setBDDState('stateReset', true)
       setBDDState('resetTime', performance.now())
-      
+
       return initialState
     }
   }
@@ -574,39 +574,39 @@ export const commonSteps = {
    * Standard navigation step
    * @param {string} pageName - Page name
    */
-  navigateToPage: (pageName) => `I am on the ${pageName} page`,
-  
+  navigateToPage: pageName => `I am on the ${pageName} page`,
+
   /**
    * Standard visibility check step
    * @param {string} element - Element description
    */
-  canSeeElement: (element) => `I can see the ${element}`,
-  
+  canSeeElement: element => `I can see the ${element}`,
+
   /**
    * Standard interaction step
    * @param {string} action - Action to perform
    * @param {string} target - Target element
    */
   performAction: (action, target) => `I ${action} ${target}`,
-  
+
   /**
    * Standard verification step
    * @param {string} expected - Expected outcome
    */
-  shouldSee: (expected) => `I should see ${expected}`,
-  
+  shouldSee: expected => `I should see ${expected}`,
+
   /**
    * Standard metric verification step
    * @param {string} metric - Metric name
    * @param {number} value - Expected value
    */
   metricShouldBe: (metric, value) => `the ${metric} should be ${value}`,
-  
+
   /**
    * Standard performance step
    * @param {string} condition - Performance condition
    */
-  performanceCheck: (condition) => `${condition} should occur`
+  performanceCheck: condition => `${condition} should occur`
 }
 
 export default stepHelpers

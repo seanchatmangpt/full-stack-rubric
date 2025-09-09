@@ -82,18 +82,18 @@ export class PerformanceTester {
   async measureMemory(operation, options = {}) {
     const { iterations = 5 } = options
     const initialMemory = this._getMemoryUsage()
-    
+
     for (let i = 0; i < iterations; i++) {
       await operation()
     }
-    
+
     // Force garbage collection if available
     if (global.gc) {
       global.gc()
     }
-    
+
     const finalMemory = this._getMemoryUsage()
-    
+
     return {
       initial: initialMemory,
       final: finalMemory,
@@ -114,8 +114,8 @@ export class PerformanceTester {
       throw new Error(`No measurements found for: ${name}`)
     }
 
-    const assertMessage = message || 
-      `${name} should complete within ${threshold}ms (actual: ${metrics.average.toFixed(2)}ms)`
+    const assertMessage = message
+      || `${name} should complete within ${threshold}ms (actual: ${metrics.average.toFixed(2)}ms)`
 
     expect(metrics.average, assertMessage).toBeLessThan(threshold)
   }
@@ -133,7 +133,7 @@ export class PerformanceTester {
 
     const variance = (metrics.standardDeviation / metrics.average) * 100
     const message = `Performance should be consistent for ${name}. Variance: ${variance.toFixed(2)}% (max: ${maxVariancePercent}%)`
-    
+
     expect(variance, message).toBeLessThan(maxVariancePercent)
   }
 
@@ -154,17 +154,17 @@ export class PerformanceTester {
    * @returns {Promise<Object>} Benchmark results
    */
   async benchmark(operations, options = {}) {
-    const { 
+    const {
       iterations = 10,
       thresholds = this.thresholds
     } = options
-    
+
     const results = {}
 
     for (const [name, operation] of Object.entries(operations)) {
       const metrics = await this.measure(name, operation, { iterations })
       const threshold = thresholds[name] || thresholds.renderTime
-      
+
       results[name] = {
         ...metrics,
         threshold,
@@ -188,7 +188,7 @@ export class PerformanceTester {
     for (const [name, metrics] of Object.entries(results)) {
       const status = metrics.passed ? '✅' : '❌'
       const grade = metrics.grade || 'N/A'
-      
+
       report += `${status} ${name} (${grade})\n`
       report += `   Average: ${metrics.average.toFixed(2)}ms\n`
       report += `   Range: ${metrics.min.toFixed(2)}ms - ${metrics.max.toFixed(2)}ms\n`
@@ -208,7 +208,7 @@ export class PerformanceTester {
 
     // First Contentful Paint
     const paintEntries = performance.getEntriesByType('paint')
-    paintEntries.forEach(entry => {
+    paintEntries.forEach((entry) => {
       if (entry.name === 'first-contentful-paint') {
         vitals.fcp = entry.startTime
       }
@@ -231,21 +231,21 @@ export class PerformanceTester {
    */
   withPerformanceTest(options = {}) {
     const { threshold = this.thresholds.renderTime } = options
-    
+
     return (target, propertyKey, descriptor) => {
       const originalMethod = descriptor.value
-      
-      descriptor.value = async function(...args) {
+
+      descriptor.value = async function (...args) {
         const start = performance.now()
         const result = await originalMethod.apply(this, args)
         const duration = performance.now() - start
-        
+
         if (duration > threshold) {
         }
-        
+
         return result
       }
-      
+
       return descriptor
     }
   }
@@ -279,7 +279,7 @@ export class PerformanceTester {
     const sorted = [...measurements].sort((a, b) => a - b)
     const sum = measurements.reduce((acc, val) => acc + val, 0)
     const average = sum / measurements.length
-    
+
     const variance = measurements.reduce((acc, val) => acc + Math.pow(val - average, 2), 0) / measurements.length
     const standardDeviation = Math.sqrt(variance)
 
@@ -314,7 +314,7 @@ export class PerformanceTester {
    */
   _getPerformanceGrade(actual, threshold) {
     const ratio = actual / threshold
-    
+
     if (ratio <= 0.5) return 'A+'
     if (ratio <= 0.7) return 'A'
     if (ratio <= 0.85) return 'B'
@@ -337,7 +337,7 @@ export class PerformanceTester {
         observer.disconnect()
       })
       observer.observe({ entryTypes: ['largest-contentful-paint'] })
-      
+
       // Fallback timeout
       setTimeout(() => {
         observer.disconnect()
@@ -354,7 +354,7 @@ export class PerformanceTester {
   async _measureCLS() {
     return new Promise((resolve) => {
       let cumulativeScore = 0
-      
+
       const observer = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
           if (entry.entryType === 'layout-shift' && !entry.hadRecentInput) {
@@ -362,9 +362,9 @@ export class PerformanceTester {
           }
         }
       })
-      
+
       observer.observe({ entryTypes: ['layout-shift'] })
-      
+
       setTimeout(() => {
         observer.disconnect()
         resolve(cumulativeScore)
@@ -388,9 +388,9 @@ export class PerformanceTester {
           }
         }
       })
-      
+
       observer.observe({ entryTypes: ['first-input'] })
-      
+
       // Fallback timeout
       setTimeout(() => {
         observer.disconnect()

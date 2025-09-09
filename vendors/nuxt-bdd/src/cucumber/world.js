@@ -26,7 +26,7 @@ export async function teardownWorld(world) {
   if (world.page) {
     await world.page.close()
   }
-  
+
   if (world.browser) {
     await world.browser.close()
   }

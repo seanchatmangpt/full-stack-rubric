@@ -26,7 +26,7 @@ export class NuxtTestBridge {
       rootDir: process.cwd(),
       ...options
     }
-    
+
     this.nuxt = null
     this.testContext = null
     this.scenarios = new Map()
@@ -70,20 +70,20 @@ export class NuxtTestBridge {
           ...nuxtConfig
         }
       })
-      
+
       this.testContext = await createTest(this.nuxt)
-      
+
       // Enhanced context with Nuxt 4 features
       this.setupEnhancedContext()
-      
+
       // Setup lifecycle hooks
       this.setupLifecycleHooks()
-      
+
       // Execute post-init hooks
       for (const hook of this.hooks.afterInit) {
         await hook(this.nuxt, this.testContext)
       }
-      
+
       return this.nuxt
     } catch (error) {
       throw new Error(`Failed to initialize Nuxt 4 test environment: ${error.message}`)
@@ -225,8 +225,8 @@ export class NuxtTestBridge {
 
     // Store management helpers
     scenario.getStore = (storeName) => {
-      return scenario.context.app?.$pinia?.state?.[storeName] || 
-             scenario.context.app?.$store?.state?.[storeName]
+      return scenario.context.app?.$pinia?.state?.[storeName]
+        || scenario.context.app?.$store?.state?.[storeName]
     }
 
     scenario.resetStore = (storeName) => {
@@ -311,7 +311,7 @@ export class NuxtTestBridge {
   }
 
   /**
-   * Add Nitro-specific helpers  
+   * Add Nitro-specific helpers
    * @param {Object} scenario - Target scenario
    * @private
    */
@@ -346,16 +346,16 @@ export class NuxtTestBridge {
 
     // Reset router
     await this.testContext.router?.replace('/')
-    
+
     // Clear caches
     this.testContext.clearCache?.()
-    
+
     // Reset stores comprehensively
     await this.resetAllStores()
-    
+
     // Clear Nitro storage
     await this.clearNitroStorage()
-    
+
     // Reset auto-imports cache
     this.resetAutoImportsCache()
   }
@@ -373,7 +373,7 @@ export class NuxtTestBridge {
           store.$reset?.()
         }
       }
-      
+
       // Reset Vuex store
       if (this.testContext.app.$store) {
         await this.testContext.app.$store.dispatch('$reset')
@@ -402,7 +402,7 @@ export class NuxtTestBridge {
   resetAutoImportsCache() {
     // Clear module cache for auto-imports
     if (typeof require !== 'undefined' && require.cache) {
-      Object.keys(require.cache).forEach(key => {
+      Object.keys(require.cache).forEach((key) => {
         if (key.includes('#imports') || key.includes('#app')) {
           delete require.cache[key]
         }
@@ -417,15 +417,15 @@ export class NuxtTestBridge {
   async cleanupScenario() {
     // Clear timers
     this.clearAllTimers()
-    
+
     // Reset DOM if in browser mode
     if (this.options.browser) {
       await this.resetDomState()
     }
-    
+
     // Clear API mocks
     this.clearApiMocks()
-    
+
     // Clear Nuxt 4 specific caches
     await this.clearNuxt4Caches()
   }
@@ -439,7 +439,7 @@ export class NuxtTestBridge {
     if (this.testContext?.nuxt4?.clearServerFunctionCache) {
       this.testContext.nuxt4.clearServerFunctionCache()
     }
-    
+
     // Clear composable cache
     if (this.testContext?.nuxt4?.clearComposableCache) {
       this.testContext.nuxt4.clearComposableCache()
@@ -481,7 +481,7 @@ export class NuxtTestBridge {
     if (!this.apiMocks) {
       this.apiMocks = new Map()
     }
-    
+
     this.apiMocks.set(endpoint, {
       response,
       options: {
@@ -501,17 +501,17 @@ export class NuxtTestBridge {
           if (mock.options.delay > 0) {
             await new Promise(resolve => setTimeout(resolve, mock.options.delay))
           }
-          
+
           // Simulate error responses
           if (mock.options.status >= 400) {
             const error = new Error(`API Error: ${mock.options.status}`)
             error.statusCode = mock.options.status
             throw error
           }
-          
+
           return mock.response
         }
-        
+
         return this.originalFetch?.(url, opts)
       })
     }

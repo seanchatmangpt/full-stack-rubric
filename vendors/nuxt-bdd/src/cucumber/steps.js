@@ -13,7 +13,7 @@ export function defineSteps(stepFn) {
   if (typeof stepFn !== 'function') {
     throw new Error('defineSteps expects a function')
   }
-  
+
   // Execute the step definition function
   stepFn({
     Given: (pattern, implementation) => defineStep('Given', pattern, implementation),

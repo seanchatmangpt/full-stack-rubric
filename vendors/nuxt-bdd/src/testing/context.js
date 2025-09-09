@@ -10,7 +10,7 @@ export class TestContext {
     this.data = new Map()
     this.cleanup = []
   }
-  
+
   /**
    * Sets context data
    * @param {string} key - Data key
@@ -19,7 +19,7 @@ export class TestContext {
   set(key, value) {
     this.data.set(key, value)
   }
-  
+
   /**
    * Gets context data
    * @param {string} key - Data key
@@ -28,7 +28,7 @@ export class TestContext {
   get(key) {
     return this.data.get(key)
   }
-  
+
   /**
    * Adds cleanup function
    * @param {Function} fn - Cleanup function
@@ -36,7 +36,7 @@ export class TestContext {
   addCleanup(fn) {
     this.cleanup.push(fn)
   }
-  
+
   /**
    * Runs cleanup functions
    * @returns {Promise<void>}

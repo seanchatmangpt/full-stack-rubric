@@ -28,7 +28,7 @@ function exampleIndividualSteps() {
     'the "user" store property "name" should be "John Doe"'
   ]
   
-  steps.forEach(step => {
+  steps.forEach((step) => {
     const definition = generateStepDefinition(step, { framework: 'cucumber', testRunner: 'vitest' })
     console.log(`Step: "${step}"`)
     console.log('Generated:')
@@ -91,19 +91,19 @@ function exampleSearchSteps() {
   // Search for specific functionality
   const authPatterns = searchStepGenerators('login')
   console.log('\nAuthentication patterns:')
-  authPatterns.forEach(pattern => {
+  authPatterns.forEach((pattern) => {
     console.log(`- ${pattern.pattern} (${pattern.tags.join(', ')})`)
   })
   
   const apiPatterns = searchStepGenerators('api')
   console.log('\nAPI patterns:')
-  apiPatterns.forEach(pattern => {
+  apiPatterns.forEach((pattern) => {
     console.log(`- ${pattern.pattern} (${pattern.tags.join(', ')})`)
   })
   
   const componentPatterns = searchStepGenerators('component')
   console.log('\nComponent patterns:')
-  componentPatterns.forEach(pattern => {
+  componentPatterns.forEach((pattern) => {
     console.log(`- ${pattern.pattern} (${pattern.tags.join(', ')})`)
   })
 }

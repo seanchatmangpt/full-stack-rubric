@@ -27,7 +27,7 @@ import { discoverProjectStructure, detectTestingFramework } from './auto-discove
 export async function generateSmartDefaults(projectPath = process.cwd(), options = {}) {
   const structure = await discoverProjectStructure(projectPath)
   const testingInfo = await detectTestingFramework(projectPath)
-  
+
   const config = {
     nuxt: generateNuxtDefaults(structure, options),
     testing: generateTestingDefaults(structure, testingInfo, options),
@@ -38,7 +38,7 @@ export async function generateSmartDefaults(projectPath = process.cwd(), options
     seo: generateSeoDefaults(structure, options),
     security: generateSecurityDefaults(structure, options)
   }
-  
+
   return config
 }
 
@@ -55,19 +55,19 @@ function generateNuxtDefaults(structure, options = {}) {
       payloadExtraction: false,
       renderJsonPayloads: true
     },
-    
+
     // Directory configuration based on detected structure
     dir: {},
-    
+
     // Auto-detect modules
     modules: [],
-    
+
     // CSS configuration
     css: [],
-    
+
     // Build configuration
     build: {},
-    
+
     // App configuration
     app: {
       head: {
@@ -75,19 +75,19 @@ function generateNuxtDefaults(structure, options = {}) {
         viewport: 'width=device-width, initial-scale=1'
       }
     },
-    
+
     // Runtime configuration
     runtimeConfig: {
       public: {}
     },
-    
+
     // TypeScript configuration
     typescript: {
       strict: true,
       typeCheck: false // Performance optimization
     }
   }
-  
+
   // Configure directory structure based on what's detected
   if (structure.directories.includes('app')) {
     // App directory structure (Nuxt 3 recommended)
@@ -96,7 +96,7 @@ function generateNuxtDefaults(structure, options = {}) {
     if (structure.directories.includes('app/middleware')) config.dir.middleware = 'app/middleware'
     if (structure.directories.includes('app/plugins')) config.dir.plugins = 'app/plugins'
   }
-  
+
   // Auto-detect and configure modules
   if (structure.dependencies.includes('@nuxtjs/tailwindcss')) {
     config.modules.push('@nuxtjs/tailwindcss')
@@ -105,7 +105,7 @@ function generateNuxtDefaults(structure, options = {}) {
       configPath: 'tailwind.config.js'
     }
   }
-  
+
   if (structure.dependencies.includes('@nuxtjs/content')) {
     config.modules.push('@nuxtjs/content')
     config.content = {
@@ -124,14 +124,14 @@ function generateNuxtDefaults(structure, options = {}) {
       }
     }
   }
-  
+
   if (structure.dependencies.includes('@pinia/nuxt')) {
     config.modules.push('@pinia/nuxt')
     config.pinia = {
       autoImports: ['defineStore', 'storeToRefs', 'acceptHMRUpdate']
     }
   }
-  
+
   if (structure.dependencies.includes('@nuxtjs/i18n')) {
     config.modules.push('@nuxtjs/i18n')
     config.i18n = {
@@ -143,11 +143,11 @@ function generateNuxtDefaults(structure, options = {}) {
       strategy: 'prefix_except_default'
     }
   }
-  
+
   if (structure.dependencies.includes('@vueuse/nuxt')) {
     config.modules.push('@vueuse/nuxt')
   }
-  
+
   if (structure.dependencies.includes('@nuxt/image')) {
     config.modules.push('@nuxt/image')
     config.image = {
@@ -163,16 +163,16 @@ function generateNuxtDefaults(structure, options = {}) {
       }
     }
   }
-  
+
   if (structure.dependencies.includes('@nuxt/devtools')) {
     config.devtools = { enabled: true }
   }
-  
+
   // Configure CSS based on detected files
   if (structure.directories.includes('assets/css')) {
     config.css.push('~/assets/css/main.css')
   }
-  
+
   // SPA mode configuration
   if (options.spa || structure.nuxtConfig.ssr === false) {
     config.ssr = false
@@ -182,7 +182,7 @@ function generateNuxtDefaults(structure, options = {}) {
       }
     }
   }
-  
+
   // Auto-imports configuration
   config.imports = {
     dirs: [
@@ -191,7 +191,7 @@ function generateNuxtDefaults(structure, options = {}) {
       'stores'
     ]
   }
-  
+
   // Components auto-import
   config.components = [
     {
@@ -199,7 +199,7 @@ function generateNuxtDefaults(structure, options = {}) {
       pathPrefix: false
     }
   ]
-  
+
   // Merge with user options
   return mergeDefaults(config, options.nuxt || {})
 }
@@ -223,7 +223,7 @@ function generateTestingDefaults(structure, testingInfo, options = {}) {
     },
     environment: 'happy-dom' // Faster than jsdom
   }
-  
+
   // Vitest configuration with Nuxt integration
   if (config.framework === 'vitest') {
     config.vitest = {
@@ -257,7 +257,7 @@ function generateTestingDefaults(structure, testingInfo, options = {}) {
       hookTimeout: 10000
     }
   }
-  
+
   // Jest configuration (fallback)
   if (config.framework === 'jest') {
     config.jest = {
@@ -280,20 +280,20 @@ function generateTestingDefaults(structure, testingInfo, options = {}) {
       coverageReporters: ['text', 'html', 'lcov']
     }
   }
-  
+
   // Setup files based on project structure
   if (structure.directories.includes('composables') || structure.directories.includes('app/composables')) {
     config.setupFiles.push('./tests/setup/composables-setup.js')
   }
-  
+
   if (structure.dependencies.includes('@pinia/nuxt')) {
     config.setupFiles.push('./tests/setup/pinia-setup.js')
   }
-  
+
   if (structure.dependencies.includes('@nuxtjs/i18n')) {
     config.setupFiles.push('./tests/setup/i18n-setup.js')
   }
-  
+
   // Add Nuxt test utils if available
   if (structure.dependencies.includes('@nuxt/test-utils')) {
     config.nuxtTestUtils = {
@@ -301,7 +301,7 @@ function generateTestingDefaults(structure, testingInfo, options = {}) {
       startOnBoot: true
     }
   }
-  
+
   return mergeDefaults(config, options.testing || {})
 }
 
@@ -318,7 +318,7 @@ function generateBDDDefaults(structure, options = {}) {
     stepDefinitionsDir: 'tests/steps',
     supportDir: 'tests/support',
     outputDir: 'tests/results',
-    
+
     // Cucumber configuration
     cucumber: {
       paths: ['tests/features/**/*.feature'],
@@ -337,17 +337,17 @@ function generateBDDDefaults(structure, options = {}) {
       retry: 1,
       timeout: 30000
     },
-    
+
     // BDD test patterns
     testPatterns: [
       'tests/features/**/*.feature',
       'tests/bdd/**/*.test.js',
       'tests/scenarios/**/*.js'
     ],
-    
+
     // Gherkin language support
     language: 'en',
-    
+
     // Report configuration
     reporting: {
       enabled: true,
@@ -355,11 +355,11 @@ function generateBDDDefaults(structure, options = {}) {
       outputPath: 'tests/results'
     }
   }
-  
+
   // Enhanced BDD setup if explicitly enabled
   if (config.enabled) {
     config.cucumber.require.push('tests/support/**/*.js')
-    
+
     // Add screenshot support for E2E BDD
     if (structure.dependencies.includes('playwright')) {
       config.cucumber.formatOptions.snippetSyntax = 'async-await'
@@ -371,7 +371,7 @@ function generateBDDDefaults(structure, options = {}) {
       }
     }
   }
-  
+
   return mergeDefaults(config, options.bdd || {})
 }
 
@@ -389,7 +389,7 @@ function generateBuildDefaults(structure, options = {}) {
       minify: process.env.NODE_ENV === 'production',
       sourceMap: process.env.NODE_ENV !== 'production'
     },
-    
+
     // Build optimization
     optimization: {
       splitChunks: {
@@ -403,16 +403,16 @@ function generateBuildDefaults(structure, options = {}) {
         }
       }
     },
-    
+
     // Transpilation
     transpile: [],
-    
+
     // PostCSS configuration
     postcss: {
       plugins: {}
     }
   }
-  
+
   // TypeScript build configuration
   if (structure.dependencies.includes('typescript')) {
     config.typescript = {
@@ -420,12 +420,12 @@ function generateBuildDefaults(structure, options = {}) {
       typeCheck: process.env.NODE_ENV !== 'production' // Disable in production for speed
     }
   }
-  
+
   // Tailwind CSS build optimization
   if (structure.dependencies.includes('tailwindcss')) {
     config.postcss.plugins.tailwindcss = {}
     config.postcss.plugins.autoprefixer = {}
-    
+
     // PurgeCSS configuration for production
     if (process.env.NODE_ENV === 'production') {
       config.postcss.plugins['@fullhuman/postcss-purgecss'] = {
@@ -439,17 +439,17 @@ function generateBuildDefaults(structure, options = {}) {
       }
     }
   }
-  
+
   // Production optimizations
   if (process.env.NODE_ENV === 'production') {
     config.nitro.minify = true
     config.nitro.sourceMap = false
-    
+
     // Advanced optimizations
     config.optimization.usedExports = true
     config.optimization.sideEffects = false
   }
-  
+
   // PWA build configuration
   if (structure.dependencies.includes('@nuxtjs/pwa')) {
     config.pwa = {
@@ -460,7 +460,7 @@ function generateBuildDefaults(structure, options = {}) {
       }
     }
   }
-  
+
   return mergeDefaults(config, options.build || {})
 }
 
@@ -479,23 +479,23 @@ function generateDevelopmentDefaults(structure, options = {}) {
       https: false,
       open: true
     },
-    
+
     // Hot reload configuration
     vite: {
       clearScreen: false,
       logLevel: 'info'
     },
-    
+
     // Source maps
     sourcemap: {
       server: true,
       client: true
     },
-    
+
     // Development tools
     devtools: true
   }
-  
+
   // Vue devtools configuration
   config.vue = {
     config: {
@@ -503,14 +503,14 @@ function generateDevelopmentDefaults(structure, options = {}) {
       performance: true
     }
   }
-  
+
   // TypeScript development configuration
   if (structure.dependencies.includes('typescript')) {
     config.typescript = {
       typeCheck: 'build' // Only check on build, not on dev server start
     }
   }
-  
+
   // ESLint integration
   if (structure.dependencies.includes('eslint')) {
     config.eslint = {
@@ -518,7 +518,7 @@ function generateDevelopmentDefaults(structure, options = {}) {
       include: ['app/**', 'components/**', 'pages/**', 'server/**']
     }
   }
-  
+
   return mergeDefaults(config, options.development || {})
 }
 
@@ -537,32 +537,32 @@ function generatePerformanceDefaults(structure, options = {}) {
       densities: [1, 2],
       sizes: '100vw sm:50vw md:33vw lg:25vw'
     },
-    
+
     // Compression
     compression: {
       gzip: true,
       brotli: true
     },
-    
+
     // Caching strategy
     routeRules: {
       '/': { prerender: true },
       '/api/**': { headers: { 'cache-control': 's-maxage=60' } },
       '/static/**': { headers: { 'cache-control': 'max-age=31536000' } }
     },
-    
+
     // Bundle analysis
     bundle: {
       analyzer: false
     },
-    
+
     // Preloading strategy
     preload: {
       links: true,
       images: true
     }
   }
-  
+
   // PWA performance optimizations
   if (structure.dependencies.includes('@nuxtjs/pwa')) {
     config.pwa = {
@@ -585,7 +585,7 @@ function generatePerformanceDefaults(structure, options = {}) {
       }
     }
   }
-  
+
   // Content optimization
   if (structure.dependencies.includes('@nuxtjs/content')) {
     config.content = {
@@ -597,7 +597,7 @@ function generatePerformanceDefaults(structure, options = {}) {
       }
     }
   }
-  
+
   return mergeDefaults(config, options.performance || {})
 }
 
@@ -610,7 +610,7 @@ function generatePerformanceDefaults(structure, options = {}) {
 function generateSeoDefaults(structure, options = {}) {
   const projectName = structure.packageInfo.name || 'Nuxt App'
   const description = structure.packageInfo.description || `${projectName} - Built with Nuxt`
-  
+
   const config = {
     // App head configuration
     app: {
@@ -621,14 +621,14 @@ function generateSeoDefaults(structure, options = {}) {
           { name: 'description', content: description },
           { name: 'format-detection', content: 'telephone=no' },
           { name: 'theme-color', content: '#000000' },
-          
+
           // Open Graph
           { property: 'og:site_name', content: projectName },
           { property: 'og:type', content: 'website' },
           { property: 'og:title', content: projectName },
           { property: 'og:description', content: description },
           { property: 'og:locale', content: 'en_US' },
-          
+
           // Twitter Card
           { name: 'twitter:card', content: 'summary_large_image' },
           { name: 'twitter:title', content: projectName },
@@ -645,15 +645,15 @@ function generateSeoDefaults(structure, options = {}) {
             children: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'WebApplication',
-              name: projectName,
-              description: description,
-              url: 'https://example.com'
+              'name': projectName,
+              'description': description,
+              'url': 'https://example.com'
             })
           }
         ]
       }
     },
-    
+
     // Sitemap configuration
     sitemap: {
       hostname: 'https://example.com',
@@ -663,7 +663,7 @@ function generateSeoDefaults(structure, options = {}) {
         return []
       }
     },
-    
+
     // Robots.txt
     robots: {
       UserAgent: '*',
@@ -671,18 +671,18 @@ function generateSeoDefaults(structure, options = {}) {
       Sitemap: 'https://example.com/sitemap.xml'
     }
   }
-  
+
   // SEO modules configuration
   if (structure.dependencies.includes('@nuxtjs/sitemap')) {
     config.modules = config.modules || []
     config.modules.push('@nuxtjs/sitemap')
   }
-  
+
   if (structure.dependencies.includes('@nuxtjs/robots')) {
     config.modules = config.modules || []
     config.modules.push('@nuxtjs/robots')
   }
-  
+
   return mergeDefaults(config, options.seo || {})
 }
 
@@ -709,13 +709,13 @@ function generateSecurityDefaults(structure, options = {}) {
         }
       }
     },
-    
+
     // CSRF protection
     csrf: {
       enabled: true,
       methodsToProtect: ['POST', 'PUT', 'PATCH', 'DELETE']
     },
-    
+
     // Rate limiting
     rateLimit: {
       enabled: true,
@@ -723,23 +723,23 @@ function generateSecurityDefaults(structure, options = {}) {
       windowMs: 15 * 60 * 1000 // 15 minutes
     }
   }
-  
+
   // Content Security Policy
   config.csp = {
     enabled: true,
     policies: {
-      'default-src': ["'self'"],
-      'script-src': ["'self'", "'unsafe-inline'"],
-      'style-src': ["'self'", "'unsafe-inline'"],
-      'img-src': ["'self'", 'data:', 'https:'],
-      'font-src': ["'self'"],
-      'connect-src': ["'self'"],
-      'media-src': ["'self'"],
-      'object-src': ["'none'"],
-      'frame-src': ["'none'"]
+      'default-src': ['\'self\''],
+      'script-src': ['\'self\'', '\'unsafe-inline\''],
+      'style-src': ['\'self\'', '\'unsafe-inline\''],
+      'img-src': ['\'self\'', 'data:', 'https:'],
+      'font-src': ['\'self\''],
+      'connect-src': ['\'self\''],
+      'media-src': ['\'self\''],
+      'object-src': ['\'none\''],
+      'frame-src': ['\'none\'']
     }
   }
-  
+
   return mergeDefaults(config, options.security || {})
 }
 
@@ -760,7 +760,7 @@ export function generateEnvironmentDefaults(environment, structure, options = {}
       sourcemap: true,
       logLevel: 'info'
     },
-    
+
     production: {
       debug: false,
       ssr: true,
@@ -770,7 +770,7 @@ export function generateEnvironmentDefaults(environment, structure, options = {}
       logLevel: 'warn',
       analyze: false
     },
-    
+
     test: {
       debug: false,
       ssr: false,
@@ -780,9 +780,9 @@ export function generateEnvironmentDefaults(environment, structure, options = {}
       logLevel: 'error'
     }
   }
-  
+
   const envConfig = baseConfig[environment] || baseConfig.development
-  
+
   return mergeDefaults(envConfig, options)
 }
 
@@ -793,14 +793,14 @@ export function generateEnvironmentDefaults(environment, structure, options = {}
  */
 export function generateAdaptiveConfig(structure) {
   const complexity = calculateProjectComplexity(structure)
-  
+
   const config = {
     base: {
       ssr: true,
       devtools: true
     }
   }
-  
+
   // Simple projects (complexity < 30)
   if (complexity < 30) {
     config.optimization = {
@@ -832,7 +832,7 @@ export function generateAdaptiveConfig(structure) {
       prefetch: true
     }
   }
-  
+
   return config
 }
 
@@ -843,30 +843,30 @@ export function generateAdaptiveConfig(structure) {
  */
 function calculateProjectComplexity(structure) {
   let score = 0
-  
+
   // Directory count contribution (max 20 points)
   score += Math.min(structure.directories.length * 1.5, 20)
-  
+
   // Dependency count contribution (max 30 points)
   score += Math.min(structure.dependencies.length * 0.8, 30)
-  
+
   // Module complexity (max 25 points)
   if (structure.nuxtConfig.modules) {
     score += Math.min(structure.nuxtConfig.modules.length * 3, 25)
   }
-  
+
   // Testing complexity (max 15 points)
   if (structure.testingConfig) {
     score += structure.testingConfig.frameworks.length * 5
     if (structure.testingConfig.bdd) score += 5
   }
-  
+
   // Framework complexity (max 10 points)
   if (structure.dependencies.includes('typescript')) score += 5
   if (structure.dependencies.includes('@nuxtjs/content')) score += 2
   if (structure.dependencies.includes('@pinia/nuxt')) score += 2
   if (structure.dependencies.includes('@nuxtjs/i18n')) score += 1
-  
+
   return Math.min(score, 100)
 }
 
@@ -878,16 +878,16 @@ function calculateProjectComplexity(structure) {
  */
 function mergeDefaults(defaults, overrides) {
   if (!overrides) return defaults
-  
+
   const result = { ...defaults }
-  
+
   for (const [key, value] of Object.entries(overrides)) {
     if (value === null || value === undefined) {
       continue
     }
-    
+
     if (Array.isArray(value)) {
-      result[key] = Array.isArray(result[key]) 
+      result[key] = Array.isArray(result[key])
         ? [...result[key], ...value]
         : value
     } else if (value && typeof value === 'object' && !Array.isArray(value)) {
@@ -896,6 +896,6 @@ function mergeDefaults(defaults, overrides) {
       result[key] = value
     }
   }
-  
+
   return result
 }

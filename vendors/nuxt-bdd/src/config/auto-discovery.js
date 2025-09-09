@@ -80,19 +80,19 @@ export async function discoverProjectStructure(projectPath = process.cwd()) {
  */
 function extractDependencies(packageInfo) {
   const deps = []
-  
+
   if (packageInfo.dependencies) {
     deps.push(...Object.keys(packageInfo.dependencies))
   }
-  
+
   if (packageInfo.devDependencies) {
     deps.push(...Object.keys(packageInfo.devDependencies))
   }
-  
+
   if (packageInfo.peerDependencies) {
     deps.push(...Object.keys(packageInfo.peerDependencies))
   }
-  
+
   return deps
 }
 
@@ -106,32 +106,32 @@ function detectProjectType(dependencies) {
   if (dependencies.includes('nuxt') && !dependencies.includes('@nuxt/core')) {
     return 'nuxt3'
   }
-  
+
   // Nuxt 2 detection
   if (dependencies.includes('@nuxt/core') || dependencies.includes('nuxt-edge')) {
     return 'nuxt2'
   }
-  
+
   // Vue 3 with Vite
   if (dependencies.includes('vue') && dependencies.includes('@vitejs/plugin-vue')) {
     return 'vue3-vite'
   }
-  
+
   // Vue 3 with Webpack
   if (dependencies.includes('vue') && dependencies.includes('webpack')) {
     return 'vue3-webpack'
   }
-  
+
   // Generic Vue project
   if (dependencies.includes('vue')) {
     return 'vue3'
   }
-  
+
   // Node.js project
   if (dependencies.some(dep => dep.startsWith('@types/node') || dep === 'express' || dep === 'fastify')) {
     return 'nodejs'
   }
-  
+
   return 'unknown'
 }
 
@@ -148,16 +148,16 @@ function detectNuxtVersion(dependencies) {
     }
     return '3.x' // Default to 3.x for nuxt package
   }
-  
+
   if (dependencies.includes('@nuxt/core')) {
     return '2.x'
   }
-  
+
   if (dependencies.includes('vue')) {
     const vueVersion = dependencies.find(dep => dep === 'vue')
     return vueVersion ? 'vue-3.x' : 'vue-unknown'
   }
-  
+
   return 'unknown'
 }
 
@@ -169,47 +169,47 @@ function detectNuxtVersion(dependencies) {
 async function scanDirectories(projectPath) {
   const commonDirs = [
     // Nuxt 3 app directory structure
-    'app', 'app/components', 'app/pages', 'app/layouts', 'app/middleware', 
+    'app', 'app/components', 'app/pages', 'app/layouts', 'app/middleware',
     'app/plugins', 'app/composables', 'app/utils', 'app/stores',
-    
+
     // Traditional Nuxt structure
     'pages', 'components', 'layouts', 'middleware', 'plugins',
     'composables', 'utils', 'stores',
-    
+
     // Assets and static files
     'assets', 'assets/css', 'assets/images', 'assets/fonts',
     'static', 'public',
-    
+
     // Server-side
     'server', 'server/api', 'server/middleware', 'server/plugins',
-    
+
     // Content management
     'content', 'content/blog', 'content/docs',
-    
+
     // Testing directories
     'tests', 'test', '__tests__', 'spec',
     'tests/unit', 'tests/integration', 'tests/e2e',
     'tests/features', 'tests/steps', 'tests/support',
-    
+
     // Source directories
     'src', 'src/components', 'src/pages',
     'lib', 'libs', 'packages',
-    
+
     // Configuration and tooling
     'config', 'configs', 'tools', 'scripts',
-    
+
     // Styling
     'styles', 'scss', 'css',
-    
+
     // Documentation
     'docs', 'documentation',
-    
+
     // Types
     'types', 'typings', '@types'
   ]
-  
+
   const foundDirs = []
-  
+
   for (const dir of commonDirs) {
     const dirPath = join(projectPath, dir)
     try {
@@ -222,7 +222,7 @@ async function scanDirectories(projectPath) {
       // Directory doesn't exist, skip
     }
   }
-  
+
   // Also discover any custom directories
   try {
     const rootContents = await readdir(projectPath)
@@ -240,7 +240,7 @@ async function scanDirectories(projectPath) {
   } catch {
     // Skip if can't read directory
   }
-  
+
   return foundDirs.sort()
 }
 
@@ -256,7 +256,7 @@ async function loadNuxtConfig(projectPath) {
     'nuxt.config.mjs',
     'nuxt.config.cjs'
   ]
-  
+
   for (const configFile of configFiles) {
     const configPath = join(projectPath, configFile)
     if (existsSync(configPath)) {
@@ -267,7 +267,7 @@ async function loadNuxtConfig(projectPath) {
       }
     }
   }
-  
+
   return {}
 }
 
@@ -278,7 +278,7 @@ async function loadNuxtConfig(projectPath) {
  */
 function parseConfigContent(content) {
   const config = {}
-  
+
   // Extract modules
   const modulesMatch = content.match(/modules:\s*\[([\s\S]*?)\]/m)
   if (modulesMatch) {
@@ -287,7 +287,7 @@ function parseConfigContent(content) {
       .map(m => m.replace(/['"]/g, '').trim())
       .filter(Boolean)
   }
-  
+
   // Extract CSS
   const cssMatch = content.match(/css:\s*\[([\s\S]*?)\]/m)
   if (cssMatch) {
@@ -296,25 +296,25 @@ function parseConfigContent(content) {
       .map(c => c.replace(/['"]/g, '').trim())
       .filter(Boolean)
   }
-  
+
   // Extract SSR setting
   const ssrMatch = content.match(/ssr:\s*(true|false)/m)
   if (ssrMatch) {
     config.ssr = ssrMatch[1] === 'true'
   }
-  
+
   // Extract target
   const targetMatch = content.match(/target:\s*['"]([^'"]+)['"]/m)
   if (targetMatch) {
     config.target = targetMatch[1]
   }
-  
+
   // Extract runtime config
   const runtimeConfigMatch = content.match(/runtimeConfig:\s*\{([\s\S]*?)\}/m)
   if (runtimeConfigMatch) {
     config.runtimeConfig = {}
   }
-  
+
   return config
 }
 
@@ -333,20 +333,20 @@ async function analyzeTestingSetup(projectPath, dependencies) {
     hasBDD: false,
     coverage: false
   }
-  
+
   // Detect testing frameworks
   if (dependencies.includes('vitest')) {
     testConfig.frameworks.push('vitest')
-    
+
     const vitestConfig = join(projectPath, 'vitest.config.js')
     if (existsSync(vitestConfig)) {
       testConfig.configFiles.push('vitest.config.js')
     }
   }
-  
+
   if (dependencies.includes('jest')) {
     testConfig.frameworks.push('jest')
-    
+
     const jestConfigs = ['jest.config.js', 'jest.config.json']
     for (const config of jestConfigs) {
       const configPath = join(projectPath, config)
@@ -356,32 +356,32 @@ async function analyzeTestingSetup(projectPath, dependencies) {
       }
     }
   }
-  
+
   // Detect E2E testing
   if (dependencies.includes('playwright') || dependencies.includes('cypress')) {
     testConfig.hasE2E = true
     if (dependencies.includes('playwright')) testConfig.frameworks.push('playwright')
     if (dependencies.includes('cypress')) testConfig.frameworks.push('cypress')
   }
-  
+
   // Detect BDD testing
   if (dependencies.includes('@cucumber/cucumber')) {
     testConfig.hasBDD = true
     testConfig.frameworks.push('cucumber')
-    
+
     const cucumberConfig = join(projectPath, 'cucumber.config.js')
     if (existsSync(cucumberConfig)) {
       testConfig.configFiles.push('cucumber.config.js')
     }
   }
-  
+
   // Detect coverage tools
-  if (dependencies.includes('@vitest/coverage') || 
-      dependencies.includes('c8') || 
-      dependencies.includes('nyc')) {
+  if (dependencies.includes('@vitest/coverage')
+    || dependencies.includes('c8')
+    || dependencies.includes('nyc')) {
     testConfig.coverage = true
   }
-  
+
   // Find test directories
   const testDirs = ['tests', 'test', '__tests__', 'spec', 'e2e']
   for (const dir of testDirs) {
@@ -393,7 +393,7 @@ async function analyzeTestingSetup(projectPath, dependencies) {
       // Directory doesn't exist
     }
   }
-  
+
   return testConfig
 }
 
@@ -412,14 +412,14 @@ async function discoverBDDStructure(projectPath) {
     stepFiles: [],
     configFiles: []
   }
-  
+
   // Check for BDD directories
   const bddDirs = [
     { key: 'featuresDir', paths: ['tests/features', 'features', 'specs'] },
     { key: 'stepDefinitionsDir', paths: ['tests/steps', 'step_definitions', 'steps'] },
     { key: 'supportDir', paths: ['tests/support', 'support'] }
   ]
-  
+
   for (const { key, paths } of bddDirs) {
     for (const path of paths) {
       const fullPath = join(projectPath, path)
@@ -433,24 +433,24 @@ async function discoverBDDStructure(projectPath) {
       }
     }
   }
-  
+
   // If BDD structure found, scan for files
   if (bddStructure.hasBDD) {
     if (bddStructure.featuresDir) {
       bddStructure.featureFiles = await scanForFiles(
-        join(projectPath, bddStructure.featuresDir), 
+        join(projectPath, bddStructure.featuresDir),
         '.feature'
       )
     }
-    
+
     if (bddStructure.stepDefinitionsDir) {
       bddStructure.stepFiles = await scanForFiles(
-        join(projectPath, bddStructure.stepDefinitionsDir), 
+        join(projectPath, bddStructure.stepDefinitionsDir),
         '.js'
       )
     }
   }
-  
+
   // Check for BDD config files
   const bddConfigFiles = ['cucumber.config.js', '.cucumber.json', 'cucumber.yml']
   for (const configFile of bddConfigFiles) {
@@ -459,7 +459,7 @@ async function discoverBDDStructure(projectPath) {
       bddStructure.configFiles.push(configFile)
     }
   }
-  
+
   return bddStructure
 }
 
@@ -471,17 +471,17 @@ async function discoverBDDStructure(projectPath) {
  */
 async function scanForFiles(dirPath, extension) {
   const files = []
-  
+
   try {
     const dirContents = await readdir(dirPath, { withFileTypes: true })
-    
+
     for (const entry of dirContents) {
       if (entry.isFile() && extname(entry.name) === extension) {
         files.push(entry.name)
       } else if (entry.isDirectory()) {
         // Recursively scan subdirectories
         const subFiles = await scanForFiles(
-          join(dirPath, entry.name), 
+          join(dirPath, entry.name),
           extension
         )
         files.push(...subFiles.map(f => join(entry.name, f)))
@@ -490,7 +490,7 @@ async function scanForFiles(dirPath, extension) {
   } catch {
     // Directory doesn't exist or can't be read
   }
-  
+
   return files
 }
 
@@ -513,7 +513,7 @@ function generateRecommendations(structure) {
     performance: [],
     security: []
   }
-  
+
   // Test framework recommendations
   if (structure.testingConfig.frameworks.length === 0) {
     recommendations.testFramework = 'vitest'
@@ -522,7 +522,7 @@ function generateRecommendations(structure) {
   } else {
     recommendations.testFramework = structure.testingConfig.frameworks[0]
   }
-  
+
   // BDD recommendations
   if (!structure.bddStructure.hasBDD) {
     recommendations.bdd.suggestions.push('Create tests/features directory for BDD scenarios')
@@ -533,51 +533,51 @@ function generateRecommendations(structure) {
       recommendations.bdd.suggestions.push('Add .feature files to describe scenarios')
     }
   }
-  
+
   // Module recommendations based on dependencies
   if (structure.dependencies.includes('@nuxtjs/tailwindcss')) {
     recommendations.modules.push('@nuxtjs/tailwindcss')
   }
-  
+
   if (structure.dependencies.includes('@nuxtjs/content')) {
     recommendations.modules.push('@nuxtjs/content')
   }
-  
+
   if (structure.dependencies.includes('@pinia/nuxt')) {
     recommendations.modules.push('@pinia/nuxt')
   }
-  
+
   if (structure.dependencies.includes('@nuxtjs/i18n')) {
     recommendations.modules.push('@nuxtjs/i18n')
   }
-  
+
   // Directory structure recommendations
   if (!structure.directories.includes('tests') && !structure.directories.includes('test')) {
     recommendations.directories.tests = 'Create tests directory for test organization'
   }
-  
+
   if (!structure.directories.includes('components') && structure.type.includes('nuxt')) {
     recommendations.directories.components = 'Create components directory for Vue components'
   }
-  
+
   if (structure.type === 'nuxt3' && !structure.directories.includes('app')) {
     recommendations.directories.app = 'Consider using app/ directory structure for Nuxt 3'
   }
-  
+
   // Performance recommendations
   if (!structure.dependencies.includes('@nuxtjs/compression')) {
     recommendations.performance.push('Consider adding compression for better performance')
   }
-  
+
   if (!structure.dependencies.includes('@nuxt/image')) {
     recommendations.performance.push('Consider @nuxt/image for optimized image handling')
   }
-  
+
   // Security recommendations
   if (!structure.nuxtConfig.runtimeConfig) {
     recommendations.security.push('Set up runtime configuration for environment variables')
   }
-  
+
   return recommendations
 }
 
@@ -597,7 +597,7 @@ export async function detectTestingFramework(projectPath = process.cwd()) {
     e2e: false,
     bdd: false
   }
-  
+
   // Check for Vitest
   const vitestConfigs = ['vitest.config.js', 'vitest.config.ts', 'vite.config.js']
   for (const config of vitestConfigs) {
@@ -608,7 +608,7 @@ export async function detectTestingFramework(projectPath = process.cwd()) {
       break
     }
   }
-  
+
   // Check for Jest (if Vitest not found)
   if (testConfig.framework === 'none') {
     const jestConfigs = ['jest.config.js', 'jest.config.json', 'package.json']
@@ -635,13 +635,13 @@ export async function detectTestingFramework(projectPath = process.cwd()) {
       }
     }
   }
-  
+
   // Check for E2E frameworks
   const e2eConfigs = [
     { name: 'playwright', files: ['playwright.config.js', 'playwright.config.ts'] },
     { name: 'cypress', files: ['cypress.config.js', 'cypress.json'] }
   ]
-  
+
   for (const { name, files } of e2eConfigs) {
     for (const file of files) {
       const configPath = join(projectPath, file)
@@ -652,7 +652,7 @@ export async function detectTestingFramework(projectPath = process.cwd()) {
     }
     if (testConfig.e2e) break
   }
-  
+
   // Check for BDD setup
   const bddConfigs = ['cucumber.config.js', '.cucumber.json']
   for (const config of bddConfigs) {
@@ -662,7 +662,7 @@ export async function detectTestingFramework(projectPath = process.cwd()) {
       break
     }
   }
-  
+
   // Find test directories
   const testDirs = ['tests', 'test', '__tests__', 'spec', 'e2e']
   for (const dir of testDirs) {
@@ -674,7 +674,7 @@ export async function detectTestingFramework(projectPath = process.cwd()) {
       // Directory doesn't exist
     }
   }
-  
+
   return testConfig
 }
 
@@ -686,7 +686,7 @@ export async function detectTestingFramework(projectPath = process.cwd()) {
 export async function generateHealthReport(projectPath = process.cwd()) {
   const structure = await discoverProjectStructure(projectPath)
   const testingInfo = await detectTestingFramework(projectPath)
-  
+
   const health = {
     score: 0,
     grade: 'F',
@@ -701,10 +701,10 @@ export async function generateHealthReport(projectPath = process.cwd()) {
       bdd: 0
     }
   }
-  
+
   let totalScore = 0
   const maxScore = 100
-  
+
   // Structure Assessment (25 points)
   let structureScore = 0
   if (structure.packageInfo.name) {
@@ -713,21 +713,21 @@ export async function generateHealthReport(projectPath = process.cwd()) {
   } else {
     health.issues.push('Missing package.json or project name')
   }
-  
+
   const essentialDirs = ['components', 'pages', 'app']
   const foundEssential = essentialDirs.filter(dir => structure.directories.includes(dir))
   structureScore += (foundEssential.length / essentialDirs.length) * 20
-  
+
   if (foundEssential.length === essentialDirs.length) {
     health.strengths.push('All essential directories present')
   } else {
     const missing = essentialDirs.filter(d => !foundEssential.includes(d))
     health.suggestions.push(`Consider creating missing directories: ${missing.join(', ')}`)
   }
-  
+
   health.categories.structure = structureScore
   totalScore += structureScore
-  
+
   // Testing Assessment (30 points)
   let testingScore = 0
   if (testingInfo.framework !== 'none') {
@@ -737,24 +737,24 @@ export async function generateHealthReport(projectPath = process.cwd()) {
     health.issues.push('No testing framework detected')
     health.suggestions.push('Set up Vitest or Jest for testing')
   }
-  
+
   if (testingInfo.bdd) {
     testingScore += 10
     health.strengths.push('BDD testing setup detected')
   } else {
     health.suggestions.push('Consider setting up BDD testing with Cucumber')
   }
-  
+
   if (testingInfo.e2e) {
     testingScore += 5
     health.strengths.push(`E2E testing configured: ${testingInfo.e2e}`)
   } else {
     health.suggestions.push('Consider adding E2E testing with Playwright')
   }
-  
+
   health.categories.testing = testingScore
   totalScore += testingScore
-  
+
   // Configuration Assessment (20 points)
   let configScore = 0
   if (Object.keys(structure.nuxtConfig).length > 0) {
@@ -763,7 +763,7 @@ export async function generateHealthReport(projectPath = process.cwd()) {
   } else {
     health.issues.push('Missing or incomplete Nuxt configuration')
   }
-  
+
   if (structure.type === 'nuxt3') {
     configScore += 10
     health.strengths.push('Using modern Nuxt 3 framework')
@@ -771,10 +771,10 @@ export async function generateHealthReport(projectPath = process.cwd()) {
     configScore += 5
     health.suggestions.push('Consider upgrading to Nuxt 3')
   }
-  
+
   health.categories.configuration = configScore
   totalScore += configScore
-  
+
   // Dependencies Assessment (15 points)
   let depsScore = 0
   if (structure.dependencies.includes('typescript') || existsSync(join(projectPath, 'tsconfig.json'))) {
@@ -783,26 +783,26 @@ export async function generateHealthReport(projectPath = process.cwd()) {
   } else {
     health.suggestions.push('Consider adding TypeScript for better development experience')
   }
-  
+
   if (structure.dependencies.includes('@nuxt/devtools')) {
     depsScore += 5
     health.strengths.push('Nuxt DevTools configured')
   }
-  
+
   health.categories.dependencies = depsScore
   totalScore += depsScore
-  
+
   // BDD Assessment (10 points)
   let bddScore = 0
   if (structure.bddStructure.hasBDD) {
     bddScore += 5
     health.strengths.push('BDD structure detected')
-    
+
     if (structure.bddStructure.featureFiles.length > 0) {
       bddScore += 3
       health.strengths.push(`${structure.bddStructure.featureFiles.length} feature files found`)
     }
-    
+
     if (structure.bddStructure.stepFiles.length > 0) {
       bddScore += 2
       health.strengths.push(`${structure.bddStructure.stepFiles.length} step definition files found`)
@@ -810,19 +810,19 @@ export async function generateHealthReport(projectPath = process.cwd()) {
   } else {
     health.suggestions.push('Consider setting up BDD testing structure')
   }
-  
+
   health.categories.bdd = bddScore
   totalScore += bddScore
-  
+
   // Calculate final score and grade
   health.score = Math.min(totalScore, maxScore)
-  
+
   if (health.score >= 90) health.grade = 'A'
   else if (health.score >= 80) health.grade = 'B'
   else if (health.score >= 70) health.grade = 'C'
   else if (health.score >= 60) health.grade = 'D'
   else health.grade = 'F'
-  
+
   return health
 }
 
@@ -833,7 +833,7 @@ export async function generateHealthReport(projectPath = process.cwd()) {
  */
 export async function analyzeProjectComplexity(projectPath = process.cwd()) {
   const structure = await discoverProjectStructure(projectPath)
-  
+
   const complexity = {
     score: 0,
     level: 'simple',
@@ -846,30 +846,30 @@ export async function analyzeProjectComplexity(projectPath = process.cwd()) {
     },
     recommendations: []
   }
-  
+
   // Calculate complexity score
   let score = 0
-  
+
   // Directory complexity (max 25 points)
   score += Math.min(structure.directories.length * 1.5, 25)
-  
+
   // Dependency complexity (max 30 points)
   score += Math.min(structure.dependencies.length * 0.8, 30)
-  
+
   // Module complexity (max 20 points)
   score += Math.min((structure.nuxtConfig.modules || []).length * 4, 20)
-  
+
   // Testing complexity (max 15 points)
   score += structure.testingConfig.frameworks.length * 5
-  
+
   // BDD complexity (max 10 points)
   if (structure.bddStructure.hasBDD) {
     score += 5
     score += Math.min(structure.bddStructure.featureFiles.length * 0.5, 5)
   }
-  
+
   complexity.score = Math.min(score, 100)
-  
+
   // Determine complexity level
   if (complexity.score < 30) {
     complexity.level = 'simple'
@@ -882,6 +882,6 @@ export async function analyzeProjectComplexity(projectPath = process.cwd()) {
     complexity.recommendations.push('Consider refactoring to reduce complexity')
     complexity.recommendations.push('Ensure comprehensive documentation')
   }
-  
+
   return complexity
 }

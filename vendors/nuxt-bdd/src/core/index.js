@@ -85,7 +85,7 @@ export function createTestingEnvironment(options = {}) {
 
   // Setup data factories
   testData.setSeed(seed)
-  
+
   // Setup performance testing
   Object.assign(perf.thresholds, performanceThresholds)
 
@@ -102,33 +102,33 @@ export function createTestingEnvironment(options = {}) {
     quickTest,
     quickMount,
     mountWithExpectations,
-    
+
     // Data generation
     UserFactory,
     ContentFactory,
     FormFactory,
     APIFactory,
     ScenarioFactory,
-    
+
     // Context management
     context,
     helpers,
-    
+
     // Performance testing
     perf,
     perfTest,
     renderPerfTest,
-    
+
     // Assertions
     should,
     a11y,
     component,
     api,
     form,
-    
+
     // Mocks
     mocks,
-    
+
     // Cleanup function
     cleanup: () => {
       helpers.reset()
@@ -217,7 +217,7 @@ export const patterns = {
       const wrapper = await mountWithExpectations(component, options)
       wrapper.unmount()
     }
-    
+
     return renderPerfTest(name, renderFn, options)
   }
 }
@@ -235,22 +235,22 @@ export default {
   quickTest,
   quickMount,
   mountWithExpectations,
-  
+
   // Factories
   UserFactory,
   ContentFactory,
   FormFactory,
-  
+
   // Utilities
   should,
   perf,
   scenarios,
   patterns,
-  
+
   // Environment
   createTestingEnvironment,
   defaultEnvironment,
-  
+
   // Version
   version
 }

@@ -116,7 +116,7 @@ const testBasicA11yStructure = (wrapper) => {
     it('has alt text for all images', () => {
       const images = wrapper.element.querySelectorAll('img')
       
-      images.forEach(img => {
+      images.forEach((img) => {
         const hasAlt = img.hasAttribute('alt')
         const isDecorative = img.getAttribute('role') === 'presentation' || 
                            img.getAttribute('aria-hidden') === 'true'
@@ -130,7 +130,7 @@ const testBasicA11yStructure = (wrapper) => {
         'input:not([type="hidden"]), select, textarea'
       )
       
-      formControls.forEach(control => {
+      formControls.forEach((control) => {
         const hasLabel = control.labels?.length > 0 ||
                         control.hasAttribute('aria-label') ||
                         control.hasAttribute('aria-labelledby') ||
@@ -163,11 +163,11 @@ const testAriaAttributes = (wrapper) => {
 
       const allElements = wrapper.element.querySelectorAll('*')
       
-      allElements.forEach(element => {
+      allElements.forEach((element) => {
         const attributes = element.getAttributeNames()
         const ariaAttributes = attributes.filter(attr => attr.startsWith('aria-'))
         
-        ariaAttributes.forEach(attr => {
+        ariaAttributes.forEach((attr) => {
           expect(validAriaAttributes).toContain(attr)
         })
       })
@@ -176,7 +176,7 @@ const testAriaAttributes = (wrapper) => {
     it('has proper aria-live regions for dynamic content', () => {
       const liveRegions = wrapper.element.querySelectorAll('[aria-live]')
       
-      liveRegions.forEach(region => {
+      liveRegions.forEach((region) => {
         const liveValue = region.getAttribute('aria-live')
         expect(['polite', 'assertive', 'off']).toContain(liveValue)
       })
@@ -185,7 +185,7 @@ const testAriaAttributes = (wrapper) => {
     it('uses aria-expanded correctly on interactive elements', () => {
       const expandableElements = wrapper.element.querySelectorAll('[aria-expanded]')
       
-      expandableElements.forEach(element => {
+      expandableElements.forEach((element) => {
         const expandedValue = element.getAttribute('aria-expanded')
         expect(['true', 'false']).toContain(expandedValue)
       })
@@ -307,7 +307,7 @@ const testScreenReaderSupport = (wrapper) => {
       const formErrors = wrapper.element.querySelectorAll('[role="alert"], .error-message')
       const invalidInputs = wrapper.element.querySelectorAll('[aria-invalid="true"]')
       
-      invalidInputs.forEach(input => {
+      invalidInputs.forEach((input) => {
         const hasErrorDescription = input.hasAttribute('aria-describedby')
         expect(hasErrorDescription).toBe(true)
       })
@@ -324,7 +324,7 @@ const testColorContrast = (wrapper) => {
     it('meets minimum color contrast ratios', () => {
       const textElements = wrapper.element.querySelectorAll('p, span, div, button, a, label')
       
-      textElements.forEach(element => {
+      textElements.forEach((element) => {
         const computedStyle = window.getComputedStyle(element)
         const backgroundColor = computedStyle.backgroundColor
         const color = computedStyle.color
@@ -359,7 +359,7 @@ const testFocusManagement = (wrapper) => {
         'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
       )
       
-      focusableElements.forEach(element => {
+      focusableElements.forEach((element) => {
         element.focus()
         const computedStyle = window.getComputedStyle(element, ':focus')
         
@@ -375,7 +375,7 @@ const testFocusManagement = (wrapper) => {
     it('manages focus correctly in modal dialogs', () => {
       const dialogs = wrapper.element.querySelectorAll('[role="dialog"]')
       
-      dialogs.forEach(dialog => {
+      dialogs.forEach((dialog) => {
         const focusableElements = dialog.querySelectorAll(
           'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
         )
@@ -420,7 +420,7 @@ const testSemanticHTML = (wrapper) => {
       )
       
       // Check that semantic elements are used meaningfully
-      semanticElements.forEach(element => {
+      semanticElements.forEach((element) => {
         // Semantic elements should have content or proper ARIA labels
         const hasContent = element.textContent?.trim().length > 0
         const hasAriaLabel = element.hasAttribute('aria-label') || element.hasAttribute('aria-labelledby')
@@ -439,7 +439,7 @@ const testSemanticHTML = (wrapper) => {
     it('uses lists for grouped items', () => {
       const listItems = wrapper.element.querySelectorAll('li')
       
-      listItems.forEach(item => {
+      listItems.forEach((item) => {
         const parentList = item.closest('ul, ol, menu')
         expect(parentList).toBeTruthy()
       })
@@ -476,7 +476,7 @@ export const testWCAGGuidelines = (component, guidelines = ['A', 'AA']) => {
       })
     })
 
-    guidelines.forEach(level => {
+    guidelines.forEach((level) => {
       describe(`WCAG ${level} Compliance`, () => {
         if (level === 'A' || level === 'AA' || level === 'AAA') {
           it('meets perceivable guidelines', () => {
@@ -520,13 +520,13 @@ export const quickA11yCheck = (component) => {
     it('passes basic accessibility checks', () => {
       // Images have alt text
       const images = wrapper.element.querySelectorAll('img')
-      images.forEach(img => {
+      images.forEach((img) => {
         expect(img.hasAttribute('alt')).toBe(true)
       })
 
       // Buttons have accessible names
       const buttons = wrapper.element.querySelectorAll('button')
-      buttons.forEach(button => {
+      buttons.forEach((button) => {
         const hasAccessibleName = button.textContent?.trim() ||
                                 button.hasAttribute('aria-label') ||
                                 button.hasAttribute('aria-labelledby')
@@ -535,7 +535,7 @@ export const quickA11yCheck = (component) => {
 
       // Form inputs have labels
       const inputs = wrapper.element.querySelectorAll('input:not([type="hidden"])')
-      inputs.forEach(input => {
+      inputs.forEach((input) => {
         const hasLabel = input.labels?.length > 0 ||
                         input.hasAttribute('aria-label') ||
                         input.hasAttribute('aria-labelledby')
@@ -544,7 +544,7 @@ export const quickA11yCheck = (component) => {
 
       // Interactive elements are focusable
       const interactive = wrapper.element.querySelectorAll('button, a, input, select, textarea')
-      interactive.forEach(element => {
+      interactive.forEach((element) => {
         const isFocusable = element.tabIndex >= 0 || element.tabIndex === -1
         expect(isFocusable).toBe(true)
       })

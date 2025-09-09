@@ -42,7 +42,7 @@ global.localStorage = localStorageMock
 // Mock sessionStorage
 const sessionStorageMock = {
   getItem: vi.fn(),
-  setItem: vi.fn(), 
+  setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn()
 }

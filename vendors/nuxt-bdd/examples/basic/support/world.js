@@ -1,5 +1,5 @@
-import { setWorldConstructor } from '@cucumber/cucumber';
-import { setup, $fetch } from '@nuxt/test-utils';
+import { setWorldConstructor } from '@cucumber/cucumber'
+import { setup, $fetch } from '@nuxt/test-utils'
 
 /**
  * Custom World class for BDD testing with Nuxt
@@ -7,10 +7,10 @@ import { setup, $fetch } from '@nuxt/test-utils';
  */
 class CustomWorld {
   constructor() {
-    this.nuxtApp = null;
-    this.currentPage = null;
-    this.pageContent = null;
-    this.responseStatus = null;
+    this.nuxtApp = null
+    this.currentPage = null
+    this.pageContent = null
+    this.responseStatus = null
   }
 
   /**
@@ -21,10 +21,10 @@ class CustomWorld {
       await setup({
         rootDir: process.cwd(),
         server: true
-      });
-      this.nuxtApp = { $fetch };
+      })
+      this.nuxtApp = { $fetch }
     }
-    return this.nuxtApp;
+    return this.nuxtApp
   }
 
   /**
@@ -32,18 +32,18 @@ class CustomWorld {
    * @param {string} path - The page path to navigate to
    */
   async navigateTo(path) {
-    this.currentPage = path;
-    await this.setupNuxt();
-    this.pageContent = await this.nuxtApp.$fetch(path);
-    return this.pageContent;
+    this.currentPage = path
+    await this.setupNuxt()
+    this.pageContent = await this.nuxtApp.$fetch(path)
+    return this.pageContent
   }
 
   /**
    * Get current page content
    */
   getCurrentPageContent() {
-    return this.pageContent;
+    return this.pageContent
   }
 }
 
-setWorldConstructor(CustomWorld);
+setWorldConstructor(CustomWorld)

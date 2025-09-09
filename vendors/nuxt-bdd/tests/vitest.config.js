@@ -10,17 +10,17 @@ export default defineConfig({
   test: {
     // Test environment
     environment: 'jsdom',
-    
+
     // Test files
     include: [
       'unit/**/*.test.js',
-      'integration/**/*.test.js', 
+      'integration/**/*.test.js',
       'performance/**/*.test.js',
       'compatibility/**/*.test.js',
       'examples/**/*.test.js',
       'bdd/**/*.steps.js'
     ],
-    
+
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
@@ -36,7 +36,7 @@ export default defineConfig({
     // Test timeouts
     testTimeout: 10000, // 10 seconds for complex integration tests
     hookTimeout: 5000,
-    
+
     // Coverage configuration
     coverage: {
       enabled: true,
@@ -77,7 +77,7 @@ export default defineConfig({
 
     // Globals
     globals: true,
-    
+
     // Reporter configuration
     reporter: ['verbose', 'json', 'html'],
     outputFile: {
@@ -87,7 +87,7 @@ export default defineConfig({
 
     // Retry configuration
     retry: 2,
-    
+
     // Pool configuration
     pool: 'forks',
     poolOptions: {
@@ -120,7 +120,7 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, '../src'),
       '~': resolve(__dirname, '../'),
-      '@tests': resolve(__dirname, './'),
+      '@tests': resolve(__dirname, './')
     }
   },
 

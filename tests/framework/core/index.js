@@ -309,9 +309,9 @@ export function scenario(description) {
 /**
  * Convenience exports for Gherkin-style syntax
  */
-export const given = (description) => new ScenarioBuilder(description).given
-export const when = (description) => new ScenarioBuilder(description).when  
-export const then = (description) => new ScenarioBuilder(description).then
+export const given = description => new ScenarioBuilder(description).given
+export const when = description => new ScenarioBuilder(description).when  
+export const then = description => new ScenarioBuilder(description).then
 
 /**
  * Framework configuration

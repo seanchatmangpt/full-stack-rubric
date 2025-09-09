@@ -226,7 +226,7 @@ export class ThemeTestHelper {
       )
       results.transitions = transitionResults
 
-      transitionResults.forEach(result => {
+      transitionResults.forEach((result) => {
         results.summary.totalTests++
         if (result.passed) {
           results.summary.passed++
@@ -364,7 +364,8 @@ export class ThemeTestHelper {
           }
 
           /* Ensure proper contrast for all themes */
-          ${theme.name === 'high-contrast' ? `
+          ${theme.name === 'high-contrast'
+            ? `
             * {
               border-width: 2px !important;
             }
@@ -372,7 +373,8 @@ export class ThemeTestHelper {
               outline: 3px solid var(--color-primary) !important;
               outline-offset: 2px !important;
             }
-          ` : ''}
+          `
+            : ''}
         </style>
         ${componentHTML}
       </div>
@@ -543,11 +545,13 @@ export class ThemeTestHelper {
    */
   hexToRgb(hex) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-    return result ? [
-      parseInt(result[1], 16),
-      parseInt(result[2], 16),
-      parseInt(result[3], 16)
-    ] : [0, 0, 0]
+    return result
+      ? [
+          parseInt(result[1], 16),
+          parseInt(result[2], 16),
+          parseInt(result[3], 16)
+        ]
+      : [0, 0, 0]
   }
 
   /**
@@ -574,7 +578,7 @@ export class ThemeTestHelper {
    * @private
    */
   getRelativeLuminance([r, g, b]) {
-    const [rs, gs, bs] = [r, g, b].map(c => {
+    const [rs, gs, bs] = [r, g, b].map((c) => {
       c = c / 255
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
     })
@@ -678,7 +682,7 @@ export class ThemeTestHelper {
         <div class="section">
           <h2>Theme Visual Tests</h2>
           <div class="theme-grid">
-            ${results.themes.map(theme => {
+            ${results.themes.map((theme) => {
               const accessibilityData = results.accessibility.find(
                 a => a.theme === theme.theme && a.component === theme.component && a.state === theme.state
               )
@@ -691,7 +695,8 @@ export class ThemeTestHelper {
                   </p>
                   ${theme.diffPercentage ? `<p><strong>Difference:</strong> ${theme.diffPercentage.toFixed(2)}%</p>` : ''}
                   
-                  ${accessibilityData ? `
+                  ${accessibilityData
+                    ? `
                     <div class="accessibility-section">
                       <p><strong>Accessibility:</strong> 
                         <span class="level-${accessibilityData.level}">${accessibilityData.level}</span>
@@ -699,7 +704,8 @@ export class ThemeTestHelper {
                       <p><strong>Contrast Ratio:</strong> 
                         <span class="contrast-ratio">${accessibilityData.contrastRatio?.toFixed(2)}:1</span>
                       </p>
-                      ${accessibilityData.violations?.length > 0 ? `
+                      ${accessibilityData.violations?.length > 0
+                        ? `
                         <div class="accessibility-issues">
                           <strong>Issues:</strong>
                           <ul>
@@ -708,16 +714,19 @@ export class ThemeTestHelper {
                             `).join('')}
                           </ul>
                         </div>
-                      ` : ''}
+                      `
+                        : ''}
                     </div>
-                  ` : ''}
+                  `
+                    : ''}
                 </div>
               `
             }).join('')}
           </div>
         </div>
 
-        ${results.transitions.length > 0 ? `
+        ${results.transitions.length > 0
+          ? `
           <div class="section">
             <h2>Theme Transitions</h2>
             <div class="theme-grid">
@@ -732,7 +741,8 @@ export class ThemeTestHelper {
               `).join('')}
             </div>
           </div>
-        ` : ''}
+        `
+          : ''}
       </body>
       </html>
     `

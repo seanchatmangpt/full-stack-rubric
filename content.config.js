@@ -61,6 +61,12 @@ export default defineContentConfig({
         exclude: ['index.md']
       },
       schema: z.object({
+        title: z.string().optional(),
+        description: z.string().optional(),
+        navigation: z.object({
+          icon: z.string().optional(),
+          title: z.string().optional()
+        }).optional(),
         links: z.array(z.object({
           label: z.string(),
           icon: z.string(),
@@ -69,5 +75,16 @@ export default defineContentConfig({
         })).optional()
       })
     })
+  },
+  // Enable experimental features for better raw content access
+  experimental: {
+    clientDB: true,
+    stripQueryParameters: false
+  },
+  // Ensure markdown parsing preserves source
+  markdown: {
+    anchorLinks: false,
+    rehypePlugins: [],
+    remarkPlugins: []
   }
 })

@@ -7,7 +7,7 @@ import { usePerformanceOptimization } from '../composables/usePerformanceOptimiz
 
 export default defineNuxtPlugin(async (nuxtApp) => {
   // Only run on client side
-  if (process.server) return;
+  if (import.meta.server) return;
   
   // Initialize performance optimization
   const performanceOptimizer = usePerformanceOptimization({

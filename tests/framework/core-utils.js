@@ -4,17 +4,15 @@
  */
 
 import { mount } from '@vue/test-utils'
-
-// Mock mountSuspended for validation
-const mountSuspended = mount
 import { expect } from 'vitest'
 import { nextTick } from 'vue'
 
+// Mock mountSuspended for validation
+const mountSuspended = mount
+
 /**
  * Enhanced mount function with automatic cleanup and BDD helpers
- * @param {Object} component - Vue component to mount
- * @param {Object} options - Mount options
- * @returns {Promise<Object>} Enhanced wrapper with BDD helpers
+ * Takes component and options, returns enhanced wrapper with BDD helpers
  */
 export async function mountWithExpectations(component, options = {}) {
   const wrapper = await mountSuspended(component, {
@@ -235,10 +233,11 @@ export function a11yTest(wrapper) {
      */
     hasAriaLabels: () => {
       const interactiveElements = wrapper.findAll('button, input, select, textarea, a, [tabindex]')
-      interactiveElements.forEach(el => {
+      interactiveElements.forEach((el) => {
         const hasLabel = el.attributes('aria-label') || 
                         el.attributes('aria-labelledby') ||
-                        el.find('label').exists()
+                        el.text().trim() ||
+                        wrapper.find(`label[for="${el.attributes('id')}"]`).exists()
         expect(hasLabel).toBeTruthy()
       })
     },
@@ -259,7 +258,7 @@ export function a11yTest(wrapper) {
      */
     hasGoodContrast: () => {
       const elements = wrapper.findAll('*')
-      elements.forEach(el => {
+      elements.forEach((el) => {
         const styles = window.getComputedStyle(el.element)
         const bgColor = styles.backgroundColor
         const textColor = styles.color

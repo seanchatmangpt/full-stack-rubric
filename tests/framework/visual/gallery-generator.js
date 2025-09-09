@@ -468,17 +468,20 @@ export class ComponentGalleryGenerator {
       }
 
       /* Dark theme adjustments */
-      ${themeConfig.name === 'dark' ? `
+      ${themeConfig.name === 'dark'
+        ? `
         .card {
           box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         button {
           box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
-      ` : ''}
+      `
+        : ''}
 
       /* High contrast adjustments */
-      ${themeConfig.name === 'high-contrast' ? `
+      ${themeConfig.name === 'high-contrast'
+        ? `
         * {
           border-width: 2px !important;
         }
@@ -486,7 +489,8 @@ export class ComponentGalleryGenerator {
           outline: 3px solid var(--color-primary) !important;
           outline-offset: 2px !important;
         }
-      ` : ''}
+      `
+        : ''}
     `
   }
 
@@ -521,12 +525,14 @@ export class ComponentGalleryGenerator {
     return await page.screenshot({
       fullPage: false,
       type: 'png',
-      clip: breakpoint ? {
-        x: 0,
-        y: 0,
-        width: breakpoint.width,
-        height: Math.min(breakpoint.height, 800)
-      } : undefined
+      clip: breakpoint
+        ? {
+            x: 0,
+            y: 0,
+            width: breakpoint.width,
+            height: Math.min(breakpoint.height, 800)
+          }
+        : undefined
     })
   }
 
@@ -593,7 +599,8 @@ export class ComponentGalleryGenerator {
                 <h2>${component.name}</h2>
                 ${component.documentation.description ? `<p>${component.documentation.description}</p>` : ''}
                 
-                ${component.documentation.props ? `
+                ${component.documentation.props
+                  ? `
                   <details class="component-props">
                     <summary>Props (${component.documentation.props.length})</summary>
                     <table class="props-table">
@@ -612,7 +619,8 @@ export class ComponentGalleryGenerator {
                       </tbody>
                     </table>
                   </details>
-                ` : ''}
+                `
+                  : ''}
               </header>
 
               <div class="variants-grid">
@@ -641,12 +649,14 @@ export class ComponentGalleryGenerator {
                       `).join('')}
                     </div>
 
-                    ${config.includeCode ? `
+                    ${config.includeCode
+                      ? `
                       <details class="variant-code">
                         <summary>Code Example</summary>
                         <pre><code class="language-vue">&lt;${component.name}${Object.entries(variant.props).map(([key, value]) => ` ${key}="${value}"`).join('')} /&gt;</code></pre>
                       </details>
-                    ` : ''}
+                    `
+                      : ''}
                   </div>
                 `).join('')}
               </div>

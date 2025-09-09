@@ -324,10 +324,10 @@ export class AdaptiveDifficulty {
     // Aggregate error patterns
     /** @type {Map<string, number>} */
     const errorPatterns = new Map();
-    sessions.forEach(session => {
+    sessions.forEach((session) => {
       session.keystrokes
         .filter(k => !k.isCorrect)
-        .forEach(k => {
+        .forEach((k) => {
           const pattern = `${k.expected}->${k.key}`;
           errorPatterns.set(pattern, (errorPatterns.get(pattern) || 0) + 1);
         });

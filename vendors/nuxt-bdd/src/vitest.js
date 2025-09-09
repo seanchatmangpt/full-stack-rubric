@@ -30,10 +30,10 @@ export async function setupNuxtBDD(options = {}) {
  */
 export async function createBDDPage(path, options = {}) {
   const page = await createPage(path, options)
-  
+
   return {
     ...page,
-    
+
     /**
      * Wait for element with BDD-friendly error messages
      * @param {string} selector - Element selector
@@ -46,7 +46,7 @@ export async function createBDDPage(path, options = {}) {
         throw new Error(`BDD Step Failed: Could not find element "${selector}" on page "${path}"`)
       }
     },
-    
+
     /**
      * Assert element text matches expected value
      * @param {string} selector - Element selector
@@ -55,12 +55,12 @@ export async function createBDDPage(path, options = {}) {
     async shouldHaveText(selector, expectedText) {
       const element = await this.waitForBDDElement(selector)
       const actualText = await element.textContent()
-      
+
       if (actualText.trim() !== expectedText.trim()) {
         throw new Error(`BDD Assertion Failed: Expected "${expectedText}" but got "${actualText}"`)
       }
     },
-    
+
     /**
      * Fill form field with BDD error handling
      * @param {string} selector - Input selector
@@ -90,10 +90,10 @@ export function mountBDD(component, options = {}) {
     },
     ...options
   })
-  
+
   return {
     ...wrapper,
-    
+
     /**
      * Find element by test ID with BDD error messages
      * @param {string} testId - Test ID attribute value
@@ -105,7 +105,7 @@ export function mountBDD(component, options = {}) {
       }
       return element
     },
-    
+
     /**
      * Assert component emitted event
      * @param {string} eventName - Event name
@@ -116,7 +116,7 @@ export function mountBDD(component, options = {}) {
       if (!emitted) {
         throw new Error(`BDD Component Test Failed: Component did not emit "${eventName}" event`)
       }
-      
+
       if (expectedPayload !== undefined) {
         const lastEmission = emitted[emitted.length - 1]
         if (JSON.stringify(lastEmission[0]) !== JSON.stringify(expectedPayload)) {

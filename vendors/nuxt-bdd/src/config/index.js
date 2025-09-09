@@ -35,11 +35,11 @@ export async function analyzeProject(projectPath = process.cwd()) {
   const { generateHealthReport } = await import('./auto-discovery.js')
   const { recommendPresets } = await import('./presets.js')
   const { discoverProjectStructure } = await import('./auto-discovery.js')
-  
+
   const structure = await discoverProjectStructure(projectPath)
   const health = await generateHealthReport(projectPath)
   const presets = recommendPresets(structure)
-  
+
   return {
     structure,
     health,
@@ -58,7 +58,7 @@ export async function analyzeProject(projectPath = process.cwd()) {
 export async function conventionConfig(options = {}) {
   const { generateSmartDefaults } = await import('./smart-defaults.js')
   const { discoverProjectStructure } = await import('./auto-discovery.js')
-  
+
   const structure = await discoverProjectStructure()
   return await generateSmartDefaults(process.cwd(), options)
 }

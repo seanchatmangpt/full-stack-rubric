@@ -2,19 +2,19 @@
 BDD Test Coverage Report
 =======================
 
-Generated: 9/7/2025, 9:35:08 PM
-Execution Time: 10257ms
+Generated: 9/7/2025, 11:18:57 PM
+Execution Time: 9817ms
 
-Feature Coverage: 89.7% (26/29)
-Scenario Coverage: 82.6% (314/380)
-Step Coverage: 80.7% (1832/2271)
+Feature Coverage: 96.6% (28/29)
+Scenario Coverage: 86.3% (328/380)
+Step Coverage: 80.0% (1816/2271)
 
-Scenario Success Rate: 90.1%
+Scenario Success Rate: 90.2%
 Step Success Rate: 94.4%
 
 Thresholds:
-- Features: ❌ 90% (Actual: 89.7%)
-- Scenarios: ❌ 85% (Actual: 82.6%)
-- Steps: ✅ 80% (Actual: 80.7%)
+- Features: ✅ 90% (Actual: 96.6%)
+- Scenarios: ✅ 85% (Actual: 86.3%)
+- Steps: ❌ 80% (Actual: 80.0%)
 
 Errors: 134

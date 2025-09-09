@@ -8,34 +8,28 @@
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     },
     "./bdd": {
       "import": "./dist/bdd/index.mjs",
-      "require": "./dist/bdd/index.cjs",
-      "types": "./dist/bdd/index.d.ts"
+      "require": "./dist/bdd/index.cjs"
     },
     "./nuxt": {
       "import": "./dist/nuxt/index.mjs",
-      "require": "./dist/nuxt/index.cjs",
-      "types": "./dist/nuxt/index.d.ts"
+      "require": "./dist/nuxt/index.cjs"
     },
     "./config": {
       "import": "./dist/config/index.mjs",
-      "require": "./dist/config/index.cjs",
-      "types": "./dist/config/index.d.ts"
+      "require": "./dist/config/index.cjs"
     },
     "./core": {
       "import": "./dist/core/index.mjs",
-      "require": "./dist/core/index.cjs",
-      "types": "./dist/core/index.d.ts"
+      "require": "./dist/core/index.cjs"
     },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "files": [
     "dist/**/*",
     "README.md",
@@ -47,7 +41,6 @@
     "dev": "unbuild --stub --watch",
     "prepack": "npm run build",
     "test": "vitest",
-    "test:types": "tsc --noEmit",
     "test:coverage": "vitest --coverage",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
@@ -87,11 +80,9 @@
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^11.1.6",
-    "@types/node": "^22.9.1",
     "eslint": "^9.34.0",
     "nuxt-bdd-testing": "^1.0.0",
     "size-limit": "^11.1.6",
-    "typescript": "^5.7.2",
     "unbuild": "^2.0.0",
     "vitest": "^3.2.4"
   },

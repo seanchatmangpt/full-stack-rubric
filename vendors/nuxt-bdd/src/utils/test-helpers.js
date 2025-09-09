@@ -16,7 +16,7 @@ export function generateTestData(type, options = {}) {
       email: `test${Date.now()}@example.com`,
       ...options
     }),
-    
+
     post: () => ({
       id: Math.random().toString(36).substr(2, 9),
       title: `Test Post ${Date.now()}`,
@@ -25,12 +25,12 @@ export function generateTestData(type, options = {}) {
       ...options
     })
   }
-  
+
   const generator = generators[type]
   if (!generator) {
     throw new Error(`Unknown test data type: ${type}`)
   }
-  
+
   return generator()
 }
 

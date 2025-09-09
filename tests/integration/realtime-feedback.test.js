@@ -252,17 +252,17 @@ const RealtimeFeedbackComponent = {
     
     processTypingError(keystroke) {
       const errorTypes = {
-        'substitution': {
+        substitution: {
           message: `Expected '${keystroke.expected}', got '${keystroke.actual}'`,
           suggestion: 'Double-check the character before continuing',
           type: 'warning'
         },
-        'insertion': {
+        insertion: {
           message: 'Extra character detected',
           suggestion: 'Use backspace to remove unwanted characters',
           type: 'warning'
         },
-        'deletion': {
+        deletion: {
           message: 'Missing character detected',
           suggestion: 'You may have skipped a character',
           type: 'critical'
@@ -331,7 +331,7 @@ const RealtimeFeedbackComponent = {
     checkForMilestones() {
       // Check for WPM milestones
       const wpmMilestones = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-      wpmMilestones.forEach(milestone => {
+      wpmMilestones.forEach((milestone) => {
         if (this.previousStats.wpm < milestone && this.currentStats.wpm >= milestone) {
           this.showAchievement({
             title: 'Speed Milestone!',

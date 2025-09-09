@@ -106,7 +106,7 @@ export class SmartMockSystem {
   _generateMockFromOperation(method, pathTemplate, operation, scenarios) {
     const { responses, parameters, requestBody } = operation;
     
-    scenarios.forEach(scenario => {
+    scenarios.forEach((scenario) => {
       if (scenario === 'success') {
         // Generate success response mocks
         Object.entries(responses)
@@ -360,7 +360,7 @@ export class SmartMockSystem {
     const allMocks = [...exactMocks, ...patternMocks];
     
     // Filter by scenario and conditions
-    const candidateMocks = allMocks.filter(mock => {
+    const candidateMocks = allMocks.filter((mock) => {
       const scenarioMatch = mock.options.scenario === this.activeScenario;
       const conditionsMatch = mock.options.conditions.every(condition => 
         condition(req)
@@ -383,9 +383,9 @@ export class SmartMockSystem {
     
     // Convert Express-style pattern to regex
     const regexPattern = pattern
-      .replace(/:[^/]+/g, '([^/]+)')  // :param -> capture group
-      .replace(/\*/g, '.*')           // * -> any characters
-      .replace(/\//g, '\\/');         // escape slashes
+      .replace(/:[^/]+/g, '([^/]+)') // :param -> capture group
+      .replace(/\*/g, '.*') // * -> any characters
+      .replace(/\//g, '\\/'); // escape slashes
     
     const regex = new RegExp(`^${regexPattern}$`);
     return regex.test(path);

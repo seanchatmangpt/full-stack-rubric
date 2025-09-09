@@ -32,7 +32,7 @@ export function createNuxtTestingSuite(options = {}) {
   return {
     bridge: getNuxtBridge(config),
     components: new NuxtComponentTester(config),
-    server: new NuxtServerTester(config), 
+    server: new NuxtServerTester(config),
     composables: new NuxtComposableTester(config),
     ssr: new NuxtSSRTester(config),
     nitro: new NitroTestRunner(config),

@@ -1,5 +1,15 @@
 import { nextTick } from 'vue'
-import { advanceTime } from '../setup/dom-setup'
+import { vi } from 'vitest'
+
+/**
+ * Mock time advancement for testing
+ * @param {number} ms - Milliseconds to advance
+ */
+const advanceTime = (ms) => {
+  if (vi.isFakeTimers?.()) {
+    vi.advanceTimersByTime(ms)
+  }
+}
 
 /**
  * Simulates typing text with realistic timing

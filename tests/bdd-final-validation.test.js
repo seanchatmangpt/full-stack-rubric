@@ -50,7 +50,7 @@ describe('BDD Final Validation Suite', () => {
       expect(Array.isArray(features)).toBe(true)
       expect(features.length).toBeGreaterThanOrEqual(2) // At least typing-tutor and performance
       
-      features.forEach(feature => {
+      features.forEach((feature) => {
         expect(feature).toHaveProperty('path')
         expect(feature).toHaveProperty('name')
         expect(feature).toHaveProperty('content')
@@ -64,9 +64,9 @@ describe('BDD Final Validation Suite', () => {
       let totalScenarios = 0
       let totalSteps = 0
 
-      features.forEach(feature => {
+      features.forEach((feature) => {
         totalScenarios += feature.scenarios.length
-        feature.scenarios.forEach(scenario => {
+        feature.scenarios.forEach((scenario) => {
           totalSteps += scenario.steps.length
           expect(scenario).toHaveProperty('name')
           expect(scenario).toHaveProperty('type')
@@ -81,7 +81,7 @@ describe('BDD Final Validation Suite', () => {
     it('should validate feature file accessibility', async () => {
       const features = await validationRunner.discoverFeatures()
       
-      features.forEach(feature => {
+      features.forEach((feature) => {
         expect(fs.existsSync(feature.path)).toBe(true)
         expect(feature.content.length).toBeGreaterThan(0)
       })
@@ -91,8 +91,8 @@ describe('BDD Final Validation Suite', () => {
       const features = await validationRunner.discoverFeatures()
       const scenarioTypes = new Set()
       
-      features.forEach(feature => {
-        feature.scenarios.forEach(scenario => {
+      features.forEach((feature) => {
+        feature.scenarios.forEach((scenario) => {
           scenarioTypes.add(scenario.type)
         })
       })
@@ -108,7 +108,7 @@ describe('BDD Final Validation Suite', () => {
       expect(Array.isArray(stepDefinitions)).toBe(true)
       expect(stepDefinitions.length).toBeGreaterThan(0)
       
-      stepDefinitions.forEach(stepDef => {
+      stepDefinitions.forEach((stepDef) => {
         expect(stepDef).toHaveProperty('pattern')
         expect(stepDef).toHaveProperty('type')
         expect(stepDef).toHaveProperty('file')
@@ -121,7 +121,7 @@ describe('BDD Final Validation Suite', () => {
       const stepDefinitions = await validationRunner.discoverStepDefinitions()
       const stepTypes = { Given: 0, When: 0, Then: 0 }
 
-      stepDefinitions.forEach(stepDef => {
+      stepDefinitions.forEach((stepDef) => {
         stepTypes[stepDef.type]++
       })
 
@@ -134,7 +134,7 @@ describe('BDD Final Validation Suite', () => {
       const stepDefinitions = await validationRunner.discoverStepDefinitions()
       const stepFiles = [...new Set(stepDefinitions.map(sd => sd.file))]
       
-      stepFiles.forEach(file => {
+      stepFiles.forEach((file) => {
         expect(fs.existsSync(file)).toBe(true)
       })
     })
@@ -185,7 +185,7 @@ describe('BDD Final Validation Suite', () => {
       expect(Array.isArray(validation.missingSteps)).toBe(true)
       
       if (validation.missingSteps.length > 0) {
-        validation.missingSteps.forEach(step => {
+        validation.missingSteps.forEach((step) => {
           expect(typeof step).toBe('string')
           expect(step.length).toBeGreaterThan(0)
         })
@@ -200,7 +200,7 @@ describe('BDD Final Validation Suite', () => {
       expect(Array.isArray(testResults)).toBe(true)
       expect(testResults.length).toBeGreaterThan(0)
       
-      testResults.forEach(result => {
+      testResults.forEach((result) => {
         expect(result).toHaveProperty('feature')
         expect(result).toHaveProperty('scenario')
         expect(result).toHaveProperty('status')
@@ -216,8 +216,8 @@ describe('BDD Final Validation Suite', () => {
       let passedSteps = 0
       let pendingSteps = 0
       
-      testResults.forEach(result => {
-        result.steps.forEach(step => {
+      testResults.forEach((result) => {
+        result.steps.forEach((step) => {
           totalSteps++
           if (step.status === 'passed') passedSteps++
           if (step.status === 'pending') pendingSteps++
@@ -236,11 +236,11 @@ describe('BDD Final Validation Suite', () => {
     it('should measure execution performance', async () => {
       const testResults = await validationRunner.runSampleScenarios()
       
-      testResults.forEach(result => {
+      testResults.forEach((result) => {
         expect(result.duration).toBeGreaterThan(0)
         expect(result.duration).toBeLessThan(1000) // Reasonable duration
         
-        result.steps.forEach(step => {
+        result.steps.forEach((step) => {
           expect(step.duration).toBeGreaterThan(0)
           expect(step.duration).toBeLessThan(100) // Reasonable step duration
         })
@@ -275,7 +275,7 @@ describe('BDD Final Validation Suite', () => {
       
       expect(Array.isArray(report.recommendations)).toBe(true)
       
-      report.recommendations.forEach(recommendation => {
+      report.recommendations.forEach((recommendation) => {
         expect(typeof recommendation).toBe('string')
         expect(recommendation.length).toBeGreaterThan(10)
       })
@@ -285,7 +285,7 @@ describe('BDD Final Validation Suite', () => {
       const report = await validationRunner.generateReport()
       
       expect(Array.isArray(report.features)).toBe(true)
-      report.features.forEach(feature => {
+      report.features.forEach((feature) => {
         expect(feature).toHaveProperty('name')
         expect(feature).toHaveProperty('path')
         expect(feature).toHaveProperty('scenarioCount')
@@ -298,7 +298,7 @@ describe('BDD Final Validation Suite', () => {
       const report = await validationRunner.generateReport()
       
       expect(Array.isArray(report.stepDefinitions)).toBe(true)
-      report.stepDefinitions.forEach(stepDef => {
+      report.stepDefinitions.forEach((stepDef) => {
         expect(stepDef).toHaveProperty('pattern')
         expect(stepDef).toHaveProperty('type')
         expect(stepDef).toHaveProperty('file')
@@ -324,7 +324,7 @@ describe('BDD Final Validation Suite', () => {
       const features = await validationRunner.discoverFeatures()
       let totalScenarios = 0
       
-      features.forEach(feature => {
+      features.forEach((feature) => {
         totalScenarios += feature.scenarios.length
         expect(feature.scenarios.length).toBeGreaterThan(0)
       })
@@ -335,7 +335,7 @@ describe('BDD Final Validation Suite', () => {
     it('should ensure step definition quality', async () => {
       const stepDefinitions = await validationRunner.discoverStepDefinitions()
       
-      stepDefinitions.forEach(stepDef => {
+      stepDefinitions.forEach((stepDef) => {
         // Pattern should not be empty
         expect(stepDef.pattern.length).toBeGreaterThan(0)
         

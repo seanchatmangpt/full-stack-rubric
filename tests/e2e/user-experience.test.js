@@ -10,9 +10,9 @@ import { nextTick } from 'vue'
 // Mock browser APIs
 const mockLocalStorage = new Map()
 global.localStorage = {
-  getItem: vi.fn((key) => mockLocalStorage.get(key) || null),
+  getItem: vi.fn(key => mockLocalStorage.get(key) || null),
   setItem: vi.fn((key, value) => mockLocalStorage.set(key, value)),
-  removeItem: vi.fn((key) => mockLocalStorage.delete(key)),
+  removeItem: vi.fn(key => mockLocalStorage.delete(key)),
   clear: vi.fn(() => mockLocalStorage.clear())
 }
 
@@ -833,7 +833,8 @@ const TypingTutorApp = {
       
       const correctChars = this.countCorrectCharacters()
       const accuracy = this.practiceInput.length > 0 ? 
-        Math.round((correctChars / this.practiceInput.length) * 100) : 100
+          Math.round((correctChars / this.practiceInput.length) * 100)
+        : 100
       
       this.currentStats = {
         wpm,
@@ -1546,7 +1547,7 @@ describe('User Experience Testing', () => {
     it('should have proper ARIA labels', async () => {
       // Check for accessibility attributes
       const buttons = wrapper.findAll('button')
-      buttons.forEach(button => {
+      buttons.forEach((button) => {
         expect(button.text().length).toBeGreaterThan(0) // Should have text content
       })
     })

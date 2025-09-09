@@ -34,14 +34,14 @@ function setupPerformanceAPI() {
      * @param {string} type
      * @returns {PerformanceEntry[]}
      */
-    getEntriesByType: vi.fn((type) => 
+    getEntriesByType: vi.fn(type => 
       performanceEntries.filter(entry => entry.entryType === type)
     ),
     /**
      * @param {string} name
      * @returns {PerformanceEntry[]}
      */
-    getEntriesByName: vi.fn((name) => 
+    getEntriesByName: vi.fn(name => 
       performanceEntries.filter(entry => entry.name === name)
     ),
     
@@ -419,8 +419,8 @@ function setupBenchmarkingUtils() {
   }
 }
 
-// Export performance testing utilities
-export const performanceUtils = {
+// Export performance testing utilities (renamed to avoid conflicts)
+export const testPerformanceUtils = {
   /**
    * Start performance monitoring
    */

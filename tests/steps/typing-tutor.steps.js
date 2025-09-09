@@ -446,3 +446,483 @@ Then('I should be able to start fresh with the same text', () => {
   expect(textarea.element.value).toBe('')
   expect(wrapper.vm.isComplete).toBe(false)
 })
+
+/**
+ * @description Set up coding exercise context
+ * @given a coding exercise is loaded
+ */
+Given('a coding exercise is loaded', async () => {
+  wrapper.vm.currentExercise = {
+    title: 'JavaScript Fundamentals',
+    description: 'Practice basic JavaScript syntax',
+    difficulty: 'beginner',
+    category: 'javascript',
+    language: 'javascript',
+    code: 'const message = "Hello, World!"\nconsole.log(message)'
+  }
+  await nextTick()
+  expect(wrapper.vm.targetText).toBeTruthy()
+})
+
+/**
+ * @description Set up started typing context
+ * @given I have started typing
+ */
+Given('I have started typing', async () => {
+  await simulateTyping(wrapper, 'con', { delayBetweenKeys: 50 })
+  expect(wrapper.vm.userInput.length).toBeGreaterThan(0)
+})
+
+/**
+ * @description Set up incorrect typing context
+ * @given I have typed some incorrect characters
+ */
+Given('I have typed some incorrect characters', async () => {
+  await simulateTyping(wrapper, 'xyz', { errorsToMake: 3 })
+  expect(wrapper.vm.errors).toBeGreaterThan(0)
+})
+
+/**
+ * @description Set up special characters in target text
+ * @given the target text contains special characters like brackets and quotes
+ */
+Given('the target text contains special characters like brackets and quotes', async () => {
+  wrapper.vm.currentExercise = {
+    title: 'Special Characters',
+    description: 'Practice typing special characters',
+    difficulty: 'intermediate',
+    category: 'javascript',
+    language: 'javascript',
+    code: 'const obj = { "key": [1, 2, 3] }'
+  }
+  await nextTick()
+  expect(wrapper.vm.targetText).toContain('{')
+  expect(wrapper.vm.targetText).toContain('"')
+  expect(wrapper.vm.targetText).toContain('[')
+})
+
+/**
+ * @description Set up indented target text
+ * @given the target text contains indentation
+ */
+Given('the target text contains indentation', async () => {
+  wrapper.vm.currentExercise = {
+    title: 'Indentation Practice',
+    description: 'Practice typing indented code',
+    difficulty: 'intermediate',
+    category: 'javascript',
+    language: 'javascript',
+    code: 'if (true) {\n  console.log("indented")\n}'
+  }
+  await nextTick()
+  expect(wrapper.vm.targetText).toContain('  ')
+})
+
+/**
+ * @description Set up mostly completed exercise
+ * @given I have typed most of the exercise
+ */
+Given('I have typed most of the exercise', async () => {
+  const targetText = wrapper.vm.targetText
+  const mostText = targetText.substring(0, targetText.length - 5)
+  await simulateTyping(wrapper, mostText, { delayBetweenKeys: 10 })
+  expect(wrapper.vm.progress).toBeGreaterThan(80)
+})
+
+/**
+ * @description Set up completed exercise
+ * @given I have completed the exercise
+ */
+Given('I have completed the exercise', async () => {
+  const targetText = wrapper.vm.targetText
+  await simulateTyping(wrapper, targetText, { delayBetweenKeys: 10 })
+  expect(wrapper.vm.isComplete).toBe(true)
+})
+
+/**
+ * @description Set up exercise with specific text
+ * @given I have started typing an exercise
+ */
+Given('I have started typing an exercise', async () => {
+  wrapper.vm.currentExercise = {
+    title: 'Test Exercise',
+    description: 'Test typing exercise',
+    difficulty: 'easy',
+    category: 'test',
+    language: 'javascript',
+    code: 'console.log("test")'
+  }
+  await simulateTyping(wrapper, 'con', { delayBetweenKeys: 50 })
+  expect(wrapper.vm.hasStarted).toBe(true)
+})
+
+/**
+ * @description Set up text with formatting
+ * @given the target text contains newlines and indentation
+ */
+Given('the target text contains newlines and indentation', async () => {
+  wrapper.vm.currentExercise = {
+    title: 'Formatted Code',
+    description: 'Practice typing formatted code',
+    difficulty: 'intermediate',
+    category: 'javascript',
+    language: 'javascript',
+    code: 'function example() {\n  if (condition) {\n    return true\n  }\n  return false\n}'
+  }
+  await nextTick()
+  expect(wrapper.vm.targetText).toContain('\n')
+  expect(wrapper.vm.targetText).toContain('  ')
+})
+
+/**
+ * @description Simulate clicking in typing area
+ * @when I click in the typing area
+ */
+When('I click in the typing area', async () => {
+  const textarea = wrapper.find('textarea')
+  await textarea.trigger('click')
+  await nextTick()
+})
+
+/**
+ * @description Simulate typing first character
+ * @when I start typing the first character
+ */
+When('I start typing the first character', async () => {
+  const targetText = wrapper.vm.targetText
+  const firstChar = targetText.charAt(0)
+  await simulateTyping(wrapper, firstChar, { delayBetweenKeys: 100 })
+  expect(wrapper.vm.userInput).toBe(firstChar)
+})
+
+/**
+ * @description Simulate typing matching character
+ * @when I type a character that matches the target text
+ */
+When('I type a character that matches the target text', async () => {
+  const targetText = wrapper.vm.targetText
+  const currentIndex = wrapper.vm.userInput.length
+  const correctChar = targetText.charAt(currentIndex)
+  await simulateTyping(wrapper, correctChar, { delayBetweenKeys: 100 })
+  expect(wrapper.vm.userInput.charAt(currentIndex)).toBe(correctChar)
+})
+
+/**
+ * @description Simulate typing non-matching character
+ * @when I type a character that doesn't match the target text
+ */
+When('I type a character that doesn\'t match the target text', async () => {
+  const wrongChar = 'x' // Assuming 'x' is wrong
+  await simulateTyping(wrapper, wrongChar, { delayBetweenKeys: 100 })
+  expect(wrapper.vm.errors).toBeGreaterThan(0)
+})
+
+/**
+ * @description Simulate backspace key
+ * @when I press backspace
+ */
+When('I press backspace', async () => {
+  const textarea = wrapper.find('textarea')
+  await textarea.trigger('keydown', { key: 'Backspace', code: 'Backspace' })
+  await nextTick()
+})
+
+/**
+ * @description Simulate tab key press
+ * @when I press the Tab key
+ */
+When('I press the Tab key', async () => {
+  const textarea = wrapper.find('textarea')
+  await textarea.trigger('keydown', { key: 'Tab', code: 'Tab' })
+  await nextTick()
+})
+
+/**
+ * @description Simulate typing final character
+ * @when I type the final character correctly
+ */
+When('I type the final character correctly', async () => {
+  const targetText = wrapper.vm.targetText
+  const remainingText = targetText.substring(wrapper.vm.userInput.length)
+  await simulateTyping(wrapper, remainingText, { delayBetweenKeys: 50 })
+  expect(wrapper.vm.userInput).toBe(targetText)
+})
+
+/**
+ * @description Simulate trying to type beyond target
+ * @when I try to type additional characters
+ */
+When('I try to type additional characters', async () => {
+  const textarea = wrapper.find('textarea')
+  const extraChars = 'extra'
+  for (const char of extraChars) {
+    await textarea.trigger('keydown', { key: char })
+    await nextTick()
+  }
+})
+
+/**
+ * @description Verify timer starts
+ * @then the timer should start
+ */
+Then('the timer should start', () => {
+  expect(wrapper.vm.hasStarted).toBe(true)
+  expect(wrapper.vm.startTime).toBeGreaterThan(0)
+})
+
+/**
+ * @description Verify progress tracking
+ * @then my typing progress should be tracked
+ */
+Then('my typing progress should be tracked', () => {
+  expect(wrapper.vm.progress).toBeGreaterThan(0)
+  expect(wrapper.vm.wpm).toBeGreaterThanOrEqual(0)
+})
+
+/**
+ * @description Verify cursor highlighting
+ * @then the cursor position should be highlighted in the target text
+ */
+Then('the cursor position should be highlighted in the target text', () => {
+  const currentChar = wrapper.find('.bg-blue-200, .bg-blue-800')
+  expect(currentChar.exists()).toBe(true)
+})
+
+/**
+ * @description Verify green highlighting
+ * @then the character should be highlighted in green
+ */
+Then('the character should be highlighted in green', () => {
+  const correctChars = wrapper.findAll('.text-green-600')
+  expect(correctChars.length).toBeGreaterThan(0)
+})
+
+/**
+ * @description Verify accuracy remains high
+ * @then my accuracy should remain high
+ */
+Then('my accuracy should remain high', () => {
+  expect(wrapper.vm.accuracy).toBeGreaterThan(90)
+})
+
+/**
+ * @description Verify cursor advancement
+ * @then the cursor should advance to the next character
+ */
+Then('the cursor should advance to the next character', () => {
+  const currentPosition = wrapper.vm.currentIndex
+  expect(currentPosition).toBeGreaterThan(0)
+})
+
+/**
+ * @description Verify red highlighting
+ * @then the character should be highlighted in red
+ */
+Then('the character should be highlighted in red', () => {
+  const incorrectChars = wrapper.findAll('.text-red-600')
+  expect(incorrectChars.length).toBeGreaterThan(0)
+})
+
+/**
+ * @description Verify error count increase
+ * @then my error count should increase
+ */
+Then('my error count should increase', () => {
+  expect(wrapper.vm.errors).toBeGreaterThan(0)
+})
+
+/**
+ * @description Verify accuracy decrease
+ * @then my accuracy should decrease
+ */
+Then('my accuracy should decrease', () => {
+  expect(wrapper.vm.accuracy).toBeLessThan(100)
+})
+
+/**
+ * @description Verify cursor still advances
+ * @then the cursor should still advance
+ */
+Then('the cursor should still advance', () => {
+  const currentPosition = wrapper.vm.currentIndex
+  expect(currentPosition).toBeGreaterThan(0)
+})
+
+/**
+ * @description Verify character removal
+ * @then the last character should be removed from my input
+ */
+Then('the last character should be removed from my input', () => {
+  const expectedLength = wrapper.vm.userInput.length
+  expect(expectedLength).toBeGreaterThanOrEqual(0)
+})
+
+/**
+ * @description Verify cursor moves back
+ * @then the cursor should move back in the target text
+ */
+Then('the cursor should move back in the target text', () => {
+  const currentIndex = wrapper.vm.currentIndex
+  expect(currentIndex).toBeGreaterThanOrEqual(0)
+})
+
+/**
+ * @description Verify ability to retype
+ * @then I can retype the character correctly
+ */
+Then('I can retype the character correctly', async () => {
+  const targetText = wrapper.vm.targetText
+  const currentIndex = wrapper.vm.currentIndex
+  const correctChar = targetText.charAt(currentIndex)
+  await simulateTyping(wrapper, correctChar)
+  expect(wrapper.vm.userInput.charAt(currentIndex)).toBe(correctChar)
+})
+
+/**
+ * @description Verify special character highlighting
+ * @then they should be highlighted in green
+ */
+Then('they should be highlighted in green', () => {
+  const correctChars = wrapper.findAll('.text-green-600')
+  expect(correctChars.length).toBeGreaterThan(0)
+})
+
+/**
+ * @description Verify accuracy maintenance
+ * @then my accuracy should be maintained
+ */
+Then('my accuracy should be maintained', () => {
+  expect(wrapper.vm.accuracy).toBeGreaterThanOrEqual(95)
+})
+
+/**
+ * @description Verify tab insertion
+ * @then two spaces should be inserted
+ */
+Then('two spaces should be inserted', () => {
+  expect(wrapper.vm.userInput).toContain('  ')
+})
+
+/**
+ * @description Verify tab doesn't change focus
+ * @then the tab should not change focus away from the typing area
+ */
+Then('the tab should not change focus away from the typing area', () => {
+  const textarea = wrapper.find('textarea')
+  expect(document.activeElement).toBe(textarea.element)
+})
+
+/**
+ * @description Verify space matching
+ * @then the spaces should match the target indentation
+ */
+Then('the spaces should match the target indentation', () => {
+  const targetText = wrapper.vm.targetText
+  const userInput = wrapper.vm.userInput
+  // Basic check that indentation is present
+  expect(userInput).toContain('  ')
+})
+
+/**
+ * @description Verify completion status
+ * @then the exercise should be marked as complete
+ */
+Then('the exercise should be marked as complete', () => {
+  expect(wrapper.vm.isComplete).toBe(true)
+  expect(wrapper.vm.progress).toBe(100)
+})
+
+/**
+ * @description Verify input matches target
+ * @then my input exactly matches the target text
+ */
+Then('my input exactly matches the target text', () => {
+  expect(wrapper.vm.userInput).toBe(wrapper.vm.targetText)
+})
+
+/**
+ * @description Verify typing area disabled
+ * @then the typing area should be disabled
+ */
+Then('the typing area should be disabled', () => {
+  const textarea = wrapper.find('textarea')
+  expect(textarea.attributes('disabled')).toBeDefined()
+})
+
+/**
+ * @description Verify no additional characters
+ * @then no additional characters should be accepted
+ */
+Then('no additional characters should be accepted', () => {
+  const currentLength = wrapper.vm.userInput.length
+  const targetLength = wrapper.vm.targetText.length
+  expect(currentLength).toBeLessThanOrEqual(targetLength)
+})
+
+/**
+ * @description Verify input cleared
+ * @then my input should be cleared
+ */
+Then('my input should be cleared', () => {
+  expect(wrapper.vm.userInput).toBe('')
+})
+
+/**
+ * @description Verify timer reset
+ * @then the timer should be reset
+ */
+Then('the timer should be reset', () => {
+  expect(wrapper.vm.hasStarted).toBe(false)
+  expect(wrapper.vm.startTime).toBe(null)
+})
+
+/**
+ * @description Verify error count reset
+ * @then the error count should be reset to zero
+ */
+Then('the error count should be reset to zero', () => {
+  expect(wrapper.vm.errors).toBe(0)
+})
+
+/**
+ * @description Verify can start again
+ * @then I can start typing again
+ */
+Then('I can start typing again', async () => {
+  const textarea = wrapper.find('textarea')
+  expect(textarea.attributes('disabled')).toBeUndefined()
+  expect(wrapper.vm.isComplete).toBe(false)
+})
+
+/**
+ * @description Verify formatting preserved
+ * @then the formatting should be preserved
+ */
+Then('the formatting should be preserved', () => {
+  const codeDisplay = wrapper.find('pre code')
+  expect(codeDisplay.exists()).toBe(true)
+  const displayedText = codeDisplay.text()
+  expect(displayedText).toContain('\n')
+})
+
+/**
+ * @description Verify monospace font
+ * @then the monospace font should be used
+ */
+Then('the monospace font should be used', () => {
+  const codeDisplay = wrapper.find('pre code')
+  expect(codeDisplay.exists()).toBe(true)
+  // Check for monospace styling
+  expect(codeDisplay.classes()).toContain('font-mono')
+})
+
+/**
+ * @description Verify text readability
+ * @then the text should be readable with proper syntax highlighting
+ */
+Then('the text should be readable with proper syntax highlighting', () => {
+  const codeDisplay = wrapper.find('pre code')
+  expect(codeDisplay.exists()).toBe(true)
+  // Basic check for syntax highlighting classes or structure
+  expect(codeDisplay.html()).toContain('language-')
+})

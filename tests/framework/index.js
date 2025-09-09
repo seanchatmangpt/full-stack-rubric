@@ -12,13 +12,7 @@ import { createTestUtilities } from './utils/test-helpers.js'
 
 /**
  * Framework initialization options
- * @typedef {Object} FrameworkOptions
- * @property {boolean} autoConfig - Enable auto-configuration
- * @property {boolean} nuxtIntegration - Enable Nuxt integration
- * @property {boolean} cucumberIntegration - Enable Cucumber/BDD integration
- * @property {Array} plugins - Framework plugins to load
- * @property {Object} conventions - Convention overrides
- * @property {Object} nuxtOptions - Nuxt test configuration
+ * Controls auto-configuration, Nuxt integration, Cucumber integration, plugins, conventions, and Nuxt options
  */
 
 /**

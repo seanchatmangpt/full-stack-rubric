@@ -12,7 +12,7 @@ import { loadFeature } from '@amiceli/vitest-cucumber'
  */
 export function defineFeature(featurePath, options = {}) {
   const feature = loadFeature(featurePath)
-  
+
   return {
     ...feature,
     ...options,

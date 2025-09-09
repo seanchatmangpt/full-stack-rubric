@@ -41,7 +41,7 @@ export const testComposable = (name, composable, config = {}) => {
       mockContext = createNuxtContextMock(mocks)
       
       // Mock dependencies
-      dependencies.forEach(dep => {
+      dependencies.forEach((dep) => {
         if (typeof dep === 'string') {
           vi.mock(dep, () => ({
             default: vi.fn()
@@ -84,14 +84,14 @@ export const testComposable = (name, composable, config = {}) => {
       expect(result).toBeDefined()
       
       // Check if composable returns expected properties
-      Object.keys(initialState).forEach(key => {
+      Object.keys(initialState).forEach((key) => {
         expect(result).toHaveProperty(key)
       })
     })
 
     // Reactivity tests
     it('maintains reactivity', async () => {
-      const reactiveProps = Object.keys(result).filter(key => {
+      const reactiveProps = Object.keys(result).filter((key) => {
         const value = result[key]
         return value && (value.__v_isRef || value.__v_isReactive)
       })
@@ -269,7 +269,7 @@ export const testStateComposable = (name, stateComposable, stateTests) => {
       result = wrapper.vm
     })
 
-    stateTests.forEach(test => {
+    stateTests.forEach((test) => {
       it(test.description, async () => {
         if (test.action) {
           await test.action(result)
@@ -283,12 +283,12 @@ export const testStateComposable = (name, stateComposable, stateTests) => {
 
     it('maintains state consistency', () => {
       // Test that state changes are consistent
-      const statefulProps = Object.keys(result).filter(key => {
+      const statefulProps = Object.keys(result).filter((key) => {
         const value = result[key]
         return value && (value.__v_isRef || value.__v_isReactive)
       })
 
-      statefulProps.forEach(prop => {
+      statefulProps.forEach((prop) => {
         const initialValue = result[prop].value || result[prop]
         
         // Make a change
@@ -420,7 +420,7 @@ export const testComposableInstances = (name, composable, instanceCount = 3) => 
         expect(instance).toBeDefined()
         
         // If instances have state, they should be independent
-        const stateProps = Object.keys(instance).filter(key => {
+        const stateProps = Object.keys(instance).filter((key) => {
           const value = instance[key]
           return value && (value.__v_isRef || value.__v_isReactive)
         })
@@ -428,7 +428,7 @@ export const testComposableInstances = (name, composable, instanceCount = 3) => 
         if (stateProps.length > 0) {
           // Change first instance
           if (index === 0) {
-            stateProps.forEach(prop => {
+            stateProps.forEach((prop) => {
               const currentValue = instance[prop].value || instance[prop]
               if (typeof currentValue === 'string') {
                 instance[prop] = currentValue + '_modified'
@@ -443,7 +443,7 @@ export const testComposableInstances = (name, composable, instanceCount = 3) => 
         const firstInstance = instances[0]
         const secondInstance = instances[1]
         
-        Object.keys(firstInstance).forEach(key => {
+        Object.keys(firstInstance).forEach((key) => {
           if (firstInstance[key] !== secondInstance[key]) {
             // State is properly isolated
             expect(firstInstance[key]).not.toEqual(secondInstance[key])

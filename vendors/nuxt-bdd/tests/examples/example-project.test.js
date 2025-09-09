@@ -4,10 +4,10 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest'
-import { 
+import {
   VitestCucumberBridge,
   registerGiven,
-  registerWhen, 
+  registerWhen,
   registerThen,
   getBDDContext,
   setBDDState,
@@ -62,20 +62,20 @@ const ProductCard = {
   methods: {
     async addToCart() {
       this.loading = true
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500))
-      
+
       this.$emit('add-to-cart', {
         productId: this.product.id,
         name: this.product.name,
         price: this.currentPrice,
         quantity: 1
       })
-      
+
       this.loading = false
       this.showSuccess = true
-      
+
       setTimeout(() => {
         this.showSuccess = false
       }, 2000)
@@ -142,10 +142,10 @@ const LoginForm = {
   },
   computed: {
     isFormValid() {
-      return this.form.email && 
-             this.form.password && 
-             !this.errors.email && 
-             !this.errors.password
+      return this.form.email
+        && this.form.password
+        && !this.errors.email
+        && !this.errors.password
     }
   },
   methods: {
@@ -158,7 +158,7 @@ const LoginForm = {
         this.errors.email = ''
       }
     },
-    
+
     validatePassword() {
       if (!this.form.password) {
         this.errors.password = 'Password is required'
@@ -168,16 +168,16 @@ const LoginForm = {
         this.errors.password = ''
       }
     },
-    
+
     async handleSubmit() {
       this.validateEmail()
       this.validatePassword()
-      
+
       if (!this.isFormValid) return
-      
+
       this.submitting = true
       this.submitError = ''
-      
+
       try {
         // Simulate login API call
         await new Promise((resolve, reject) => {
@@ -189,13 +189,12 @@ const LoginForm = {
             }
           }, 1000)
         })
-        
+
         this.submitSuccess = true
-        this.$emit('login-success', { 
+        this.$emit('login-success', {
           email: this.form.email,
-          rememberMe: this.form.rememberMe 
+          rememberMe: this.form.rememberMe
         })
-        
       } catch (error) {
         this.submitError = error.message
       } finally {
@@ -264,15 +263,15 @@ const ShoppingCart = {
     totalItems() {
       return this.items.reduce((total, item) => total + item.quantity, 0)
     },
-    
+
     subtotal() {
       return this.items.reduce((total, item) => total + (item.price * item.quantity), 0)
     },
-    
+
     tax() {
       return this.subtotal * this.taxRate
     },
-    
+
     total() {
       return this.subtotal + this.tax
     }
@@ -281,28 +280,27 @@ const ShoppingCart = {
     increaseQuantity(itemId) {
       this.$emit('update-quantity', { itemId, change: 1 })
     },
-    
+
     decreaseQuantity(itemId) {
       this.$emit('update-quantity', { itemId, change: -1 })
     },
-    
+
     removeItem(itemId) {
       this.$emit('remove-item', itemId)
     },
-    
+
     async checkout() {
       this.checkingOut = true
-      
+
       try {
         // Simulate checkout process
         await new Promise(resolve => setTimeout(resolve, 2000))
-        
+
         this.$emit('checkout-complete', {
           items: this.items,
           total: this.total,
           timestamp: new Date().toISOString()
         })
-        
       } finally {
         this.checkingOut = false
       }
@@ -355,9 +353,9 @@ describe('nuxt-bdd example testing scenarios', () => {
 
       const addButton = wrapper.find('.add-to-cart-btn')
       expect(addButton.text()).toBe('Add to Cart')
-      
+
       await addButton.trigger('click')
-      
+
       // Should show loading state
       expect(addButton.text()).toBe('Adding...')
       expect(addButton.element.disabled).toBe(true)
@@ -375,7 +373,7 @@ describe('nuxt-bdd example testing scenarios', () => {
       })
 
       expect(wrapper.find('.success-message').text()).toBe('Added to cart!')
-      
+
       wrapper.unmount()
     })
 
@@ -395,14 +393,14 @@ describe('nuxt-bdd example testing scenarios', () => {
       const addButton = wrapper.find('.add-to-cart-btn')
       expect(addButton.text()).toBe('Out of Stock')
       expect(addButton.element.disabled).toBe(true)
-      
+
       // Should not emit events when clicked
       const cartEvents = []
-      wrapper.vm.$on('add-to-cart', (event) => cartEvents.push(event))
-      
+      wrapper.vm.$on('add-to-cart', event => cartEvents.push(event))
+
       await addButton.trigger('click')
       expect(cartEvents).toHaveLength(0)
-      
+
       wrapper.unmount()
     })
   })
@@ -416,7 +414,7 @@ describe('nuxt-bdd example testing scenarios', () => {
       // BDD Step 1: Given I have valid credentials
       const emailInput = wrapper.find('#email')
       const passwordInput = wrapper.find('#password')
-      
+
       await emailInput.setValue('test@example.com')
       await passwordInput.setValue('password')
 
@@ -434,7 +432,7 @@ describe('nuxt-bdd example testing scenarios', () => {
 
       const submitButton = wrapper.find('button[type="submit"]')
       expect(submitButton.element.disabled).toBe(false)
-      
+
       await wrapper.find('form').trigger('submit')
 
       // Should show loading state
@@ -452,7 +450,7 @@ describe('nuxt-bdd example testing scenarios', () => {
       })
 
       expect(wrapper.find('.success-message').text()).toBe('Login successful!')
-      
+
       wrapper.unmount()
     })
 
@@ -463,10 +461,10 @@ describe('nuxt-bdd example testing scenarios', () => {
 
       // Test empty form submission
       await wrapper.find('form').trigger('submit')
-      
+
       const emailInput = wrapper.find('#email')
       const passwordInput = wrapper.find('#password')
-      
+
       await emailInput.trigger('blur')
       await passwordInput.trigger('blur')
 
@@ -476,7 +474,7 @@ describe('nuxt-bdd example testing scenarios', () => {
       // Test invalid email
       await emailInput.setValue('invalid-email')
       await emailInput.trigger('blur')
-      
+
       expect(wrapper.text()).toContain('Email is invalid')
 
       // Test short password
@@ -485,7 +483,7 @@ describe('nuxt-bdd example testing scenarios', () => {
       await passwordInput.trigger('blur')
 
       expect(wrapper.text()).toContain('Password must be at least 6 characters')
-      
+
       wrapper.unmount()
     })
 
@@ -505,7 +503,7 @@ describe('nuxt-bdd example testing scenarios', () => {
 
       expect(wrapper.find('.error-message').text()).toBe('Invalid credentials')
       expect(wrapper.find('.success-message').exists()).toBe(false)
-      
+
       wrapper.unmount()
     })
   })
@@ -579,7 +577,7 @@ describe('nuxt-bdd example testing scenarios', () => {
         items: initialCartItems,
         total: expect.any(Number)
       })
-      
+
       wrapper.unmount()
     })
 
@@ -592,7 +590,7 @@ describe('nuxt-bdd example testing scenarios', () => {
       expect(wrapper.text()).toContain('Shopping Cart (0 items)')
       expect(wrapper.text()).toContain('Your cart is empty')
       expect(wrapper.find('.checkout-btn').exists()).toBe(false)
-      
+
       wrapper.unmount()
     })
   })
@@ -644,7 +642,7 @@ describe('nuxt-bdd example testing scenarios', () => {
       })
 
       expect(cartWrapper.text()).toContain('Test Product')
-      
+
       let checkoutCompleted = false
       cartWrapper.vm.$on('checkout-complete', (order) => {
         checkoutCompleted = true
@@ -712,11 +710,11 @@ describe('nuxt-bdd example testing scenarios', () => {
       })
 
       const events = []
-      wrapper.vm.$on('add-to-cart', (event) => events.push(event))
+      wrapper.vm.$on('add-to-cart', event => events.push(event))
 
       // Rapidly click add to cart (should handle debouncing/multiple clicks)
       const button = wrapper.find('.add-to-cart-btn')
-      
+
       // Click multiple times rapidly
       for (let i = 0; i < 5; i++) {
         await button.trigger('click')
@@ -727,7 +725,7 @@ describe('nuxt-bdd example testing scenarios', () => {
 
       // Should handle rapid clicks gracefully (may add once or handle multiple)
       expect(events.length).toBeGreaterThan(0)
-      
+
       wrapper.unmount()
     })
 
@@ -741,36 +739,36 @@ describe('nuxt-bdd example testing scenarios', () => {
       }))
 
       const start = performance.now()
-      
+
       const wrapper = await bridge.mountComponent({
         component: ShoppingCart,
         props: { items: manyItems }
       })
 
       const mountTime = performance.now() - start
-      
+
       // Should mount large cart reasonably quickly
       expect(mountTime).toBeLessThan(200)
 
       // Verify all items rendered
       expect(wrapper.findAll('.cart-item')).toHaveLength(100)
-      
+
       // Test cart operations
       const updateStart = performance.now()
-      
+
       const updateEvents = []
-      wrapper.vm.$on('update-quantity', (event) => updateEvents.push(event))
-      
+      wrapper.vm.$on('update-quantity', event => updateEvents.push(event))
+
       // Update quantity on first item
       const firstIncreaseButton = wrapper.find('.item-controls button[text="+"]')
       await firstIncreaseButton.trigger('click')
-      
+
       const updateTime = performance.now() - updateStart
-      
+
       // Should handle updates quickly even with large cart
       expect(updateTime).toBeLessThan(50)
       expect(updateEvents).toHaveLength(1)
-      
+
       wrapper.unmount()
     })
   })

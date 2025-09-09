@@ -119,9 +119,9 @@ export const PRESETS = {
       'stripe'
     ],
     scripts: {
-      build: 'nuxt build',
-      dev: 'nuxt dev',
-      test: 'vitest',
+      'build': 'nuxt build',
+      'dev': 'nuxt dev',
+      'test': 'vitest',
       'test:e2e': 'playwright test'
     }
   },
@@ -232,10 +232,10 @@ export const PRESETS = {
       'zod'
     ],
     scripts: {
-      build: 'nuxt build',
-      dev: 'nuxt dev',
+      'build': 'nuxt build',
+      'dev': 'nuxt dev',
       'db:migrate': 'node scripts/migrate.js',
-      test: 'vitest'
+      'test': 'vitest'
     }
   },
   
@@ -297,9 +297,9 @@ export const PRESETS = {
       '@cucumber/cucumber'
     ],
     scripts: {
-      build: 'nuxt build',
-      dev: 'nuxt dev',
-      test: 'vitest',
+      'build': 'nuxt build',
+      'dev': 'nuxt dev',
+      'test': 'vitest',
       'test:ui': 'vitest --ui',
       'test:coverage': 'vitest --coverage',
       'test:e2e': 'playwright test',

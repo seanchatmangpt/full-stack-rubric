@@ -281,9 +281,9 @@ export class VisualDiffTool {
         background: { r: 255, g: 255, b: 255, alpha: 1 }
       }
     })
-    .composite(images)
-    .png()
-    .toBuffer()
+      .composite(images)
+      .png()
+      .toBuffer()
   }
 
   /**
@@ -321,12 +321,12 @@ export class VisualDiffTool {
         background: { r: 255, g: 255, b: 255, alpha: 1 }
       }
     })
-    .composite([
-      { input: labelBuffer, left: 0, top: 0 },
-      { input: resizedImage, left: 0, top: labelHeight }
-    ])
-    .png()
-    .toBuffer()
+      .composite([
+        { input: labelBuffer, left: 0, top: 0 },
+        { input: resizedImage, left: 0, top: labelHeight }
+      ])
+      .png()
+      .toBuffer()
   }
 
   /**
@@ -393,7 +393,8 @@ export class VisualDiffTool {
           </div>
         </div>
 
-        ${regions.length > 0 ? `
+        ${regions.length > 0
+          ? `
           <div class="regions">
             <h3>Different Regions (${regions.length})</h3>
             ${regions.map((region, i) => `
@@ -405,7 +406,8 @@ export class VisualDiffTool {
               </div>
             `).join('')}
           </div>
-        ` : ''}
+        `
+          : ''}
 
         ${metadata.testName ? `<div><strong>Test:</strong> ${metadata.testName}</div>` : ''}
         ${metadata.timestamp ? `<div><strong>Timestamp:</strong> ${metadata.timestamp}</div>` : ''}
@@ -422,11 +424,13 @@ export class VisualDiffTool {
    */
   hexToRgb(hex) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-    return result ? [
-      parseInt(result[1], 16),
-      parseInt(result[2], 16),
-      parseInt(result[3], 16)
-    ] : [255, 0, 0]
+    return result
+      ? [
+          parseInt(result[1], 16),
+          parseInt(result[2], 16),
+          parseInt(result[3], 16)
+        ]
+      : [255, 0, 0]
   }
 
   /**

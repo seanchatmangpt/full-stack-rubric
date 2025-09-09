@@ -28,7 +28,7 @@ export class PluginSystem extends EventEmitter {
     this.initialized = false
     this.bddPlugins = new Set()
   }
-  
+
   /**
    * Register a new plugin
    * @param {Plugin} plugin - Plugin to register
@@ -39,15 +39,15 @@ export class PluginSystem extends EventEmitter {
       // Dynamic import for string plugins
       plugin = await this.loadPlugin(plugin)
     }
-    
+
     if (!plugin.name) {
       throw new Error('Plugin must have a name')
     }
-    
+
     if (this.plugins.has(plugin.name)) {
       throw new Error(`Plugin "${plugin.name}" is already registered`)
     }
-    
+
     // Check dependencies
     if (plugin.dependencies) {
       for (const dep of plugin.dependencies) {
@@ -56,32 +56,32 @@ export class PluginSystem extends EventEmitter {
         }
       }
     }
-    
+
     // Install plugin
     const pluginInstance = {
       ...plugin,
       options: { ...plugin.options, ...options },
       installed: false
     }
-    
+
     this.plugins.set(plugin.name, pluginInstance)
-    
+
     // Track BDD plugins
     if (plugin.bddEnabled) {
       this.bddPlugins.add(plugin.name)
     }
-    
+
     // Call install function if provided
     if (typeof plugin.install === 'function') {
       await plugin.install(this, options)
       pluginInstance.installed = true
     }
-    
+
     this.emit('plugin:installed', pluginInstance)
-    
+
     return this
   }
-  
+
   /**
    * Register a hook handler with priority support
    * @param {string} hookName - Hook name
@@ -92,16 +92,16 @@ export class PluginSystem extends EventEmitter {
     if (!this.hooks.has(hookName)) {
       this.hooks.set(hookName, [])
     }
-    
+
     const handlers = this.hooks.get(hookName)
     handlers.push({ handler, priority })
-    
+
     // Sort by priority
     handlers.sort((a, b) => a.priority - b.priority)
-    
+
     return this
   }
-  
+
   /**
    * Execute hooks with error handling and context
    * @param {string} hookName - Hook name
@@ -113,10 +113,10 @@ export class PluginSystem extends EventEmitter {
     if (!this.hooks.has(hookName)) {
       return payload
     }
-    
+
     const handlers = this.hooks.get(hookName)
     let result = payload
-    
+
     for (const { handler } of handlers) {
       try {
         const hookResult = await handler(result, context)
@@ -125,7 +125,7 @@ export class PluginSystem extends EventEmitter {
         }
       } catch (error) {
         this.emit('hook:error', { hookName, error, handler, context })
-        
+
         // Continue execution unless it's a critical hook
         if (hookName.includes('critical') || context.failOnError) {
           throw error
@@ -133,10 +133,10 @@ export class PluginSystem extends EventEmitter {
         }
       }
     }
-    
+
     return result
   }
-  
+
   /**
    * Add middleware function with BDD context awareness
    * @param {Function} middleware - Middleware function
@@ -155,11 +155,11 @@ export class PluginSystem extends EventEmitter {
         return config
       }
     }
-    
+
     this.middleware.push(middlewareWrapper)
     return this
   }
-  
+
   /**
    * Apply middleware to configuration with BDD context
    * @param {Object} config - Configuration object
@@ -168,14 +168,14 @@ export class PluginSystem extends EventEmitter {
    */
   async applyMiddleware(config, context = {}) {
     let result = config
-    
+
     for (const middleware of this.middleware) {
       result = await middleware(result, context) || result
     }
-    
+
     return result
   }
-  
+
   /**
    * Load plugin dynamically with error handling
    * @param {string} pluginName - Plugin name or path
@@ -193,7 +193,7 @@ export class PluginSystem extends EventEmitter {
         `@nuxt-bdd/plugin-${pluginName}`,
         `nuxt-bdd-plugin-${pluginName}`
       ]
-      
+
       for (const path of alternativePaths) {
         try {
           const plugin = await import(path)
@@ -202,11 +202,11 @@ export class PluginSystem extends EventEmitter {
           // Continue to next path
         }
       }
-      
+
       throw new Error(`Failed to load plugin "${pluginName}": ${error.message}`)
     }
   }
-  
+
   /**
    * Get registered plugin
    * @param {string} name - Plugin name
@@ -215,7 +215,7 @@ export class PluginSystem extends EventEmitter {
   getPlugin(name) {
     return this.plugins.get(name) || null
   }
-  
+
   /**
    * Get all registered plugins
    * @returns {Plugin[]} - Array of plugins
@@ -223,7 +223,7 @@ export class PluginSystem extends EventEmitter {
   getPlugins() {
     return Array.from(this.plugins.values())
   }
-  
+
   /**
    * Get BDD-enabled plugins
    * @returns {Plugin[]} - Array of BDD plugins
@@ -231,7 +231,7 @@ export class PluginSystem extends EventEmitter {
   getBDDPlugins() {
     return Array.from(this.bddPlugins).map(name => this.plugins.get(name))
   }
-  
+
   /**
    * Check if plugin is installed
    * @param {string} name - Plugin name
@@ -240,30 +240,30 @@ export class PluginSystem extends EventEmitter {
   hasPlugin(name) {
     return this.plugins.has(name)
   }
-  
+
   /**
    * Remove plugin with cleanup
    * @param {string} name - Plugin name
    */
   removePlugin(name) {
     const plugin = this.plugins.get(name)
-    
+
     if (!plugin) {
       return false
     }
-    
+
     // Call uninstall if provided
     if (typeof plugin.uninstall === 'function') {
       plugin.uninstall(this)
     }
-    
+
     this.plugins.delete(name)
     this.bddPlugins.delete(name)
     this.emit('plugin:removed', plugin)
-    
+
     return true
   }
-  
+
   /**
    * Initialize plugin system with built-in plugins
    */
@@ -271,14 +271,14 @@ export class PluginSystem extends EventEmitter {
     if (this.initialized) {
       return
     }
-    
+
     // Install built-in plugins
     await this.installBuiltinPlugins()
-    
+
     this.initialized = true
     this.emit('initialized')
   }
-  
+
   /**
    * Install built-in plugins with BDD enhancements
    */
@@ -293,17 +293,17 @@ export class PluginSystem extends EventEmitter {
           // Ensure Nuxt 3 defaults
           if (!config.nuxt) config.nuxt = {}
           if (!config.nuxt.modules) config.nuxt.modules = []
-          
+
           // Add test utils if not present
           if (!config.nuxt.modules.includes('@nuxt/test-utils')) {
             config.nuxt.modules.push('@nuxt/test-utils')
           }
-          
+
           return config
         })
       }
     })
-    
+
     // BDD Testing plugin
     await this.use({
       name: 'bdd-testing',
@@ -319,7 +319,7 @@ export class PluginSystem extends EventEmitter {
             if (!config.testing.bdd.stepDefinitionsDir) {
               config.testing.bdd.stepDefinitionsDir = 'tests/steps'
             }
-            
+
             // Configure Cucumber
             if (!config.testing.bdd.cucumber) {
               config.testing.bdd.cucumber = {
@@ -333,7 +333,7 @@ export class PluginSystem extends EventEmitter {
         })
       }
     })
-    
+
     // TypeScript support plugin
     await this.use({
       name: 'typescript',
@@ -348,7 +348,7 @@ export class PluginSystem extends EventEmitter {
               typeCheck: false, // Performance optimization
               ...config.nuxt.typescript
             }
-            
+
             // TypeScript BDD configuration
             if (config.testing?.bdd?.enabled) {
               config.testing.bdd.typescript = true
@@ -358,7 +358,7 @@ export class PluginSystem extends EventEmitter {
         })
       }
     })
-    
+
     // Vitest integration plugin
     await this.use({
       name: 'vitest',
@@ -376,7 +376,7 @@ export class PluginSystem extends EventEmitter {
               },
               ...config.testing.vitest
             }
-            
+
             // BDD integration
             if (config.testing?.bdd?.enabled) {
               config.testing.vitest.setupFiles = [
@@ -409,27 +409,27 @@ export const builtinPlugins = {
         production: 'prod',
         test: 'test'
       }
-      
+
       system.hook('config:modify', (config, context) => {
         const env = process.env.NODE_ENV || 'development'
         const envKey = envMap[env] || env
-        
+
         if (config[envKey]) {
           const merged = { ...config, ...config[envKey] }
-          
+
           // Environment-specific BDD settings
           if (env === 'test' && merged.testing?.bdd?.enabled) {
             merged.testing.bdd.parallel = 1 // Single thread for test env
           }
-          
+
           return merged
         }
-        
+
         return config
       })
     }
   },
-  
+
   /**
    * Performance optimization plugin
    */
@@ -451,12 +451,12 @@ export const builtinPlugins = {
             }
           }
         }
-        
+
         return config
       })
     }
   },
-  
+
   /**
    * Security headers plugin with BDD testing considerations
    */
@@ -490,12 +490,12 @@ export const builtinPlugins = {
             ...config.nuxt.nitro?.routeRules
           }
         }
-        
+
         return config
       })
     }
   },
-  
+
   /**
    * Auto-import plugin with BDD test utilities
    */
@@ -515,17 +515,17 @@ export const builtinPlugins = {
           ],
           ...config.nuxt.imports
         }
-        
+
         // BDD-specific imports
         if (config.testing?.bdd?.enabled) {
           config.nuxt.imports.dirs.push('tests/support/**')
         }
-        
+
         return config
       })
     }
   },
-  
+
   /**
    * SEO optimization plugin
    */
@@ -551,12 +551,12 @@ export const builtinPlugins = {
             ...config.nuxt.app?.head
           }
         }
-        
+
         return config
       })
     }
   },
-  
+
   /**
    * BDD Accessibility testing plugin
    */
@@ -574,19 +574,19 @@ export const builtinPlugins = {
             tags: options.tags || ['wcag2a'],
             ...config.testing.bdd.accessibility
           }
-          
+
           // Add axe-core if not present
           if (!config.dependencies?.includes('@axe-core/playwright')) {
             config.dependencies = config.dependencies || []
             config.dependencies.push('@axe-core/playwright')
           }
         }
-        
+
         return config
       })
     }
   },
-  
+
   /**
    * Content management plugin with BDD content testing
    */
@@ -608,7 +608,7 @@ export const builtinPlugins = {
             },
             ...config.nuxt.content
           }
-          
+
           // BDD content testing scenarios
           if (config.testing?.bdd?.enabled) {
             config.testing.bdd.scenarios = [
@@ -619,7 +619,7 @@ export const builtinPlugins = {
             ]
           }
         }
-        
+
         return config
       })
     }
@@ -653,17 +653,17 @@ export const pluginUtils = {
     if (!plugin.name || typeof plugin.name !== 'string') {
       return false
     }
-    
+
     if (plugin.install && typeof plugin.install !== 'function') {
       return false
     }
-    
+
     if (plugin.bddEnabled && !plugin.install) {
     }
-    
+
     return true
   },
-  
+
   /**
    * Create plugin from configuration with BDD defaults
    * @param {Object} config - Plugin configuration
@@ -679,7 +679,7 @@ export const pluginUtils = {
       bddEnabled: config.bddEnabled || false
     }
   },
-  
+
   /**
    * Merge plugin configurations with BDD awareness
    * @param {Plugin[]} plugins - Array of plugins
@@ -690,21 +690,21 @@ export const pluginUtils = {
       nuxt: {},
       testing: { bdd: { enabled: false } }
     }
-    
+
     for (const plugin of plugins) {
       if (plugin.config) {
         Object.assign(config, plugin.config)
       }
-      
+
       // Track if any plugin enables BDD
       if (plugin.bddEnabled) {
         config.testing.bdd.enabled = true
       }
     }
-    
+
     return config
   },
-  
+
   /**
    * Get plugin recommendations based on project needs
    * @param {Object} requirements - Project requirements
@@ -712,31 +712,31 @@ export const pluginUtils = {
    */
   recommend(requirements = {}) {
     const recommendations = []
-    
+
     // Always recommend core plugins
     recommendations.push('nuxt-core', 'environment')
-    
+
     // BDD-specific recommendations
     if (requirements.bdd || requirements.testing) {
       recommendations.push('bdd-testing', 'vitest')
     }
-    
+
     if (requirements.typescript) {
       recommendations.push('typescript')
     }
-    
+
     if (requirements.content) {
       recommendations.push('content')
     }
-    
+
     if (requirements.accessibility) {
       recommendations.push('accessibility')
     }
-    
+
     if (requirements.production) {
       recommendations.push('performance', 'security', 'seo')
     }
-    
+
     return recommendations
   }
 }

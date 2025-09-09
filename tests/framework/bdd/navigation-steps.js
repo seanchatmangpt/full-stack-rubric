@@ -708,7 +708,7 @@ expect(loadingElement.exists()).toBe(false)`
    */
   parseQueryString(queryString) {
     const params = queryString.split('&')
-    const queryObject = params.map(param => {
+    const queryObject = params.map((param) => {
       const [key, value] = param.split('=')
       return `${key}: '${value}'`
     }).join(', ')

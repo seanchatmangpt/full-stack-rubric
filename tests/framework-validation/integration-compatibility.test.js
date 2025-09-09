@@ -73,9 +73,9 @@ describe('Framework Integration Compatibility', () => {
     it('should detect incompatible versions', () => {
       const versions = {
         nuxt: '2.15.0', // Breaking change
-        vue: '2.7.0',   // Breaking change
+        vue: '2.7.0', // Breaking change
         vitest: '1.0.0', // Breaking change
-        node: '16.0.0'   // Breaking change
+        node: '16.0.0' // Breaking change
       }
 
       const result = CompatibilityChecker.checkVersions(versions)
@@ -86,9 +86,9 @@ describe('Framework Integration Compatibility', () => {
     it('should provide version recommendations', () => {
       const versions = {
         nuxt: '3.12.0', // Older supported version
-        vue: '3.3.0',   // Older supported version
+        vue: '3.3.0', // Older supported version
         vitest: '2.0.0', // Older supported version
-        node: '18.0.0'   // Older supported version
+        node: '18.0.0' // Older supported version
       }
 
       const result = CompatibilityChecker.checkVersions(versions)
@@ -316,7 +316,7 @@ describe('Framework Integration Compatibility', () => {
     })
 
     it('should handle async test operations', async () => {
-      const asyncOperation = () => new Promise(resolve => {
+      const asyncOperation = () => new Promise((resolve) => {
         setTimeout(() => resolve('async result'), 10)
       })
 
@@ -342,12 +342,12 @@ describe('Framework Integration Compatibility', () => {
       }
 
       // Validate structure without requiring actual package.json
-      Object.keys(expectedDependencies).forEach(dep => {
+      Object.keys(expectedDependencies).forEach((dep) => {
         expect(typeof dep).toBe('string')
         expect(dep.length).toBeGreaterThan(0)
       })
 
-      Object.keys(devDependencies).forEach(dep => {
+      Object.keys(devDependencies).forEach((dep) => {
         expect(typeof dep).toBe('string')
         expect(dep.length).toBeGreaterThan(0)
       })

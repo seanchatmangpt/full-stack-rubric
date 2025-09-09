@@ -20,7 +20,7 @@ global.ResizeObserver = vi.fn(() => mockResizeObserver)
  * @param {boolean} matches - Whether the media query matches
  * @returns {Object} Mock matchMedia object
  */
-const createMatchMediaMock = (matches) => ({
+const createMatchMediaMock = matches => ({
   matches,
   media: '',
   onchange: null,
@@ -335,8 +335,9 @@ const ResponsiveTypingTutor = {
     },
 
     targetTextStyle() {
-      const fontSize = this.isMobile ? (this.isCompact ? '14px' : '16px') : 
-                      this.isTablet ? '18px' : '20px'
+      const fontSize = this.isMobile
+        ? (this.isCompact ? '14px' : '16px') : 
+        this.isTablet ? '18px' : '20px'
       const lineHeight = this.isMobile ? '1.4' : '1.6'
       
       return {
@@ -558,7 +559,8 @@ const ResponsiveTypingTutor = {
       ).length
       
       this.stats.accuracy = this.userInput.length > 0 ? 
-        Math.round((correctChars / this.userInput.length) * 100) : 100
+          Math.round((correctChars / this.userInput.length) * 100)
+        : 100
     },
 
     /**
@@ -764,7 +766,7 @@ describe('Responsive Design Tests', () => {
     it('should use even more compact layouts', async () => {
       await nextTick()
       const statItems = wrapper.findAll('.stat-item')
-      statItems.forEach(item => {
+      statItems.forEach((item) => {
         expect(item.classes()).toContain('compact')
       })
     })
@@ -1029,7 +1031,7 @@ describe('Responsive Design Tests', () => {
       await nextTick()
       const buttons = wrapper.findAll('button')
       
-      buttons.forEach(button => {
+      buttons.forEach((button) => {
         expect(button.text().length).toBeGreaterThan(0) // All buttons should have text
       })
     })
@@ -1041,7 +1043,7 @@ describe('Responsive Design Tests', () => {
       expect(focusableElements.length).toBeGreaterThan(0)
       
       // All focusable elements should not have negative tabindex
-      focusableElements.forEach(element => {
+      focusableElements.forEach((element) => {
         const tabIndex = element.attributes('tabindex')
         if (tabIndex) {
           expect(parseInt(tabIndex)).toBeGreaterThanOrEqual(0)

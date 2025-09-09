@@ -30,8 +30,8 @@ describe('BDD Integration Examples', () => {
           props: ['modelValue', 'lang', 'options'],
           emits: ['update:modelValue']
         },
-        UButton: { 
-          template: '<button @click="$emit(\'click\')" v-bind="$attrs"><slot /></button>' 
+        UButton: {
+          template: '<button @click="$emit(\'click\')" v-bind="$attrs"><slot /></button>'
         }
       }
     })
@@ -77,13 +77,13 @@ describe('BDD Integration Examples', () => {
   it('should demonstrate BDD patterns', () => {
     // Create navigation pattern
     const navigationPattern = bddPatterns.navigation('typing tutor page', MockComponent)
-    
-    // Create visibility pattern  
+
+    // Create visibility pattern
     const visibilityPattern = bddPatterns.visibility('practice text', 'pre code')
-    
+
     // Create interaction pattern
     const typingPattern = bddPatterns.interaction('type', 'text', 'textarea')
-    
+
     // Create assertion pattern
     const highlightPattern = bddPatterns.assertion('correct highlighting', (wrapper) => {
       return wrapper.findAll('.text-green-600').length > 0
@@ -116,9 +116,9 @@ const bddSuite = createBDDSuite('Typing Tutor', {
 Given('I am on the typing tutor page', async () => {
   const TypingPage = await import('../../app/pages/typing.vue')
   const wrapper = await bddSuite.mount(TypingPage.default)
-  
+
   await stepHelpers.navigation.navigateToPage('typing tutor', wrapper)
-  
+
   expect(wrapper.exists()).toBe(true)
 })
 
@@ -162,7 +162,7 @@ When('I type {string} in exactly {int} seconds', async (text, seconds) => {
 When('I type very rapidly with {int}ms between keystrokes', async (interval) => {
   const wrapper = getBDDContext().wrapper
   const targetText = wrapper.vm.targetText || 'sample text for testing'
-  
+
   await stepHelpers.interactions.rapidType(targetText, interval, wrapper)
 })
 
@@ -217,7 +217,7 @@ Then('the progress bar should show approximately {int}% completion', (expectedPr
  */
 Then('a completion modal should appear', () => {
   stepHelpers.assertions.verifyModal(
-    { 
+    {
       visible: true,
       containsText: ['completion', 'final'],
       hasButtons: ['Next', 'Close']
@@ -240,13 +240,13 @@ Then('the application should remain responsive', () => {
  */
 Then('no performance degradation should occur', () => {
   const metrics = bddSuite.getMetrics()
-  
+
   // Verify render times are reasonable
   if (metrics.renderTimes.length > 0) {
     const avgRenderTime = metrics.renderTimes.reduce((a, b) => a + b) / metrics.renderTimes.length
     expect(avgRenderTime).toBeLessThan(100)
   }
-  
+
   // Verify memory usage is stable
   expect(metrics.memoryDiff).toBeLessThan(50 * 1024 * 1024) // Less than 50MB increase
 })
@@ -276,11 +276,11 @@ Feature: Typing Tutor Application
 `
 
     const feature = parseFeature(featureContent)
-    
+
     expect(feature.title).toBe('Typing Tutor Application')
     expect(feature.scenarios).toHaveLength(2)
     expect(feature.background.steps).toHaveLength(2)
-    
+
     // Validate feature structure
     const validation = validateFeature(feature)
     expect(validation.isValid).toBe(true)
@@ -293,16 +293,15 @@ describe('Step Discovery Example', () => {
   it('should discover missing and unused steps', async () => {
     // This would typically run against your actual project
     const projectRoot = process.cwd()
-    
+
     try {
       const discovery = await discoverSteps(projectRoot)
-      
-      
+
       // Generate missing step definitions
       if (discovery.missing.length > 0) {
         const generatedSteps = stepDiscovery.generateMissingSteps(discovery.missing)
       }
-      
+
       expect(discovery.coverage).toBeDefined()
       expect(discovery.definitions).toBeDefined()
       expect(discovery.usage).toBeDefined()

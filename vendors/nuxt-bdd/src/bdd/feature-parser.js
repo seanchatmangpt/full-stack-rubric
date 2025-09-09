@@ -66,7 +66,7 @@ export class FeatureParser {
       requireBackground: false,
       ...options
     }
-    
+
     this.gherkinKeywords = {
       feature: /^\s*Feature:\s*(.+)$/,
       background: /^\s*Background:\s*$/,
@@ -243,7 +243,7 @@ export class FeatureParser {
         const cells = line.split('|')
           .map(cell => cell.trim())
           .filter(cell => cell !== '')
-        
+
         if (currentScenario && cells.length > 0) {
           if (!currentScenario.examples.length) {
             // First row is headers
@@ -270,7 +270,7 @@ export class FeatureParser {
   validateFeature(feature) {
     const errors = []
     const warnings = []
-    
+
     // Check feature title
     if (!feature.title) {
       errors.push('Feature must have a title')
@@ -350,7 +350,7 @@ export class FeatureParser {
     if (outline.examples.length > 0) {
       const headers = outline.examples[0].headers
       const stepsText = outline.steps.map(s => s.text).join(' ')
-      
+
       for (const header of headers) {
         if (!stepsText.includes(`<${header}>`)) {
           warnings.push(`Example parameter "${header}" is not used in scenario outline "${outline.title}"`)
@@ -373,7 +373,7 @@ export class FeatureParser {
     let hasGiven = false
     let hasWhen = false
     let hasThen = false
-    
+
     for (const step of steps) {
       // Check for valid keywords
       if (!this.options.allowedKeywords.includes(step.keyword)) {
@@ -414,18 +414,18 @@ export class FeatureParser {
   calculateStatistics(feature) {
     const scenarios = feature.scenarios.length
     const scenarioOutlines = feature.scenarioOutlines.length
-    const totalSteps = feature.scenarios.reduce((sum, s) => sum + s.steps.length, 0) +
-                     feature.scenarioOutlines.reduce((sum, s) => sum + s.steps.length, 0)
-    
+    const totalSteps = feature.scenarios.reduce((sum, s) => sum + s.steps.length, 0)
+      + feature.scenarioOutlines.reduce((sum, s) => sum + s.steps.length, 0)
+
     const backgroundSteps = feature.background ? feature.background.steps.length : 0
-    
+
     const stepKeywords = {}
     const allSteps = [
       ...(feature.background ? feature.background.steps : []),
       ...feature.scenarios.flatMap(s => s.steps),
       ...feature.scenarioOutlines.flatMap(s => s.steps)
     ]
-    
+
     for (const step of allSteps) {
       stepKeywords[step.keyword] = (stepKeywords[step.keyword] || 0) + 1
     }
@@ -474,7 +474,7 @@ export class FeatureParser {
       patterns.add(`${step.keyword} ${parameterized}`)
     }
 
-    return Array.from(patterns).map(pattern => {
+    return Array.from(patterns).map((pattern) => {
       const [keyword, ...textParts] = pattern.split(' ')
       return {
         keyword,
@@ -492,7 +492,7 @@ export class FeatureParser {
    */
   parameterizeStepText(text) {
     return text
-      .replace(/\d+\.\d+/g, '{float}')  // Floats before integers
+      .replace(/\d+\.\d+/g, '{float}') // Floats before integers
       .replace(/\d+/g, '{int}')
       .replace(/"([^"]+)"/g, '{string}')
       .replace(/'([^']+)'/g, '{string}')
@@ -527,7 +527,7 @@ export class FeatureParser {
     const { keyword, pattern: stepPattern } = pattern
     const functionName = this.generateFunctionName(stepPattern)
     const parameters = this.extractStepParameters(stepPattern)
-    
+
     const paramList = parameters.length > 0 ? parameters.join(', ') : ''
     const asyncKeyword = options.async !== false ? 'async ' : ''
 
@@ -552,11 +552,11 @@ ${asyncKeyword}function ${functionName}(${paramList}) {
   extractStepParameters(pattern) {
     const params = []
     const parameterMatches = pattern.matchAll(/\{(int|float|string)\}/g)
-    
+
     let intCount = 0
     let floatCount = 0
     let stringCount = 0
-    
+
     for (const match of parameterMatches) {
       switch (match[1]) {
         case 'int':
@@ -573,7 +573,7 @@ ${asyncKeyword}function ${functionName}(${paramList}) {
           break
       }
     }
-    
+
     return params
   }
 

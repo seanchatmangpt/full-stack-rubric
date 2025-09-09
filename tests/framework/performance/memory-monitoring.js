@@ -207,7 +207,8 @@ export class MemoryMonitor {
       listenersAdded,
       listenersRemaining,
       cleanupEfficiency: listenersAdded > 0 ? 
-        ((listenersAdded - listenersRemaining) / listenersAdded) * 100 : 100
+          ((listenersAdded - listenersRemaining) / listenersAdded) * 100
+        : 100
     };
   }
 
@@ -239,7 +240,7 @@ export class MemoryMonitor {
         console.warn(`🚨 Memory Alert: Heap increased by ${this._formatBytes(increase)} since last snapshot`);
         
         // Notify observers
-        this.observers.forEach(observer => {
+        this.observers.forEach((observer) => {
           observer.onMemoryAlert({
             type: 'heap-increase',
             increase,
@@ -394,7 +395,7 @@ export class MemoryMonitor {
     report += `📊 Total Snapshots: ${this.snapshots.length}\n\n`;
     
     report += 'Recent Snapshots:\n';
-    this.snapshots.slice(-5).forEach(snapshot => {
+    this.snapshots.slice(-5).forEach((snapshot) => {
       report += `  ${snapshot.label}: ${this._formatBytes(snapshot.usedJSHeapSize)}\n`;
     });
     

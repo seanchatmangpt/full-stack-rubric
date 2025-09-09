@@ -200,7 +200,7 @@ export class BDDValidationRunner {
    * @returns {boolean} True if definition exists
    */
   hasStepDefinition(step) {
-    return this.stepDefinitions.some(stepDef => {
+    return this.stepDefinitions.some((stepDef) => {
       const pattern = stepDef.pattern
       
       // Simple pattern matching

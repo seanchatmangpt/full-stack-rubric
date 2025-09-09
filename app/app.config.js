@@ -4,46 +4,38 @@
  */
 
 /**
- * @typedef {Object} UIColors
- * @property {string} primary - Primary color theme
- * @property {string} neutral - Neutral color theme
+ * UI color configuration
+ * Defines primary and neutral color themes
  */
 
 /**
- * @typedef {Object} UIFooterSlots
- * @property {string} root - Root footer styling classes
- * @property {string} left - Left section styling classes
+ * Footer slot styling configuration
+ * Contains root and left section CSS classes
  */
 
 /**
- * @typedef {Object} UIFooter
- * @property {UIFooterSlots} slots - Footer slot configurations
+ * Footer configuration
+ * Contains slot styling and layout settings
  */
 
 /**
- * @typedef {Object} UIConfig
- * @property {UIColors} colors - Color configuration
- * @property {UIFooter} footer - Footer configuration
+ * Overall UI configuration
+ * Contains colors, footer, and layout settings
  */
 
 /**
- * @typedef {Object} SEOConfig
- * @property {string} siteName - Site name for SEO
+ * SEO configuration
+ * Contains site name and meta settings
  */
 
 /**
- * @typedef {Object} HeaderLogo
- * @property {string} alt - Logo alt text
- * @property {string} light - Light theme logo URL
- * @property {string} dark - Dark theme logo URL
+ * Header logo configuration
+ * Contains alt text and theme-specific logo URLs
  */
 
 /**
- * @typedef {Object} HeaderLink
- * @property {string} icon - Icon class name
- * @property {string} to - Link URL
- * @property {string} target - Link target
- * @property {string} aria-label - Accessibility label
+ * Header navigation link configuration
+ * Contains icon, URL, target, and accessibility settings
  */
 
 /**

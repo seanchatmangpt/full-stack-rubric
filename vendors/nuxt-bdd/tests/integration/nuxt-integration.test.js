@@ -7,10 +7,10 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
 import { fileURLToPath } from 'node:url'
 import { setup, createPage, url } from '@nuxt/test-utils/e2e'
 import { $fetch } from 'ofetch'
-import { 
+import {
   VitestCucumberBridge,
   registerGiven,
-  registerWhen, 
+  registerWhen,
   registerThen,
   getBDDContext,
   setBDDState,
@@ -44,18 +44,18 @@ describe('nuxt-bdd integration', () => {
       })
 
       // Register test steps
-      registerGiven('I am on the home page', async function() {
+      registerGiven('I am on the home page', async function () {
         setBDDState('currentPage', 'home')
         setBDDState('url', await url('/'))
       })
 
-      registerWhen('I navigate to {string}', async function(path) {
+      registerWhen('I navigate to {string}', async function (path) {
         const targetUrl = await url(path)
         setBDDState('targetUrl', targetUrl)
         setBDDState('response', await $fetch(path))
       })
 
-      registerThen('I should see the content', function() {
+      registerThen('I should see the content', function () {
         const response = getBDDState('response')
         expect(response).toBeDefined()
         expect(typeof response).toBe('string')
@@ -94,9 +94,9 @@ describe('nuxt-bdd integration', () => {
 
     it('should validate feature file against registered steps', () => {
       // Register realistic Nuxt BDD steps
-      bridge.registerStep('given', 'I am on the {string} page', async function(page) {})
-      bridge.registerStep('when', 'I click the {string} button', async function(buttonText) {})
-      bridge.registerStep('then', 'I should see {string}', function(expectedText) {})
+      bridge.registerStep('given', 'I am on the {string} page', async function (page) {})
+      bridge.registerStep('when', 'I click the {string} button', async function (buttonText) {})
+      bridge.registerStep('then', 'I should see {string}', function (expectedText) {})
 
       const featureContent = `
 Feature: Nuxt Application Navigation
@@ -113,7 +113,7 @@ Feature: Nuxt Application Navigation
       `
 
       const result = bridge.validateFeatureSteps(featureContent)
-      
+
       expect(result.isValid).toBe(true)
       expect(result.missing).toHaveLength(0)
       expect(result.found.length).toBeGreaterThan(0)
@@ -130,15 +130,15 @@ Feature: User Authentication
       `
 
       const generated = bridge.generateStepDefinitions(featureContent)
-      
+
       // Should contain step definitions for missing steps
       expect(generated).toContain('Given(')
       expect(generated).toContain('When(')
       expect(generated).toContain('Then(')
-      
+
       // Should parameterize email and messages
       expect(generated).toContain('{string}')
-      
+
       // Should generate meaningful function names
       expect(generated).toContain('i_have_a_user_with_email')
       expect(generated).toContain('i_submit_the_login_form')
@@ -184,11 +184,11 @@ Feature: User Authentication
 
       expect(wrapper.text()).toContain('Test Component')
       expect(wrapper.text()).toContain('Click Me')
-      
+
       // Simulate click
       await wrapper.find('button').trigger('click')
       await wrapper.vm.$nextTick()
-      
+
       expect(wrapper.text()).toContain('Clicked!')
       expect(wrapper.emitted('click')).toBeTruthy()
     })
@@ -211,7 +211,7 @@ Feature: User Authentication
       const wrapper = await bridge.mountComponent({
         component: NuxtLinkComponent,
         stubs: {
-          NuxtLink: { 
+          NuxtLink: {
             template: '<a :href="to"><slot /></a>',
             props: ['to']
           },
@@ -240,13 +240,13 @@ Feature: User Authentication
       let scenarioState = {}
 
       // Register complete scenario steps
-      bridge.registerStep('given', 'I am viewing a Nuxt application', async function() {
+      bridge.registerStep('given', 'I am viewing a Nuxt application', async function () {
         const html = await $fetch('/')
         scenarioState.html = html
         bridge.trackMemory('page_load')
       })
 
-      bridge.registerStep('when', 'I make a request to the API', async function() {
+      bridge.registerStep('when', 'I make a request to the API', async function () {
         try {
           // Try to fetch from a potential API route
           const response = await $fetch('/api/health').catch(() => ({ status: 'no-api' }))
@@ -257,11 +257,11 @@ Feature: User Authentication
         bridge.trackMemory('api_request')
       })
 
-      bridge.registerStep('then', 'the application should respond correctly', function() {
+      bridge.registerStep('then', 'the application should respond correctly', function () {
         // Validate HTML structure
         expect(scenarioState.html).toBeDefined()
         expect(scenarioState.html).toContain('<html')
-        
+
         // Check that we got some response (either success or expected error)
         expect(
           scenarioState.apiResponse || scenarioState.apiError
@@ -288,7 +288,7 @@ Feature: User Authentication
       const context = getBDDContext()
 
       // Simulate a complex e-commerce-like scenario
-      bridge.registerStep('given', 'I have a shopping cart with {int} items', function(itemCount) {
+      bridge.registerStep('given', 'I have a shopping cart with {int} items', function (itemCount) {
         context.state.cartItems = Array(itemCount).fill().map((_, i) => ({
           id: i + 1,
           name: `Item ${i + 1}`,
@@ -296,7 +296,7 @@ Feature: User Authentication
         }))
       })
 
-      bridge.registerStep('when', 'I apply a {int} percent discount', function(discountPercent) {
+      bridge.registerStep('when', 'I apply a {int} percent discount', function (discountPercent) {
         const items = context.state.cartItems || []
         context.state.discount = discountPercent
         context.state.originalTotal = items.reduce((sum, item) => sum + item.price, 0)
@@ -304,18 +304,18 @@ Feature: User Authentication
         context.state.finalTotal = context.state.originalTotal - context.state.discountAmount
       })
 
-      bridge.registerStep('then', 'the total should be {float}', function(expectedTotal) {
+      bridge.registerStep('then', 'the total should be {float}', function (expectedTotal) {
         expect(context.state.finalTotal).toBeCloseTo(expectedTotal, 2)
       })
 
-      bridge.registerStep('then', 'I should save {float} with the discount', function(expectedSavings) {
+      bridge.registerStep('then', 'I should save {float} with the discount', function (expectedSavings) {
         expect(context.state.discountAmount).toBeCloseTo(expectedSavings, 2)
       })
 
       // Execute scenario: 3 items (Item 1: $10, Item 2: $11, Item 3: $12) = $33 total
       // 10% discount = $3.30 savings, $29.70 final total
       const steps = bridge.getStepRegistry()
-      
+
       await steps.get('given:I have a shopping cart with {int} items').handler(3)
       await steps.get('when:I apply a {int} percent discount').handler(10)
       steps.get('then:the total should be {float}').handler(29.70)
@@ -362,7 +362,7 @@ It has no structure
       expect(() => getBDDContext()).not.toThrow()
       expect(() => setBDDState('key', null)).not.toThrow()
       expect(() => getBDDState('nonexistent')).not.toThrow()
-      
+
       expect(getBDDState('nonexistent')).toBeUndefined()
     })
   })
@@ -371,21 +371,21 @@ It has no structure
 describe('cross-browser compatibility', () => {
   it('should work without performance API', () => {
     const originalPerformance = global.performance
-    
+
     // Remove performance API
     delete global.performance
-    
+
     const bridge = new VitestCucumberBridge({ performanceTracking: true })
-    
+
     expect(() => {
       bridge.initializePerformanceTracking()
       bridge.trackMemory('test')
     }).not.toThrow()
-    
+
     const metrics = bridge.getPerformanceMetrics()
     expect(metrics.currentMemory).toBe(0)
     expect(metrics.memoryDiff).toBe(0)
-    
+
     // Restore
     global.performance = originalPerformance
   })
@@ -395,10 +395,10 @@ describe('cross-browser compatibility', () => {
       now: () => Date.now()
       // No memory property
     }
-    
+
     const bridge = new VitestCucumberBridge({ performanceTracking: true })
     bridge.initializePerformanceTracking()
-    
+
     expect(() => {
       bridge.trackMemory('test')
       bridge.getPerformanceMetrics()

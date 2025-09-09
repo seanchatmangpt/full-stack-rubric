@@ -78,7 +78,7 @@ export class VitestCucumberBridge {
       mockDefaults: {},
       ...config
     }
-    
+
     this.setupHooks()
   }
 
@@ -123,7 +123,7 @@ export class VitestCucumberBridge {
       bddContext.wrapper.unmount()
       bddContext.wrapper = null
     }
-    
+
     bddContext.state = {}
     bddContext.mocks = {}
     bddContext.performance = {}
@@ -170,25 +170,25 @@ export class VitestCucumberBridge {
    */
   async mountComponent(config) {
     const { component, props = {}, stubs = {}, global = {} } = config
-    
+
     const defaultStubs = {
       MonacoEditor: {
         template: '<textarea v-model="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" class="w-full h-full p-4" />',
         props: ['modelValue', 'lang', 'options'],
         emits: ['update:modelValue']
       },
-      UButton: { 
-        template: '<button @click="$emit(\'click\')" v-bind="$attrs"><slot /></button>' 
+      UButton: {
+        template: '<button @click="$emit(\'click\')" v-bind="$attrs"><slot /></button>'
       },
-      UBadge: { 
-        template: '<span class="badge" v-bind="$attrs"><slot /></span>' 
+      UBadge: {
+        template: '<span class="badge" v-bind="$attrs"><slot /></span>'
       },
-      UModal: { 
+      UModal: {
         template: '<div v-if="modelValue" class="modal"><slot /></div>',
         props: ['modelValue'],
         emits: ['update:modelValue']
       },
-      UCard: { 
+      UCard: {
         template: '<div class="card"><slot name="header" /><slot /><slot name="footer" /></div>'
       },
       ...this.config.mockDefaults,
@@ -205,9 +205,9 @@ export class VitestCucumberBridge {
 
     const startTime = performance.now()
     bddContext.wrapper = mount(component, mountConfig)
-    
+
     await nextTick()
-    
+
     const loadTime = performance.now() - startTime
     if (this.config.performanceTracking) {
       performanceTracker.metrics.renderTimes.push(loadTime)
@@ -235,7 +235,7 @@ export class VitestCucumberBridge {
    */
   trackMemory(label) {
     if (!this.config.performanceTracking) return
-    
+
     const memoryUsage = performance.memory?.usedJSHeapSize || 0
     performanceTracker.metrics.memoryUsage.push({
       label,
@@ -266,7 +266,7 @@ export class VitestCucumberBridge {
     for (const step of steps) {
       const registered = Array.from(stepRegistry.values())
         .find(def => new RegExp(def.pattern).test(step.text))
-      
+
       if (registered) {
         found.push({ step, definition: registered })
       } else {
@@ -290,11 +290,11 @@ export class VitestCucumberBridge {
   extractStepsFromFeature(featureContent) {
     const steps = []
     const lines = featureContent.split('\n')
-    
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim()
       const stepMatch = line.match(/^\s*(Given|When|Then|And|But)\s+(.+)$/)
-      
+
       if (stepMatch) {
         steps.push({
           type: stepMatch[1],
@@ -304,7 +304,7 @@ export class VitestCucumberBridge {
         })
       }
     }
-    
+
     return steps
   }
 
@@ -334,7 +334,7 @@ export class VitestCucumberBridge {
     const { type, text } = step
     const parameterizedText = this.parameterizeStep(text)
     const functionName = this.generateFunctionName(text)
-    
+
     return `/**
  * @description ${text}
  * @${type.toLowerCase()} ${parameterizedText}
@@ -368,11 +368,11 @@ async function ${functionName}(${this.extractParameters(parameterizedText).join(
   extractParameters(parameterizedText) {
     const params = []
     const matches = parameterizedText.matchAll(/\{(int|float|string)\}/g)
-    
+
     let intCount = 0
     let floatCount = 0
     let stringCount = 0
-    
+
     for (const match of matches) {
       switch (match[1]) {
         case 'int':
@@ -389,7 +389,7 @@ async function ${functionName}(${this.extractParameters(parameterizedText).join(
           break
       }
     }
-    
+
     return params
   }
 
@@ -425,7 +425,7 @@ export function registerGiven(pattern, handler, options = {}) {
 
 /**
  * Convenience function to register When steps
- * @param {string} pattern - Gherkin pattern  
+ * @param {string} pattern - Gherkin pattern
  * @param {Function} handler - Step handler
  * @param {Object} options - Additional options
  */

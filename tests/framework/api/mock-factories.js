@@ -115,7 +115,9 @@ export class MockFactories {
       name: faker.commerce.productName(),
       price: parseFloat(faker.commerce.price()),
       quantity: faker.datatype.number({ min: 1, max: 5 }),
-      total: function() { return this.price * this.quantity; }
+      total: function () {
+ return this.price * this.quantity; 
+}
     }));
 
     // Address factories
@@ -190,9 +192,15 @@ export class MockFactories {
       page: overrides.page || 1,
       limit: overrides.limit || 10,
       total: overrides.total || faker.datatype.number({ min: 50, max: 1000 }),
-      totalPages: function() { return Math.ceil(this.total / this.limit); },
-      hasNext: function() { return this.page < this.totalPages(); },
-      hasPrev: function() { return this.page > 1; }
+      totalPages: function () {
+ return Math.ceil(this.total / this.limit); 
+},
+      hasNext: function () {
+ return this.page < this.totalPages(); 
+},
+      hasPrev: function () {
+ return this.page > 1; 
+}
     }));
 
     // File/Media factories
@@ -296,7 +304,7 @@ export class MockFactories {
     let data = factoryDef.factory();
     
     // Apply traits
-    traits.forEach(traitName => {
+    traits.forEach((traitName) => {
       const traitKey = `${name}.${traitName}`;
       const trait = this.traits.get(traitKey);
       if (trait) {
@@ -344,7 +352,7 @@ export class MockFactories {
   _resolveComputedProperties(data) {
     const resolved = { ...data };
     
-    Object.keys(resolved).forEach(key => {
+    Object.keys(resolved).forEach((key) => {
       if (typeof resolved[key] === 'function') {
         resolved[key] = resolved[key].call(resolved);
       }
@@ -366,7 +374,7 @@ export class MockFactories {
     name: () => faker.name.findName(),
     email: () => faker.internet.email(),
     username: () => faker.internet.userName(),
-    slug: (text) => faker.helpers.slugify(text || faker.lorem.words(3)),
+    slug: text => faker.helpers.slugify(text || faker.lorem.words(3)),
     
     // Content fields
     paragraph: () => faker.lorem.paragraph(),
@@ -394,7 +402,7 @@ export class MockFactories {
     imageUrl: (width = 400, height = 400) => faker.image.imageUrl(width, height),
     
     // Status fields
-    status: (options) => faker.helpers.arrayElement(options),
+    status: options => faker.helpers.arrayElement(options),
     
     // Geographic fields
     country: () => faker.address.country(),
@@ -426,7 +434,7 @@ export class MockFactories {
    * Reset all sequences
    */
   resetSequences() {
-    this.sequences.forEach(sequence => {
+    this.sequences.forEach((sequence) => {
       sequence.counter = 0;
     });
     return this;
@@ -445,9 +453,9 @@ export class MockFactories {
 
 // Register default sequences
 const factories = new MockFactories();
-factories.sequence('incrementalId', (n) => n);
-factories.sequence('email', (n) => `user${n}@example.com`);
-factories.sequence('username', (n) => `user${n}`);
+factories.sequence('incrementalId', n => n);
+factories.sequence('email', n => `user${n}@example.com`);
+factories.sequence('username', n => `user${n}`);
 
 /**
  * Create mock factories instance

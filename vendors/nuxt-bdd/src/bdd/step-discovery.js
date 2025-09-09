@@ -57,11 +57,11 @@ export class StepDiscovery {
       featureFilePatterns: ['*.feature'],
       ...options
     }
-    
+
     this.stepDefinitionRegex = [
       // Standard vitest-cucumber patterns
       /(?:Given|When|Then)\s*\(\s*['"`]([^'"`]+)['"`]\s*,\s*([^)]+)\)/g,
-      // Function-based patterns  
+      // Function-based patterns
       /(?:Given|When|Then)\s*\(\s*['"`]([^'"`]+)['"`]\s*,\s*(async\s+)?function\s*([^(]*)/g,
       // Arrow function patterns
       /(?:Given|When|Then)\s*\(\s*['"`]([^'"`]+)['"`]\s*,\s*(async\s+)?\(/g
@@ -76,10 +76,10 @@ export class StepDiscovery {
   async discoverSteps(projectRoot) {
     const definitions = await this.findStepDefinitions(projectRoot)
     const usage = await this.findStepUsage(projectRoot)
-    
+
     const { missing, unused } = this.analyzeStepCoverage(definitions, usage)
     const coverage = this.calculateCoverage(definitions, usage, missing, unused)
-    
+
     return {
       definitions,
       usage,
@@ -96,20 +96,20 @@ export class StepDiscovery {
    */
   async findStepDefinitions(projectRoot) {
     const definitions = []
-    
+
     for (const directory of this.options.stepDirectories) {
       const fullPath = join(projectRoot, directory)
-      
+
       if (this.directoryExists(fullPath)) {
         const files = this.findFiles(fullPath, this.options.stepFilePatterns)
-        
+
         for (const file of files) {
           const fileDefinitions = await this.parseStepFile(file)
           definitions.push(...fileDefinitions)
         }
       }
     }
-    
+
     return definitions
   }
 
@@ -120,20 +120,20 @@ export class StepDiscovery {
    */
   async findStepUsage(projectRoot) {
     const usage = []
-    
+
     for (const directory of this.options.featureDirectories) {
       const fullPath = join(projectRoot, directory)
-      
+
       if (this.directoryExists(fullPath)) {
         const files = this.findFiles(fullPath, this.options.featureFilePatterns)
-        
+
         for (const file of files) {
           const fileUsage = await this.parseFeatureFile(file)
           usage.push(...fileUsage)
         }
       }
     }
-    
+
     return usage
   }
 
@@ -146,39 +146,39 @@ export class StepDiscovery {
     const content = readFileSync(filePath, 'utf-8')
     const definitions = []
     const lines = content.split('\n')
-    
+
     // Find step keyword imports to determine available keywords
     const importMatch = content.match(/import\s+{([^}]+)}\s+from\s+['"`]@amiceli\/vitest-cucumber['"`]/)
-    const availableKeywords = importMatch ? 
-      importMatch[1].split(',').map(k => k.trim()) : 
-      ['Given', 'When', 'Then']
-    
+    const availableKeywords = importMatch
+      ? importMatch[1].split(',').map(k => k.trim())
+      : ['Given', 'When', 'Then']
+
     for (const keyword of availableKeywords) {
       if (!['Given', 'When', 'Then', 'Before', 'After'].includes(keyword)) continue
-      
+
       const keywordRegex = new RegExp(`${keyword}\\s*\\(\\s*['"\`]([^'"\`]+)['"\`]\\s*,\\s*([^)]+)`, 'g')
       let match
-      
+
       while ((match = keywordRegex.exec(content)) !== null) {
         const pattern = match[1]
         const implementation = match[2].trim()
-        
+
         // Find line number
         const beforeMatch = content.substring(0, match.index)
         const lineNumber = beforeMatch.split('\n').length
-        
+
         // Extract function name if present
         const functionMatch = implementation.match(/(?:async\s+)?(?:function\s+)?([a-zA-Z_$][a-zA-Z0-9_$]*)/)
         const functionName = functionMatch ? functionMatch[1] : 'anonymous'
-        
+
         // Extract parameters from pattern
         const parameters = this.extractPatternParameters(pattern)
-        
+
         // Check if implemented (not just a placeholder)
-        const isImplemented = !implementation.includes('throw new Error') && 
-                             !implementation.includes('TODO') &&
-                             !implementation.includes('not implemented')
-        
+        const isImplemented = !implementation.includes('throw new Error')
+          && !implementation.includes('TODO')
+          && !implementation.includes('not implemented')
+
         definitions.push({
           pattern,
           keyword,
@@ -190,7 +190,7 @@ export class StepDiscovery {
         })
       }
     }
-    
+
     return definitions
   }
 
@@ -203,7 +203,7 @@ export class StepDiscovery {
     const content = readFileSync(filePath, 'utf-8')
     const feature = parseFeature(content, filePath)
     const usage = []
-    
+
     // Process background steps
     if (feature.background) {
       for (const step of feature.background.steps) {
@@ -216,7 +216,7 @@ export class StepDiscovery {
         })
       }
     }
-    
+
     // Process scenario steps
     for (const scenario of feature.scenarios) {
       for (const step of scenario.steps) {
@@ -229,7 +229,7 @@ export class StepDiscovery {
         })
       }
     }
-    
+
     // Process scenario outline steps
     for (const outline of feature.scenarioOutlines) {
       for (const step of outline.steps) {
@@ -242,7 +242,7 @@ export class StepDiscovery {
         })
       }
     }
-    
+
     return usage
   }
 
@@ -256,10 +256,10 @@ export class StepDiscovery {
     const missing = []
     const unused = []
     const usedPatterns = new Set()
-    
+
     // Find missing step definitions
     for (const use of usage) {
-      const matchingDefinition = definitions.find(def => {
+      const matchingDefinition = definitions.find((def) => {
         try {
           const regex = new RegExp(`^${def.pattern}$`)
           return def.keyword === use.keyword && regex.test(use.step)
@@ -267,7 +267,7 @@ export class StepDiscovery {
           return false
         }
       })
-      
+
       if (matchingDefinition) {
         usedPatterns.add(`${matchingDefinition.keyword}:${matchingDefinition.pattern}`)
       } else {
@@ -282,7 +282,7 @@ export class StepDiscovery {
         })
       }
     }
-    
+
     // Find unused step definitions
     for (const definition of definitions) {
       const key = `${definition.keyword}:${definition.pattern}`
@@ -290,7 +290,7 @@ export class StepDiscovery {
         unused.push(definition)
       }
     }
-    
+
     return { missing, unused }
   }
 
@@ -306,13 +306,14 @@ export class StepDiscovery {
     const totalSteps = usage.length
     const coveredSteps = totalSteps - missing.length
     const coveragePercentage = totalSteps > 0 ? (coveredSteps / totalSteps) * 100 : 100
-    
+
     const implementedDefinitions = definitions.filter(def => def.implemented).length
-    const implementationPercentage = definitions.length > 0 ? 
-      (implementedDefinitions / definitions.length) * 100 : 100
-    
+    const implementationPercentage = definitions.length > 0
+      ? (implementedDefinitions / definitions.length) * 100
+      : 100
+
     const keywordStats = this.calculateKeywordStatistics(usage)
-    
+
     return {
       totalSteps,
       coveredSteps,
@@ -333,7 +334,7 @@ export class StepDiscovery {
    */
   calculateKeywordStatistics(usage) {
     const stats = {}
-    
+
     for (const use of usage) {
       if (!stats[use.keyword]) {
         stats[use.keyword] = {
@@ -343,12 +344,12 @@ export class StepDiscovery {
       }
       stats[use.keyword].count++
     }
-    
+
     const total = usage.length
     for (const keyword in stats) {
       stats[keyword].percentage = Math.round((stats[keyword].count / total) * 100 * 100) / 100
     }
-    
+
     return stats
   }
 
@@ -361,19 +362,19 @@ export class StepDiscovery {
   generateMissingSteps(missing, options = {}) {
     const { groupByFile = true, includeComments = true } = options
     const templates = []
-    
+
     if (groupByFile) {
       const byFile = this.groupMissingByFile(missing)
-      
+
       for (const [file, steps] of Object.entries(byFile)) {
         if (includeComments) {
           templates.push(`// Missing step definitions for ${file}`)
         }
-        
+
         for (const step of steps) {
           templates.push(step.suggestedImplementation)
         }
-        
+
         templates.push('')
       }
     } else {
@@ -381,7 +382,7 @@ export class StepDiscovery {
         templates.push(step.suggestedImplementation)
       }
     }
-    
+
     return templates.join('\n')
   }
 
@@ -392,14 +393,14 @@ export class StepDiscovery {
    */
   groupMissingByFile(missing) {
     const grouped = {}
-    
+
     for (const step of missing) {
       if (!grouped[step.feature]) {
         grouped[step.feature] = []
       }
       grouped[step.feature].push(step)
     }
-    
+
     return grouped
   }
 
@@ -411,16 +412,16 @@ export class StepDiscovery {
   extractPatternParameters(pattern) {
     const params = []
     const matches = pattern.matchAll(/\{(int|float|string|word)\}/g)
-    
+
     let counts = { int: 0, float: 0, string: 0, word: 0 }
-    
+
     for (const match of matches) {
       const type = match[1]
       const count = counts[type]
       params.push(count > 0 ? `${type}${count + 1}` : type)
       counts[type]++
     }
-    
+
     return params
   }
 
@@ -448,9 +449,9 @@ export class StepDiscovery {
     const pattern = this.parameterizeStep(stepText)
     const functionName = this.generateFunctionName(stepText)
     const parameters = this.extractPatternParameters(pattern)
-    
+
     const paramList = parameters.length > 0 ? parameters.join(', ') : ''
-    
+
     return `/**
  * @description ${keyword} ${stepText}
  * @${keyword.toLowerCase()} ${pattern}
@@ -483,20 +484,20 @@ ${keyword}('${pattern}', async function ${functionName}(${paramList}) {
    */
   findFiles(directory, patterns) {
     const files = []
-    
+
     try {
       const entries = readdirSync(directory)
-      
+
       for (const entry of entries) {
         const fullPath = join(directory, entry)
         const stat = statSync(fullPath)
-        
+
         if (stat.isFile()) {
-          const matches = patterns.some(pattern => {
+          const matches = patterns.some((pattern) => {
             const regex = new RegExp(pattern.replace('*', '.*'))
             return regex.test(entry)
           })
-          
+
           if (matches) {
             files.push(fullPath)
           }
@@ -509,7 +510,7 @@ ${keyword}('${pattern}', async function ${functionName}(${paramList}) {
     } catch (error) {
       // Directory doesn't exist or can't be read
     }
-    
+
     return files
   }
 
@@ -536,7 +537,7 @@ ${keyword}('${pattern}', async function ${functionName}(${paramList}) {
   generateCoverageReport(discoveryResult, options = {}) {
     const { format = 'text', includeDetails = true } = options
     const { coverage, missing, unused, definitions, usage } = discoveryResult
-    
+
     if (format === 'json') {
       return JSON.stringify({
         coverage,
@@ -548,7 +549,7 @@ ${keyword}('${pattern}', async function ${functionName}(${paramList}) {
         }
       }, null, 2)
     }
-    
+
     const lines = []
     lines.push('BDD Step Coverage Report')
     lines.push('========================')
@@ -559,11 +560,11 @@ ${keyword}('${pattern}', async function ${functionName}(${paramList}) {
     lines.push(`Implementation: ${coverage.implementationPercentage}%`)
     lines.push('')
     lines.push('Step Distribution:')
-    
+
     for (const [keyword, stats] of Object.entries(coverage.keywordStats)) {
       lines.push(`  ${keyword}: ${stats.count} (${stats.percentage}%)`)
     }
-    
+
     if (includeDetails) {
       if (missing.length > 0) {
         lines.push('')
@@ -572,7 +573,7 @@ ${keyword}('${pattern}', async function ${functionName}(${paramList}) {
           lines.push(`  ${step.keyword} ${step.step} (${step.feature}:${step.lineNumber})`)
         }
       }
-      
+
       if (unused.length > 0) {
         lines.push('')
         lines.push(`Unused Step Definitions (${unused.length}):`)
@@ -581,7 +582,7 @@ ${keyword}('${pattern}', async function ${functionName}(${paramList}) {
         }
       }
     }
-    
+
     return lines.join('\n')
   }
 }

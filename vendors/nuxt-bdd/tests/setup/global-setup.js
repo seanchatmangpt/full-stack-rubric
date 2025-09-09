@@ -11,13 +11,13 @@ import { beforeAll, afterAll, beforeEach, afterEach } from 'vitest'
 const testConfig = {
   // Performance tracking
   performanceEnabled: true,
-  
+
   // Memory monitoring
   memoryMonitoring: true,
-  
+
   // Cleanup behavior
   autoCleanup: true,
-  
+
   // Test isolation
   isolateTests: true
 }
@@ -42,20 +42,22 @@ function setupPerformanceMonitoring() {
   if (typeof global.performance === 'undefined') {
     global.performance = {
       now: () => Date.now(),
-      memory: process.memoryUsage ? {
-        get usedJSHeapSize() {
-          return process.memoryUsage().heapUsed
-        },
-        get totalJSHeapSize() {
-          return process.memoryUsage().heapTotal
-        },
-        get jsHeapSizeLimit() {
-          return process.memoryUsage().heapTotal * 2
-        }
-      } : undefined
+      memory: process.memoryUsage
+        ? {
+            get usedJSHeapSize() {
+              return process.memoryUsage().heapUsed
+            },
+            get totalJSHeapSize() {
+              return process.memoryUsage().heapTotal
+            },
+            get jsHeapSizeLimit() {
+              return process.memoryUsage().heapTotal * 2
+            }
+          }
+        : undefined
     }
   }
-  
+
   globalTestState.startTime = performance.now()
   globalTestState.memoryBaseline = performance.memory?.usedJSHeapSize || 0
 }
@@ -76,9 +78,12 @@ function setupDOMPolyfills() {
       constructor(callback) {
         this.callback = callback
       }
+
       observe() {}
       disconnect() {}
-      takeRecords() { return [] }
+      takeRecords() {
+        return []
+      }
     }
   }
 
@@ -88,6 +93,7 @@ function setupDOMPolyfills() {
       constructor(callback) {
         this.callback = callback
       }
+
       observe() {}
       unobserve() {}
       disconnect() {}
@@ -103,25 +109,25 @@ function setupTestUtilities() {
   global.testUtils = {
     // Wait utility
     wait: (ms = 0) => new Promise(resolve => setTimeout(resolve, ms)),
-    
+
     // Next tick utility
     nextTick: () => new Promise(resolve => setImmediate(resolve)),
-    
+
     // Memory snapshot utility
     memorySnapshot: () => ({
       timestamp: performance.now(),
       memory: performance.memory?.usedJSHeapSize || 0,
       delta: (performance.memory?.usedJSHeapSize || 0) - globalTestState.memoryBaseline
     }),
-    
+
     // Performance measurement utility
     measure: (label, fn) => {
       const start = performance.now()
       const result = fn()
       const duration = performance.now() - start
-      
+
       if (result && typeof result.then === 'function') {
-        return result.then(value => {
+        return result.then((value) => {
           const asyncDuration = performance.now() - start
           console.log(`⏱️  ${label}: ${asyncDuration.toFixed(2)}ms (async)`)
           return value
@@ -174,22 +180,22 @@ function setupMemoryLeakDetection() {
   if (!testConfig.memoryMonitoring) return
 
   let testStartMemory = 0
-  
+
   beforeEach(() => {
     testStartMemory = performance.memory?.usedJSHeapSize || 0
   })
-  
+
   afterEach(() => {
     if (!performance.memory) return
-    
+
     const currentMemory = performance.memory.usedJSHeapSize
     const memoryIncrease = currentMemory - testStartMemory
-    
+
     // Warn about significant memory increases (>10MB per test)
     if (memoryIncrease > 10 * 1024 * 1024) {
       console.warn(`High memory increase detected: ${(memoryIncrease / 1024 / 1024).toFixed(2)}MB`)
     }
-    
+
     // Force garbage collection if available (helps with memory measurements)
     if (typeof global.gc === 'function') {
       global.gc()
@@ -205,7 +211,7 @@ function setupTestIsolation() {
 
   beforeEach(() => {
     globalTestState.testCount++
-    
+
     // Clear any global state that might leak between tests
     if (global.testUtils) {
       // Reset any global test state
@@ -215,14 +221,14 @@ function setupTestIsolation() {
   afterEach(() => {
     if (testConfig.autoCleanup) {
       // Cleanup global state after each test
-      
+
       // Clear any remaining timeouts/intervals
       const highestTimeoutId = setTimeout(() => {}, 0)
       for (let i = 0; i < highestTimeoutId; i++) {
         clearTimeout(i)
         clearInterval(i)
       }
-      
+
       // Clear immediate callbacks
       if (typeof clearImmediate !== 'undefined') {
         const highestImmediateId = setImmediate(() => {})
@@ -256,7 +262,7 @@ function setupErrorHandling() {
  */
 beforeAll(async () => {
   console.log('🚀 Setting up nuxt-bdd test environment...')
-  
+
   setupPerformanceMonitoring()
   setupDOMPolyfills()
   setupTestUtilities()
@@ -264,7 +270,7 @@ beforeAll(async () => {
   setupMemoryLeakDetection()
   setupTestIsolation()
   setupErrorHandling()
-  
+
   console.log('✅ Test environment setup complete')
   console.log(`📊 Node.js version: ${process.version}`)
   console.log(`📊 Memory baseline: ${(globalTestState.memoryBaseline / 1024 / 1024).toFixed(2)}MB`)
@@ -277,22 +283,22 @@ afterAll(() => {
   const totalTime = performance.now() - globalTestState.startTime
   const currentMemory = performance.memory?.usedJSHeapSize || 0
   const memoryDelta = currentMemory - globalTestState.memoryBaseline
-  
+
   console.log('\n📊 Test Suite Summary:')
   console.log(`⏱️  Total time: ${totalTime.toFixed(2)}ms`)
   console.log(`📈 Tests executed: ${globalTestState.testCount}`)
   console.log(`❌ Failures detected: ${globalTestState.failureCount}`)
   console.log(`💾 Memory delta: ${(memoryDelta / 1024 / 1024).toFixed(2)}MB`)
-  
+
   if (memoryDelta > 50 * 1024 * 1024) {
     console.warn('⚠️  High memory usage detected - possible memory leaks')
   }
-  
+
   // Restore console
   if (global.restoreConsole) {
     global.restoreConsole()
   }
-  
+
   console.log('🧹 Test environment cleanup complete')
 })
 

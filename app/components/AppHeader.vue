@@ -57,7 +57,10 @@ const { header } = useAppConfig()
         variant="soft"
         class="mr-2"
       >
-        <Icon name="i-heroicons-pencil" class="mr-1" />
+        <Icon
+          name="i-heroicons-pencil"
+          class="mr-1"
+        />
         Typing Tutor
       </UButton>
 

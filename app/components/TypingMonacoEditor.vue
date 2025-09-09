@@ -5,17 +5,26 @@
       <div class="metrics-row">
         <div class="metric">
           <label>WPM</label>
-          <span class="value" :class="getWPMClass(metrics.wpm)">{{ metrics.wpm }}</span>
+          <span
+            class="value"
+            :class="getWPMClass(metrics.wpm)"
+          >{{ metrics.wpm }}</span>
         </div>
         <div class="metric">
           <label>Accuracy</label>
-          <span class="value" :class="getAccuracyClass(metrics.accuracy)">{{ Math.round(metrics.accuracy) }}%</span>
+          <span
+            class="value"
+            :class="getAccuracyClass(metrics.accuracy)"
+          >{{ Math.round(metrics.accuracy) }}%</span>
         </div>
         <div class="metric">
           <label>Consistency</label>
           <span class="value">{{ Math.round(metrics.consistency) }}%</span>
         </div>
-        <div class="metric" v-if="sessionDuration > 0">
+        <div
+          v-if="sessionDuration > 0"
+          class="metric"
+        >
           <label>Time</label>
           <span class="value">{{ formatDuration(sessionDuration) }}</span>
         </div>
@@ -23,58 +32,73 @@
       
       <!-- Progress Bar -->
       <div class="progress-bar">
-        <div class="progress-fill" :style="{ width: `${progressScore}%` }"></div>
+        <div
+          class="progress-fill"
+          :style="{ width: `${progressScore}%` }"
+        />
       </div>
     </div>
 
     <!-- Monaco Editor Container -->
-    <div class="editor-container" ref="editorContainer">
+    <div
+      ref="editorContainer"
+      class="editor-container"
+    >
       <!-- Target text display -->
-      <div class="target-text" v-if="targetText">
+      <div
+        v-if="targetText"
+        class="target-text"
+      >
         <pre>{{ targetText }}</pre>
       </div>
       
       <!-- Monaco Editor will be mounted here -->
-      <div class="monaco-editor" ref="monacoContainer"></div>
+      <div
+        ref="monacoContainer"
+        class="monaco-editor"
+      />
     </div>
 
     <!-- Session Controls -->
     <div class="session-controls">
       <button 
         v-if="!isActive" 
-        @click="startTypingSession" 
-        class="btn-primary"
+        class="btn-primary" 
         :disabled="!targetText"
+        @click="startTypingSession"
       >
         Start Typing Session
       </button>
       
       <button 
         v-if="isActive" 
-        @click="pauseSession" 
-        class="btn-secondary"
+        class="btn-secondary" 
+        @click="pauseSession"
       >
         Pause
       </button>
       
       <button 
         v-if="isActive" 
-        @click="endTypingSession" 
-        class="btn-danger"
+        class="btn-danger" 
+        @click="endTypingSession"
       >
         End Session
       </button>
       
       <button 
-        @click="resetSession" 
-        class="btn-outline"
+        class="btn-outline" 
+        @click="resetSession"
       >
         Reset
       </button>
     </div>
 
     <!-- Error Patterns Display -->
-    <div class="error-patterns" v-if="metrics.errorPatterns.size > 0">
+    <div
+      v-if="metrics.errorPatterns.size > 0"
+      class="error-patterns"
+    >
       <h4>Common Errors</h4>
       <div class="error-list">
         <div 
@@ -91,7 +115,7 @@
 </template>
 
 <script setup>
-// @ts-nocheck
+// JavaScript implementation - no TypeScript checking needed
 /**
  * @fileoverview Typing Monaco Editor component with real-time metrics
  * Provides a Monaco-based code editor optimized for typing practice
@@ -226,7 +250,7 @@ function setupKeystrokeMonitoring() {
     if (!isActive.value) return
 
     // Process each content change
-    e.changes.forEach(change => {
+    e.changes.forEach((change) => {
       const position = { 
         line: change.range.startLineNumber, 
         column: change.range.startColumn 

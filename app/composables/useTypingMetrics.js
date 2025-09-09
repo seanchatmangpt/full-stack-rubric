@@ -1,53 +1,28 @@
 import { ref, reactive, computed, readonly } from 'vue'
 
 /**
- * @typedef {Object} TypingMetrics
- * @property {number} wpm - Words per minute (real-time)
- * @property {number} accuracy - Percentage accuracy (0-100)
- * @property {number} consistency - Variance in keystroke timing
- * @property {number[]} keystrokeLatency - Individual keystroke delays
- * @property {Map<string, number>} errorPatterns - Character/pattern error frequency
- * @property {KeystrokeHeat[]} heatmap - Timing distribution per key
- * @property {number} rythmScore - Consistency in typing rhythm
- * @property {number[]} pausePattern - Pause locations and durations
- * @property {number} momentum - Acceleration/deceleration trend
+ * Comprehensive typing performance metrics
+ * Tracks WPM, accuracy, consistency, latency, error patterns, heatmap, rhythm, pauses, and momentum
  */
 
 /**
- * @typedef {Object} KeystrokeEvent
- * @property {number} timestamp
- * @property {string} key
- * @property {string} expected
- * @property {boolean} isCorrect
- * @property {number} timeDelta
- * @property {{line: number, column: number}} position
+ * Keystroke event data
+ * Contains timestamp, key, expected character, correctness, time delta, and position
  */
 
 /**
- * @typedef {Object} KeystrokeHeat
- * @property {string} key
- * @property {number} averageTime
- * @property {number} frequency
- * @property {number} errorRate
+ * Keystroke performance heatmap data
+ * Contains key, average time, frequency, and error rate
  */
 
 /**
- * @typedef {Object} AccuracyMetrics
- * @property {number} raw
- * @property {number} adjusted
- * @property {number} errorRate
- * @property {number} correctionRatio
+ * Accuracy measurement metrics
+ * Contains raw accuracy, adjusted accuracy, error rate, and correction ratio
  */
 
 /**
- * @typedef {Object} PerformanceSession
- * @property {string} id
- * @property {number} startTime
- * @property {number} [endTime]
- * @property {string} drillType
- * @property {number} targetWPM
- * @property {number} finalWPM
- * @property {AccuracyMetrics} accuracy
+ * Performance session record
+ * Contains id, timing, drill type, target and final WPM, and accuracy metrics
  * @property {KeystrokeEvent[]} keystrokes
  */
 
@@ -200,7 +175,7 @@ class TypingCalculator {
     
     recentEvents
       .filter(e => !e.isCorrect)
-      .forEach(e => {
+      .forEach((e) => {
         const pattern = `${e.expected}->${e.key}`;
         patterns.set(pattern, (patterns.get(pattern) || 0) + 1);
       });

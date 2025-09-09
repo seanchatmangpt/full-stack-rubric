@@ -158,7 +158,7 @@ describe('Bundle Optimization Performance Tests', () => {
       
       expect(results).toHaveLength(2);
       // Results should be settled (success or failure)
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.status).toMatch(/fulfilled|rejected/);
       });
     });

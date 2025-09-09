@@ -120,13 +120,13 @@ export const autoTestEvents = (component, options = {}) => {
       const html = wrapper.html()
       const eventMatches = html.match(/@\w+/g) || []
       
-      eventMatches.forEach(match => {
+      eventMatches.forEach((match) => {
         const eventName = match.substring(1)
         detectedEvents.push(eventName)
       })
 
       // Test each detected event
-      detectedEvents.forEach(eventName => {
+      detectedEvents.forEach((eventName) => {
         const triggerElement = wrapper.find(`[data-testid="${eventName}-trigger"]`)
         if (triggerElement.exists()) {
           it(`can emit ${eventName}`, async () => {
@@ -153,7 +153,7 @@ export const testFormEvents = (component, formFields) => {
       wrapper = mount(component)
     })
 
-    formFields.forEach(field => {
+    formFields.forEach((field) => {
       describe(`${field.name} field`, () => {
         it('emits input event on value change', async () => {
           const input = wrapper.find(`[data-testid="${field.name}"]`)
@@ -213,7 +213,7 @@ export const testKeyboardEvents = (component, keyboardEvents) => {
       wrapper = mount(component)
     })
 
-    keyboardEvents.forEach(config => {
+    keyboardEvents.forEach((config) => {
       it(`handles ${config.key} key press`, async () => {
         const target = config.target 
           ? wrapper.find(`[data-testid="${config.target}"]`)
@@ -294,7 +294,7 @@ export const testTimedEvents = (component, timedEvents) => {
       vi.useRealTimers()
     })
 
-    timedEvents.forEach(config => {
+    timedEvents.forEach((config) => {
       it(`emits ${config.event} after ${config.delay}ms`, async () => {
         const trigger = wrapper.find(`[data-testid="${config.trigger}"]`)
         

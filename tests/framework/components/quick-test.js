@@ -114,7 +114,7 @@ export const quickTest = (name, component, options = {}) => {
         
         // Check for aria-labels on interactive elements
         const interactiveElements = element.querySelectorAll('button, a, input, select, textarea')
-        interactiveElements.forEach(el => {
+        interactiveElements.forEach((el) => {
           const hasLabel = el.getAttribute('aria-label') || 
                           el.getAttribute('aria-labelledby') || 
                           el.textContent.trim()
@@ -123,7 +123,7 @@ export const quickTest = (name, component, options = {}) => {
 
         // Check for alt text on images
         const images = element.querySelectorAll('img')
-        images.forEach(img => {
+        images.forEach((img) => {
           expect(img.getAttribute('alt')).toBeTruthy()
         })
       })
@@ -231,7 +231,7 @@ export const propMatrix = (name, component, propCombinations) => {
  */
 export const responsiveTest = (name, component, breakpoints = [320, 768, 1024, 1200]) => {
   return describe(`${name} - Responsive`, () => {
-    breakpoints.forEach(width => {
+    breakpoints.forEach((width) => {
       it(`renders correctly at ${width}px`, () => {
         Object.defineProperty(window, 'innerWidth', {
           writable: true,

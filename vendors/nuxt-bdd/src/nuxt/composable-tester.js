@@ -21,7 +21,7 @@ export class NuxtComposableTester {
       mockFetch: true,
       ...options
     }
-    
+
     this.nuxtContext = null
     this.mockContext = new Map()
     this.watchers = []
@@ -64,7 +64,7 @@ export class NuxtComposableTester {
       return stateMap.get(key)
     })
 
-    // Mock useRoute  
+    // Mock useRoute
     this.mockContext.set('useRoute', () => this.createMockRoute())
 
     // Mock useRouter
@@ -73,7 +73,7 @@ export class NuxtComposableTester {
     // Mock useFetch
     this.mockContext.set('useFetch', (url, options = {}) => {
       const data = ref(null)
-      const pending = ref(true) 
+      const pending = ref(true)
       const error = ref(null)
       const refresh = jest.fn()
 
@@ -90,7 +90,7 @@ export class NuxtComposableTester {
     this.mockContext.set('useAsyncData', (key, handler, options = {}) => {
       const data = ref(null)
       const pending = ref(true)
-      const error = ref(null) 
+      const error = ref(null)
       const refresh = async () => {
         pending.value = true
         try {
@@ -114,9 +114,11 @@ export class NuxtComposableTester {
     // Mock useHead
     this.mockContext.set('useHead', (head) => {
       const headData = ref(head)
-      return { 
+      return {
         headData,
-        updateHead: (newHead) => { headData.value = { ...headData.value, ...newHead } }
+        updateHead: (newHead) => {
+          headData.value = { ...headData.value, ...newHead }
+        }
       }
     })
 
@@ -175,7 +177,7 @@ export class NuxtComposableTester {
     return jest.fn().mockImplementation(async (url, options = {}) => {
       // Simulate network delay
       await new Promise(resolve => setTimeout(resolve, 50))
-      
+
       return {
         mockResponse: true,
         url,
@@ -206,10 +208,10 @@ export class NuxtComposableTester {
     try {
       // Execute composable in test scope
       const result = await this.executeInScope(composableFunction, testOptions.args, testScope)
-      
+
       // Analyze result
       const analysis = this.analyzeComposableResult(result)
-      
+
       return {
         success: true,
         result,
@@ -238,7 +240,7 @@ export class NuxtComposableTester {
   createTestScope(options) {
     const scope = {
       refs: new Map(),
-      computeds: new Map(), 
+      computeds: new Map(),
       watchers: new Map(),
       effects: [],
       provides: new Map(),
@@ -268,7 +270,7 @@ export class NuxtComposableTester {
    */
   async executeInScope(composableFunction, args, scope) {
     const startTime = performance.now()
-    
+
     // Mock global composable functions
     const originalGlobals = {}
     for (const [key, mock] of scope.globals) {
@@ -280,12 +282,12 @@ export class NuxtComposableTester {
 
     try {
       const result = composableFunction(...args)
-      
+
       // Wait for any async operations
       await this.waitForAsync(result)
-      
+
       const endTime = performance.now()
-      
+
       // Track execution metrics
       if (result && typeof result === 'object') {
         result._testMetrics = {
@@ -293,7 +295,7 @@ export class NuxtComposableTester {
           scope
         }
       }
-      
+
       return result
     } finally {
       // Restore original globals
@@ -313,9 +315,9 @@ export class NuxtComposableTester {
     if (!result || typeof result !== 'object') return
 
     const promises = []
-    
+
     // Check for pending refs
-    Object.values(result).forEach(value => {
+    Object.values(result).forEach((value) => {
       if (value && typeof value === 'object' && value.__v_isRef) {
         // If it's a ref with pending promise
         if (value.value && typeof value.value?.then === 'function') {
@@ -351,9 +353,9 @@ export class NuxtComposableTester {
 
     if (result && typeof result === 'object') {
       // Analyze properties
-      Object.keys(result).forEach(key => {
+      Object.keys(result).forEach((key) => {
         if (key.startsWith('_test')) return // Skip test metadata
-        
+
         const value = result[key]
         const property = {
           name: key,
@@ -363,9 +365,9 @@ export class NuxtComposableTester {
           isComputed: value && value.__v_isReadonly === true,
           isFunction: typeof value === 'function'
         }
-        
+
         analysis.properties.push(property)
-        
+
         if (property.isRef) analysis.hasRefs = true
         if (property.isReactive) analysis.isReactive = true
         if (property.isComputed) analysis.hasComputeds = true
@@ -383,7 +385,7 @@ export class NuxtComposableTester {
    */
   estimateMemoryUsage(result) {
     if (!result) return 0
-    
+
     try {
       const jsonString = JSON.stringify(result, (key, value) => {
         // Skip circular references and Vue internals
@@ -405,7 +407,7 @@ export class NuxtComposableTester {
    */
   async testComposableVariations(composableFunction, argCombinations) {
     const results = []
-    
+
     for (const args of argCombinations) {
       const result = await this.testComposable(composableFunction, { args })
       results.push({
@@ -413,7 +415,7 @@ export class NuxtComposableTester {
         ...result
       })
     }
-    
+
     return results
   }
 
@@ -432,15 +434,15 @@ export class NuxtComposableTester {
     }
 
     const result = await this.testComposable(composableFunction, testOptions)
-    
+
     if (!result.success) return result
 
     const reactivityResults = []
-    
+
     // Test each mutation
     for (const mutation of testOptions.mutations) {
       const before = this.captureState(result.result)
-      
+
       // Apply mutation
       if (typeof mutation === 'function') {
         await mutation(result.result)
@@ -448,12 +450,12 @@ export class NuxtComposableTester {
         // Assume mutation is a state change
         Object.assign(result.result, mutation)
       }
-      
+
       // Wait for reactivity
       await nextTick()
-      
+
       const after = this.captureState(result.result)
-      
+
       reactivityResults.push({
         mutation,
         before,
@@ -461,7 +463,7 @@ export class NuxtComposableTester {
         changed: JSON.stringify(before) !== JSON.stringify(after)
       })
     }
-    
+
     return {
       ...result,
       reactivity: {
@@ -480,13 +482,13 @@ export class NuxtComposableTester {
    */
   captureState(composableResult) {
     const state = {}
-    
+
     if (composableResult && typeof composableResult === 'object') {
-      Object.keys(composableResult).forEach(key => {
+      Object.keys(composableResult).forEach((key) => {
         if (key.startsWith('_test')) return
-        
+
         const value = composableResult[key]
-        
+
         if (value && value.__v_isRef) {
           state[key] = value.value
         } else if (value && typeof value !== 'function') {
@@ -494,7 +496,7 @@ export class NuxtComposableTester {
         }
       })
     }
-    
+
     return state
   }
 
@@ -506,17 +508,17 @@ export class NuxtComposableTester {
    */
   async testComposableLifecycle(composableFunction, options = {}) {
     const lifecycleEvents = []
-    
+
     // Create proxy to track lifecycle calls
     const lifecycleProxy = new Proxy({}, {
       get(target, prop) {
         if (typeof prop === 'string' && (
-          prop.startsWith('onMount') ||
-          prop.startsWith('onUnmount') ||
-          prop.startsWith('onBeforeMount') ||
-          prop.startsWith('onBeforeUnmount') ||
-          prop.startsWith('watch') ||
-          prop.startsWith('watchEffect')
+          prop.startsWith('onMount')
+          || prop.startsWith('onUnmount')
+          || prop.startsWith('onBeforeMount')
+          || prop.startsWith('onBeforeUnmount')
+          || prop.startsWith('watch')
+          || prop.startsWith('watchEffect')
         )) {
           return (...args) => {
             lifecycleEvents.push({
@@ -524,14 +526,14 @@ export class NuxtComposableTester {
               args: args.length,
               timestamp: Date.now()
             })
-            
+
             // Store cleanup function if provided
             if (typeof args[args.length - 1] === 'function') {
               this.cleanupFunctions.push(args[args.length - 1])
             }
           }
         }
-        
+
         return this.mockContext.get(prop) || (() => {})
       }
     })
@@ -540,21 +542,21 @@ export class NuxtComposableTester {
     const originalOnMounted = global.onMounted
     const originalOnUnmounted = global.onUnmounted
     const originalWatch = global.watch
-    
+
     global.onMounted = lifecycleProxy.onMounted
-    global.onUnmounted = lifecycleProxy.onUnmounted  
+    global.onUnmounted = lifecycleProxy.onUnmounted
     global.watch = lifecycleProxy.watch
 
     try {
       const result = await this.testComposable(composableFunction, options)
-      
+
       // Simulate component unmount to test cleanup
       for (const cleanup of this.cleanupFunctions) {
         if (typeof cleanup === 'function') {
           cleanup()
         }
       }
-      
+
       return {
         ...result,
         lifecycle: {
@@ -567,7 +569,7 @@ export class NuxtComposableTester {
       global.onMounted = originalOnMounted
       global.onUnmounted = originalOnUnmounted
       global.watch = originalWatch
-      
+
       this.cleanupFunctions = []
     }
   }
@@ -593,10 +595,10 @@ export class NuxtComposableTester {
 
     for (const test of tests) {
       const testStart = Date.now()
-      
+
       try {
         let result
-        
+
         switch (test.type) {
           case 'basic':
             result = await this.testComposable(test.composable, test.options)
@@ -613,7 +615,7 @@ export class NuxtComposableTester {
           default:
             throw new Error(`Unknown test type: ${test.type}`)
         }
-        
+
         const testResult = {
           name: test.name,
           type: test.type,
@@ -621,15 +623,14 @@ export class NuxtComposableTester {
           duration: Date.now() - testStart,
           result
         }
-        
+
         suiteResults.tests.push(testResult)
-        
+
         if (testResult.success) {
           suiteResults.summary.passed++
         } else {
           suiteResults.summary.failed++
         }
-        
       } catch (error) {
         suiteResults.tests.push({
           name: test.name,
@@ -643,7 +644,7 @@ export class NuxtComposableTester {
     }
 
     suiteResults.summary.duration = Date.now() - suiteResults.startTime
-    
+
     return suiteResults
   }
 
@@ -660,14 +661,14 @@ export class NuxtComposableTester {
         }
       }
     }
-    
+
     // Clear watchers
-    this.watchers.forEach(watcher => {
+    this.watchers.forEach((watcher) => {
       if (typeof watcher === 'function') {
         watcher()
       }
     })
-    
+
     // Clear state
     this.mockContext.clear()
     this.cleanupFunctions = []
@@ -695,7 +696,7 @@ export function getComposableTester(options = {}) {
 /**
  * Initialize composable testing environment
  * @param {Object} nuxtContext - Nuxt test context
- * @param {Object} options - Tester options  
+ * @param {Object} options - Tester options
  * @returns {NuxtComposableTester} Initialized tester
  */
 export function initializeComposableTesting(nuxtContext, options = {}) {

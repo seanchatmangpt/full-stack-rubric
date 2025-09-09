@@ -1,6 +1,6 @@
 /**
  * @fileoverview Modern build configuration for tree-shakable library distribution
- * @description Unbuild configuration for ESM/CJS dual package with TypeScript declarations
+ * @description Unbuild configuration for ESM/CJS dual package - pure JavaScript
  */
 
 import { defineBuildConfig } from 'unbuild'
@@ -22,7 +22,7 @@ export default defineBuildConfig({
     // Nuxt integration entry
     {
       input: 'src/nuxt/index',
-      outDir: 'dist/nuxt', 
+      outDir: 'dist/nuxt',
       name: 'index'
     },
     // Configuration utilities entry
@@ -45,8 +45,8 @@ export default defineBuildConfig({
   // Clean output directory before build
   clean: true,
 
-  // Generate TypeScript declaration files
-  declaration: true,
+  // Pure JavaScript build - no TypeScript declarations
+  declaration: false,
 
   // Generate source maps for debugging
   sourcemap: true,
@@ -56,11 +56,11 @@ export default defineBuildConfig({
     emitCJS: true,
     cjsBridge: true,
     inlineDependencies: false,
-    
+
     // External dependencies (don't bundle)
     external: [
       '@amiceli/vitest-cucumber',
-      '@vue/test-utils', 
+      '@vue/test-utils',
       'vitest',
       'vue',
       'nuxt',
@@ -77,7 +77,7 @@ export default defineBuildConfig({
           arrowFunctions: true
         }
       },
-      
+
       // Tree-shaking optimization
       treeshake: {
         preset: 'recommended',

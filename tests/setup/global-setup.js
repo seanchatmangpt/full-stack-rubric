@@ -22,7 +22,14 @@ afterAll(() => {
 beforeEach(() => {
   // Reset all mocks before each test
   vi.clearAllMocks()
-  vi.clearAllTimers()
+  
+  // Reset timers carefully to avoid conflicts
+  try {
+    vi.clearAllTimers()
+    vi.useRealTimers()
+  } catch (error) {
+    // Ignore timer reset errors
+  }
   
   // Reset any global state
   resetGlobalState()
@@ -41,7 +48,7 @@ function setupGlobalMocks() {
   // Mock localStorage
   const localStorageMock = {
     store: new Map(),
-    getItem: vi.fn((key) => localStorageMock.store.get(key) || null),
+    getItem: vi.fn(key => localStorageMock.store.get(key) || null),
     setItem: vi.fn((key, value) => {
       localStorageMock.store.set(key, value)
     }),
@@ -63,7 +70,7 @@ function setupGlobalMocks() {
   // Mock sessionStorage
   const sessionStorageMock = {
     store: new Map(),
-    getItem: vi.fn((key) => sessionStorageMock.store.get(key) || null),
+    getItem: vi.fn(key => sessionStorageMock.store.get(key) || null),
     setItem: vi.fn((key, value) => {
       sessionStorageMock.store.set(key, value)
     }),
@@ -104,11 +111,31 @@ function setupGlobalMocks() {
     now: vi.fn(() => Date.now()),
     mark: vi.fn((name) => {}),
     measure: vi.fn((name, startMark, endMark) => {}),
-    getEntriesByName: vi.fn((name) => []),
-    getEntriesByType: vi.fn((type) => []),
+    getEntriesByName: vi.fn(name => []),
+    getEntriesByType: vi.fn((type) => {
+      if (type === 'navigation') {
+        return [{
+          navigationStart: 1000,
+          loadEventEnd: 3000,
+          domContentLoadedEventEnd: 2500,
+          fetchStart: 1100,
+          responseEnd: 2000,
+          domInteractive: 2200
+        }];
+      }
+      if (type === 'resource') {
+        return [];
+      }
+      return [];
+    }),
     clearMarks: vi.fn(),
     clearMeasures: vi.fn(),
-    timeOrigin: Date.now()
+    timeOrigin: Date.now(),
+    memory: {
+      usedJSHeapSize: 1024 * 1024 * 10, // 10MB
+      totalJSHeapSize: 1024 * 1024 * 20, // 20MB
+      jsHeapSizeLimit: 1024 * 1024 * 100 // 100MB
+    }
   }
 
   // Mock URL API
@@ -157,17 +184,41 @@ function setupGlobalMocks() {
   })
 
   // Assign mocks to global objects
-  Object.defineProperty(window, 'localStorage', { value: localStorageMock })
-  Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock })
-  Object.defineProperty(window, 'performance', { value: performanceMock })
+  Object.defineProperty(window, 'localStorage', { 
+    value: localStorageMock, 
+    writable: true, 
+    configurable: true 
+  })
+  Object.defineProperty(window, 'sessionStorage', { 
+    value: sessionStorageMock, 
+    writable: true, 
+    configurable: true 
+  })
+  Object.defineProperty(window, 'performance', { 
+    value: performanceMock, 
+    writable: true, 
+    configurable: true 
+  })
   
-  Object.defineProperty(global, 'localStorage', { value: localStorageMock })
-  Object.defineProperty(global, 'sessionStorage', { value: sessionStorageMock })
-  Object.defineProperty(global, 'performance', { value: performanceMock })
+  Object.defineProperty(global, 'localStorage', { 
+    value: localStorageMock, 
+    writable: true, 
+    configurable: true 
+  })
+  Object.defineProperty(global, 'sessionStorage', { 
+    value: sessionStorageMock, 
+    writable: true, 
+    configurable: true 
+  })
+  Object.defineProperty(global, 'performance', { 
+    value: performanceMock, 
+    writable: true, 
+    configurable: true 
+  })
 
   // Mock console methods to reduce test noise
   const consoleMethods = ['log', 'warn', 'error', 'info', 'debug']
-  consoleMethods.forEach(method => {
+  consoleMethods.forEach((method) => {
     global.console[method] = vi.fn()
   })
 
@@ -180,13 +231,37 @@ function setupGlobalMocks() {
       text: () => Promise.resolve(''),
       blob: () => Promise.resolve(new Blob()),
       arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
-      headers: new Map(),
+      headers: new Map([['content-length', '51200']]), // 50KB for bundle tests
       url: '',
       redirected: false,
       type: 'basic',
       statusText: 'OK'
     })
   )
+
+  // Mock crypto API
+  Object.defineProperty(global, 'crypto', {
+    value: {
+      randomUUID: vi.fn(() => 'test-uuid-123-456-789'),
+      getRandomValues: vi.fn((arr) => {
+        for (let i = 0; i < arr.length; i++) {
+          arr[i] = Math.floor(Math.random() * 256);
+        }
+        return arr;
+      })
+    }
+  })
+
+  // Mock window.confirm for tests that need user confirmation
+  global.confirm = vi.fn(() => true)
+  
+  // Mock screen API
+  global.screen = {
+    width: 1920,
+    height: 1080,
+    availWidth: 1920,
+    availHeight: 1040
+  }
 }
 
 /**
@@ -236,7 +311,7 @@ function setupVueTestUtils() {
 
   // Global mocks
   config.global.mocks = {
-    $t: (key) => key, // Mock i18n
+    $t: key => key, // Mock i18n
     $route: {
       path: '/',
       params: {},
@@ -338,9 +413,9 @@ export const testUtils = {
       global.localStorage.store.clear()
       global.sessionStorage.store.clear()
     },
-    getItem: vi.fn((key) => store.get(key) || null),
+    getItem: vi.fn(key => store.get(key) || null),
     setItem: vi.fn((key, value) => store.set(key, value)),
-    removeItem: vi.fn((key) => store.delete(key)),
+    removeItem: vi.fn(key => store.delete(key)),
     store: new Map()
   },
 

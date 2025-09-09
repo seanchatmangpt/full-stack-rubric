@@ -882,7 +882,7 @@ describe('Typing Performance Benchmarks', () => {
       promises.push(wrapper.vm.simulateRapidTyping(20, 10))
       
       // Simulate validation calls
-      promises.push(new Promise(resolve => {
+      promises.push(new Promise((resolve) => {
         let count = 0
         const validate = () => {
           if (count++ < 10) {
@@ -1031,8 +1031,8 @@ describe('Typing Performance Benchmarks', () => {
       // Store baseline for comparison
       const expectedBaseline = {
         averageLatency: 5, // Expected average latency
-        p95Latency: 15,    // Expected 95th percentile
-        maxLatency: 30     // Expected maximum latency
+        p95Latency: 15, // Expected 95th percentile
+        maxLatency: 30 // Expected maximum latency
       }
 
       expect(baseline.average).toBeLessThanOrEqual(expectedBaseline.averageLatency)
@@ -1050,7 +1050,7 @@ describe('Typing Performance Benchmarks', () => {
 
       // Intentionally introduce performance regression
       const originalValidateInput = wrapper.vm.validateInput
-      wrapper.vm.validateInput = function() {
+      wrapper.vm.validateInput = function () {
         // Simulate slow validation
         const start = performance.now()
         while (performance.now() - start < 50) {

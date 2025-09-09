@@ -11,7 +11,7 @@ import { nextTick } from 'vue'
  * @typedef {Object} QuickTestOptions
  * @property {boolean} shallow - Use shallow mounting
  * @property {Object} props - Props to pass to component
- * @property {Object} slots - Slots to render  
+ * @property {Object} slots - Slots to render
  * @property {Object} global - Global config for mounting
  * @property {boolean} autoProps - Auto-generate props from component
  * @property {Array<string>} events - Events to test automatically
@@ -56,7 +56,7 @@ export function quickTest(name, component, options = {}) {
 
       const mountFunction = shallow ? shallowMount : mount
       const generatedProps = autoProps ? generateSmartProps(component) : {}
-      
+
       wrapper = mountFunction(component, {
         props: { ...generatedProps, ...props },
         slots,
@@ -80,15 +80,15 @@ export function quickTest(name, component, options = {}) {
       expect(wrapper.html()).toBeTruthy()
     })
 
-    // Props validation 
+    // Props validation
     it('validates props correctly', async () => {
       const componentProps = component.props || {}
-      
+
       for (const [propName, propConfig] of Object.entries(componentProps)) {
         if (propConfig.required) {
           expect(wrapper.props(propName)).toBeDefined()
         }
-        
+
         if (propConfig.validator) {
           const propValue = wrapper.props(propName)
           if (propValue !== undefined) {
@@ -115,19 +115,19 @@ export function quickTest(name, component, options = {}) {
     if (a11y) {
       it('meets accessibility standards', () => {
         const element = wrapper.element
-        
+
         // Check interactive elements have labels
         const interactive = element.querySelectorAll('button, a, input, select, textarea')
-        interactive.forEach(el => {
-          const hasLabel = el.getAttribute('aria-label') || 
-                          el.getAttribute('aria-labelledby') || 
-                          el.textContent.trim()
+        interactive.forEach((el) => {
+          const hasLabel = el.getAttribute('aria-label')
+            || el.getAttribute('aria-labelledby')
+            || el.textContent.trim()
           expect(hasLabel).toBeTruthy()
         })
 
         // Check images have alt text
         const images = element.querySelectorAll('img')
-        images.forEach(img => {
+        images.forEach((img) => {
           expect(img.getAttribute('alt')).toBeTruthy()
         })
       })
@@ -137,7 +137,7 @@ export function quickTest(name, component, options = {}) {
     return {
       wrapper,
       mockContext,
-      
+
       // Enhanced interaction methods
       async rerender(newProps = {}) {
         await wrapper.setProps({ ...wrapper.props(), ...newProps })
@@ -159,7 +159,7 @@ export function quickTest(name, component, options = {}) {
       },
 
       getByText(text) {
-        return wrapper.findAll('*').filter(node => 
+        return wrapper.findAll('*').filter(node =>
           node.text().includes(text)
         )[0]
       },
@@ -209,8 +209,8 @@ function generateSmartProps(component) {
       props[propName] = getDefaultValueForType(propConfig)
     } else if (typeof propConfig === 'object') {
       if (propConfig.default !== undefined) {
-        props[propName] = typeof propConfig.default === 'function' 
-          ? propConfig.default() 
+        props[propName] = typeof propConfig.default === 'function'
+          ? propConfig.default()
           : propConfig.default
       } else if (propConfig.type) {
         props[propName] = getDefaultValueForType(propConfig.type)
@@ -246,7 +246,7 @@ function getDefaultValueForType(type) {
  * @returns {Array} Array of test results
  */
 export function batchTest(components) {
-  return components.map(([name, component, options = {}]) => 
+  return components.map(([name, component, options = {}]) =>
     quickTest(name, component, options)
   )
 }

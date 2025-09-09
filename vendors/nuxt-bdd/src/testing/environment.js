@@ -11,7 +11,7 @@ import { setupBDDEnvironment, cleanupBDDEnvironment } from '../setup.js'
  */
 export async function createTestEnvironment(config = {}) {
   await setupBDDEnvironment(config)
-  
+
   return {
     config,
     cleanup: cleanupBDDEnvironment,

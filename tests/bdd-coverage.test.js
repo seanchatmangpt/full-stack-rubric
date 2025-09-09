@@ -21,10 +21,10 @@ const COVERAGE_CONFIG = {
   stepsPath: join(__dirname, 'steps'),
   outputPath: join(__dirname, 'coverage-reports'),
   thresholds: {
-    features: 90,      // 90% feature coverage
-    scenarios: 85,     // 85% scenario coverage  
-    steps: 80,         // 80% step coverage
-    branches: 75       // 75% branch coverage
+    features: 90, // 90% feature coverage
+    scenarios: 85, // 85% scenario coverage  
+    steps: 80, // 80% step coverage
+    branches: 75 // 75% branch coverage
   },
   formats: ['html', 'json', 'lcov', 'text'],
   includeSkipped: true,
@@ -272,12 +272,14 @@ class CoverageReportGenerator {
         </table>
     </div>
 
-    ${stats.execution.errors > 0 ? `
+    ${stats.execution.errors > 0
+      ? `
     <div class="errors">
         <h2>Errors (${stats.execution.errors})</h2>
         <p class="status-failed">There were ${stats.execution.errors} errors during execution.</p>
     </div>
-    ` : ''}
+    `
+      : ''}
 </body>
 </html>`
   }
@@ -387,7 +389,7 @@ describe('BDD Coverage Analysis and Reporting', () => {
     console.log(`Errors: ${stats.execution.errors}`)
     
     console.log('\n📋 Generated Reports:')
-    reports.forEach(report => {
+    reports.forEach((report) => {
       console.log(`- ${report.format.toUpperCase()}: ${report.path}`)
     })
   })

@@ -73,8 +73,8 @@ export class CucumberBridge {
   convertToGherkinPattern(description) {
     // Handle parameterized descriptions
     let pattern = description
-      .replace(/\{([^}]+)\}/g, '(.+)')  // {param} -> capture group
-      .replace(/"/g, '"([^"]*)"')       // "value" -> capture group
+      .replace(/\{([^}]+)\}/g, '(.+)') // {param} -> capture group
+      .replace(/"/g, '"([^"]*)"') // "value" -> capture group
       
     return new RegExp(`^${pattern}$`)
   }
@@ -181,10 +181,11 @@ export class CucumberBridge {
    * @param {Function} handler - Step handler
    */
   defineStep(type, pattern, handler) {
-    const stepFunction = type === 'given' ? Given : 
-                       type === 'when' ? When : Then
+    const stepFunction = type === 'given'
+      ? Given : 
+      type === 'when' ? When : Then
 
-    stepFunction(pattern, async function(...args) {
+    stepFunction(pattern, async function (...args) {
       // Merge global context with scenario context
       const context = { ...this.globalContext, ...this }
       

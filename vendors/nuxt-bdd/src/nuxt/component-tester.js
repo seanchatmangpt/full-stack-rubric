@@ -25,7 +25,7 @@ export class NuxtComponentTester {
       provide: {},
       ...options
     }
-    
+
     this.nuxtContext = null
     this.mountedComponents = new Set()
     this.defaultMocks = new Map()
@@ -134,7 +134,7 @@ export class NuxtComponentTester {
     }
 
     // Create component instance
-    const wrapper = this.options.shallow 
+    const wrapper = this.options.shallow
       ? shallowMount(component, mountOptions)
       : mount(component, mountOptions)
 
@@ -247,7 +247,7 @@ export class NuxtComponentTester {
 
       // Check for missing alt text on images
       const images = element.querySelectorAll('img')
-      images.forEach(img => {
+      images.forEach((img) => {
         if (!img.getAttribute('alt') && !img.getAttribute('aria-label')) {
           issues.push('Image missing alt text')
         }
@@ -255,7 +255,7 @@ export class NuxtComponentTester {
 
       // Check for missing labels on inputs
       const inputs = element.querySelectorAll('input, select, textarea')
-      inputs.forEach(input => {
+      inputs.forEach((input) => {
         if (!input.getAttribute('aria-label') && !input.getAttribute('aria-labelledby')) {
           const label = element.querySelector(`label[for="${input.id}"]`)
           if (!label) {
@@ -323,7 +323,7 @@ export class NuxtComponentTester {
     }
 
     // Check each slot was rendered
-    Object.keys(slotsMap).forEach(slotName => {
+    Object.keys(slotsMap).forEach((slotName) => {
       const slotContent = slotsMap[slotName]
       result.slotsRendered[slotName] = wrapper.html().includes(slotContent)
     })
@@ -342,11 +342,11 @@ export class NuxtComponentTester {
     const originalHooks = {}
 
     // Mock lifecycle hooks
-    lifecycleHooks.forEach(hook => {
+    lifecycleHooks.forEach((hook) => {
       hooksCalled[hook] = false
       if (component[hook]) {
         originalHooks[hook] = component[hook]
-        component[hook] = function(...args) {
+        component[hook] = function (...args) {
           hooksCalled[hook] = true
           return originalHooks[hook].call(this, ...args)
         }
@@ -367,7 +367,7 @@ export class NuxtComponentTester {
     }
 
     // Restore original hooks
-    Object.keys(originalHooks).forEach(hook => {
+    Object.keys(originalHooks).forEach((hook) => {
       component[hook] = originalHooks[hook]
     })
 
@@ -416,10 +416,11 @@ export class NuxtComponentTester {
         size: { width: viewport.width, height: viewport.height },
         rendered: wrapper.exists(),
         html: wrapper.html(),
-        computedStyles: window?.getComputedStyle ? 
-          Array.from(wrapper.element.querySelectorAll('*')).map(el => 
-            window.getComputedStyle(el)
-          ) : null
+        computedStyles: window?.getComputedStyle
+          ? Array.from(wrapper.element.querySelectorAll('*')).map(el =>
+              window.getComputedStyle(el)
+            )
+          : null
       })
 
       wrapper.destroy()
@@ -464,7 +465,7 @@ export class NuxtComponentTester {
         acc[attr.name] = attr.value
         return acc
       }, {}),
-      children: Array.from(element.children).map(child => 
+      children: Array.from(element.children).map(child =>
         this.createElementTree(child)
       ),
       textContent: element.textContent?.trim()
@@ -481,7 +482,7 @@ export class NuxtComponentTester {
     const events = []
     const originalEmit = wrapper.vm.$emit
 
-    wrapper.vm.$emit = function(event, ...args) {
+    wrapper.vm.$emit = function (event, ...args) {
       events.push({
         event,
         args,

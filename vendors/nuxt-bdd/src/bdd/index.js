@@ -94,7 +94,7 @@ export function initializeBDD(config = {}) {
  */
 export function createBDDSuite(suiteName, config = {}) {
   const bddEnv = initializeBDD(config)
-  
+
   return {
     suiteName,
     bridge: bddEnv.bridge,

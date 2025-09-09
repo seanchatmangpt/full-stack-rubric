@@ -341,7 +341,7 @@ export function autoConfigureFromNuxt(nuxtConfigPath = './nuxt.config') {
       modules: nuxtConfig.modules || [],
       plugins: nuxtConfig.plugins || [],
       css: nuxtConfig.css || [],
-      build: nuxtConfig.build || {},
+      build: nuxtConfig.build || {}
       // Add other relevant config
     }
   } catch (error) {

@@ -96,7 +96,7 @@ export class PerformanceAssertions {
     const paintEntries = performance.getEntriesByType('paint');
     const metrics = {};
 
-    paintEntries.forEach(entry => {
+    paintEntries.forEach((entry) => {
       metrics[entry.name.replace('-', '_')] = entry.startTime;
     });
 
@@ -265,10 +265,10 @@ export function createPerfTest(name, renderFn, options = {}) {
  * @returns {Function} Test decorator
  */
 export function withPerformanceTest(options = {}) {
-  return function(target, propertyKey, descriptor) {
+  return function (target, propertyKey, descriptor) {
     const originalMethod = descriptor.value;
     
-    descriptor.value = async function(...args) {
+    descriptor.value = async function (...args) {
       const startTime = performance.now();
       const result = await originalMethod.apply(this, args);
       const endTime = performance.now();

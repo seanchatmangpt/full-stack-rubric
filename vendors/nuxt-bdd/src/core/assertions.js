@@ -16,13 +16,13 @@ export class A11yAssertions {
   static hasAriaLabels(element) {
     const el = element.element || element
     const interactiveElements = el.querySelectorAll('button, input, select, textarea, a, [tabindex]')
-    
+
     interactiveElements.forEach((interactive, index) => {
-      const hasLabel = interactive.getAttribute('aria-label') || 
-                      interactive.getAttribute('aria-labelledby') ||
-                      interactive.getAttribute('title') ||
-                      interactive.textContent.trim()
-      
+      const hasLabel = interactive.getAttribute('aria-label')
+        || interactive.getAttribute('aria-labelledby')
+        || interactive.getAttribute('title')
+        || interactive.textContent.trim()
+
       expect(hasLabel, `Interactive element ${index} should have accessible label`).toBeTruthy()
     })
   }
@@ -34,7 +34,7 @@ export class A11yAssertions {
   static hasImageAltText(element) {
     const el = element.element || element
     const images = el.querySelectorAll('img')
-    
+
     images.forEach((img, index) => {
       const altText = img.getAttribute('alt')
       expect(altText, `Image ${index} should have alt text`).toBeTruthy()
@@ -49,18 +49,18 @@ export class A11yAssertions {
   static hasProperHeadingHierarchy(element) {
     const el = element.element || element
     const headings = Array.from(el.querySelectorAll('h1, h2, h3, h4, h5, h6'))
-    
+
     if (headings.length === 0) return
 
     const levels = headings.map(h => parseInt(h.tagName.charAt(1)))
-    
+
     // Should start with h1 or at least not skip levels
     let currentLevel = levels[0]
-    
+
     for (let i = 1; i < levels.length; i++) {
       const level = levels[i]
       const jump = level - currentLevel
-      
+
       expect(jump, `Heading level should not jump more than 1 (from h${currentLevel} to h${level})`).toBeLessThanOrEqual(1)
       currentLevel = level
     }
@@ -75,7 +75,7 @@ export class A11yAssertions {
     const focusableElements = el.querySelectorAll(
       'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
     )
-    
+
     focusableElements.forEach((focusable, index) => {
       const tabIndex = focusable.getAttribute('tabindex')
       if (tabIndex && tabIndex !== '0') {
@@ -100,7 +100,7 @@ export class PerformanceAssertions {
     const start = performance.now()
     await operation()
     const duration = performance.now() - start
-    
+
     expect(duration, `Operation should complete within ${maxTime}ms`).toBeLessThan(maxTime)
     return duration
   }
@@ -112,17 +112,17 @@ export class PerformanceAssertions {
    */
   static async memoryUsageWithin(operation, maxMemoryMB) {
     const initialMemory = performance.memory?.usedJSHeapSize || 0
-    
+
     await operation()
-    
+
     // Force garbage collection if available
     if (global.gc) {
       global.gc()
     }
-    
+
     const finalMemory = performance.memory?.usedJSHeapSize || 0
     const memoryIncreaseMB = (finalMemory - initialMemory) / (1024 * 1024)
-    
+
     expect(memoryIncreaseMB, `Memory usage should not exceed ${maxMemoryMB}MB`).toBeLessThan(maxMemoryMB)
   }
 }
@@ -167,7 +167,7 @@ export class ComponentAssertions {
   static emittedEvent(wrapper, eventName, expectedPayload = undefined) {
     const emitted = wrapper.emitted(eventName)
     expect(emitted, `Component should emit event: "${eventName}"`).toBeTruthy()
-    
+
     if (expectedPayload !== undefined) {
       const lastEmit = emitted[emitted.length - 1]
       expect(lastEmit, `Event "${eventName}" should have expected payload`).toEqual(expectedPayload)
@@ -183,7 +183,7 @@ export class ComponentAssertions {
   static hasAttribute(wrapper, attribute, expectedValue = undefined) {
     const attrs = wrapper.attributes()
     expect(attrs, `Component should have attribute: "${attribute}"`).toHaveProperty(attribute)
-    
+
     if (expectedValue !== undefined) {
       expect(attrs[attribute], `Attribute "${attribute}" should have expected value`).toBe(expectedValue)
     }
@@ -197,13 +197,13 @@ export class ComponentAssertions {
   static hasValidProps(wrapper, component) {
     const componentProps = component.props || {}
     const wrapperProps = wrapper.props()
-    
+
     Object.entries(componentProps).forEach(([propName, propConfig]) => {
       if (propConfig.required) {
         expect(wrapperProps, `Required prop "${propName}" should be defined`).toHaveProperty(propName)
         expect(wrapperProps[propName], `Required prop "${propName}" should not be null/undefined`).toBeDefined()
       }
-      
+
       if (propConfig.validator && wrapperProps[propName] !== undefined) {
         const isValid = propConfig.validator(wrapperProps[propName])
         expect(isValid, `Prop "${propName}" should pass validation`).toBe(true)
@@ -222,9 +222,9 @@ export class APIAssertions {
    * @param {Object} expectedStructure - Expected response structure
    */
   static hasStructure(response, expectedStructure) {
-    Object.keys(expectedStructure).forEach(key => {
+    Object.keys(expectedStructure).forEach((key) => {
       expect(response, `Response should have property: "${key}"`).toHaveProperty(key)
-      
+
       if (typeof expectedStructure[key] === 'object' && expectedStructure[key] !== null) {
         this.hasStructure(response[key], expectedStructure[key])
       }
@@ -238,7 +238,7 @@ export class APIAssertions {
   static isPaginated(response) {
     expect(response, 'Response should have data property').toHaveProperty('data')
     expect(response, 'Response should have pagination property').toHaveProperty('pagination')
-    
+
     const { pagination } = response
     expect(pagination, 'Pagination should have page').toHaveProperty('page')
     expect(pagination, 'Pagination should have limit').toHaveProperty('limit')
@@ -255,11 +255,11 @@ export class APIAssertions {
    */
   static isError(response, expectedStatus = undefined) {
     expect(response, 'Response should have error property').toHaveProperty('error')
-    
+
     const { error } = response
     expect(error, 'Error should have message').toHaveProperty('message')
     expect(error.message, 'Error message should be a string').toBeTypeOf('string')
-    
+
     if (expectedStatus !== undefined) {
       expect(error, 'Error should have status').toHaveProperty('status')
       expect(error.status, `Error status should be ${expectedStatus}`).toBe(expectedStatus)
@@ -280,9 +280,9 @@ export class FormAssertions {
   static hasValidationError(wrapper, fieldName, expectedError = undefined) {
     const errorSelector = `[data-testid="${fieldName}-error"], .error[data-field="${fieldName}"], .field-error`
     const errorElement = wrapper.find(errorSelector)
-    
+
     expect(errorElement.exists(), `Field "${fieldName}" should have validation error`).toBe(true)
-    
+
     if (expectedError !== undefined) {
       expect(errorElement.text(), `Validation error should match expected message`).toContain(expectedError)
     }
@@ -295,17 +295,17 @@ export class FormAssertions {
   static isLoading(wrapper) {
     const submitButton = wrapper.find('[type="submit"], button[type="submit"]')
     const form = wrapper.find('form')
-    
+
     // Check for disabled submit button
     if (submitButton.exists()) {
       expect(submitButton.attributes('disabled'), 'Submit button should be disabled during loading').toBeDefined()
     }
-    
+
     // Check for loading class or attribute
-    const hasLoadingState = form.classes().includes('loading') || 
-                           form.attributes('data-loading') === 'true' ||
-                           wrapper.find('[data-testid="loading"]').exists()
-    
+    const hasLoadingState = form.classes().includes('loading')
+      || form.attributes('data-loading') === 'true'
+      || wrapper.find('[data-testid="loading"]').exists()
+
     expect(hasLoadingState, 'Form should be in loading state').toBe(true)
   }
 
@@ -318,7 +318,7 @@ export class FormAssertions {
     Object.entries(expectedData).forEach(([fieldName, expectedValue]) => {
       const field = wrapper.find(`[name="${fieldName}"], [data-testid="${fieldName}"]`)
       expect(field.exists(), `Form field "${fieldName}" should exist`).toBe(true)
-      
+
       const actualValue = field.element.value || field.element.textContent
       expect(actualValue, `Field "${fieldName}" should have expected value`).toBe(String(expectedValue))
     })

@@ -291,7 +291,7 @@ describe('TypingCalculator', () => {
         { timestamp: baseTime + 500, key: 'e', correct: true }, // Slow
         { timestamp: baseTime + 550, key: 'f', correct: true }, // Fast
         { timestamp: baseTime + 600, key: 'g', correct: true }, // Fast
-        { timestamp: baseTime + 650, key: 'h', correct: true }  // Fast - another burst
+        { timestamp: baseTime + 650, key: 'h', correct: true } // Fast - another burst
       ]
       const bursts = TypingCalculator.detectTypingBursts(keystrokes, 100)
       expect(bursts).toBe(2)

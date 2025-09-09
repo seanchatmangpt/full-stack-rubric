@@ -101,14 +101,18 @@ export class StateFactory {
       accessToken: isAuthenticated ? faker.string.alphanumeric(64) : null,
       refreshToken: isAuthenticated ? faker.string.alphanumeric(64) : null,
       tokenExpiry: isAuthenticated ? faker.date.future() : null,
-      user: isAuthenticated ? {
-        id: faker.string.uuid(),
-        email: faker.internet.email(),
-        roles: faker.helpers.arrayElements(['user', 'admin', 'moderator'], { min: 1, max: 2 })
-      } : null,
-      permissions: isAuthenticated ? faker.helpers.arrayElements([
-        'read:profile', 'write:profile', 'delete:account', 'admin:users'
-      ], { min: 2, max: 4 }) : [],
+      user: isAuthenticated
+        ? {
+            id: faker.string.uuid(),
+            email: faker.internet.email(),
+            roles: faker.helpers.arrayElements(['user', 'admin', 'moderator'], { min: 1, max: 2 })
+          }
+        : null,
+      permissions: isAuthenticated
+        ? faker.helpers.arrayElements([
+            'read:profile', 'write:profile', 'delete:account', 'admin:users'
+          ], { min: 2, max: 4 })
+        : [],
       lastAuthAction: faker.helpers.arrayElement(['login', 'logout', 'refresh', 'register']),
       authAttempts: {
         count: faker.number.int({ min: 0, max: 3 }),
@@ -379,21 +383,25 @@ export class StateFactory {
         shipping: parseFloat(shipping.toFixed(2)),
         total: parseFloat((subtotal + tax + shipping).toFixed(2))
       },
-      coupon: faker.datatype.boolean(0.2) ? {
-        code: faker.string.alphanumeric(8).toUpperCase(),
-        discount: faker.number.int({ min: 5, max: 25 }),
-        type: faker.helpers.arrayElement(['percentage', 'fixed'])
-      } : null,
+      coupon: faker.datatype.boolean(0.2)
+        ? {
+            code: faker.string.alphanumeric(8).toUpperCase(),
+            discount: faker.number.int({ min: 5, max: 25 }),
+            type: faker.helpers.arrayElement(['percentage', 'fixed'])
+          }
+        : null,
       shipping: {
-        address: faker.datatype.boolean(0.7) ? {
-          firstName: faker.person.firstName(),
-          lastName: faker.person.lastName(),
-          street: faker.location.streetAddress(),
-          city: faker.location.city(),
-          state: faker.location.state(),
-          zipCode: faker.location.zipCode(),
-          country: faker.location.country()
-        } : null,
+        address: faker.datatype.boolean(0.7)
+          ? {
+              firstName: faker.person.firstName(),
+              lastName: faker.person.lastName(),
+              street: faker.location.streetAddress(),
+              city: faker.location.city(),
+              state: faker.location.state(),
+              zipCode: faker.location.zipCode(),
+              country: faker.location.country()
+            }
+          : null,
         method: faker.helpers.arrayElement(['standard', 'express', 'overnight']),
         estimatedDays: faker.number.int({ min: 1, max: 7 })
       },
@@ -424,10 +432,12 @@ export class StateFactory {
       timestamp: faker.date.recent(),
       read: faker.datatype.boolean(0.4),
       persistent: faker.datatype.boolean(0.2),
-      actions: faker.datatype.boolean(0.3) ? [
-        { label: 'View', action: 'view' },
-        { label: 'Dismiss', action: 'dismiss' }
-      ] : [],
+      actions: faker.datatype.boolean(0.3)
+        ? [
+            { label: 'View', action: 'view' },
+            { label: 'Dismiss', action: 'dismiss' }
+          ]
+        : [],
       category: faker.helpers.arrayElement(['system', 'user', 'content', 'security']),
       priority: faker.helpers.arrayElement(['low', 'medium', 'high', 'urgent'])
     }))

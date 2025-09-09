@@ -46,20 +46,20 @@ export const PRESETS = {
       }
     },
     dependencies: [
-      'nuxt', 
-      'vue', 
-      '@nuxt/test-utils', 
-      'vitest', 
-      '@vue/test-utils', 
+      'nuxt',
+      'vue',
+      '@nuxt/test-utils',
+      'vitest',
+      '@vue/test-utils',
       'jsdom',
       '@cucumber/cucumber'
     ],
     scripts: {
-      build: 'nuxt build',
-      dev: 'nuxt dev',
-      generate: 'nuxt generate',
-      preview: 'nuxt preview',
-      test: 'vitest',
+      'build': 'nuxt build',
+      'dev': 'nuxt dev',
+      'generate': 'nuxt generate',
+      'preview': 'nuxt preview',
+      'test': 'vitest',
       'test:bdd': 'cucumber-js',
       'test:ui': 'vitest --ui'
     },
@@ -69,7 +69,7 @@ export const PRESETS = {
       playwright: false
     }
   },
-  
+
   // Content-heavy website with BDD
   'content-site-bdd': {
     name: 'Content Website with BDD',
@@ -78,7 +78,7 @@ export const PRESETS = {
       nuxt: {
         ssr: true,
         modules: [
-          '@nuxtjs/content', 
+          '@nuxtjs/content',
           '@nuxtjs/tailwindcss',
           '@nuxt/test-utils'
         ],
@@ -113,8 +113,8 @@ export const PRESETS = {
       }
     },
     dependencies: [
-      'nuxt', 
-      '@nuxtjs/content', 
+      'nuxt',
+      '@nuxtjs/content',
       '@nuxtjs/tailwindcss',
       'tailwindcss',
       'autoprefixer',
@@ -124,11 +124,11 @@ export const PRESETS = {
       'playwright'
     ],
     scripts: {
-      build: 'nuxt build',
-      dev: 'nuxt dev',
-      generate: 'nuxt generate',
-      preview: 'nuxt preview',
-      test: 'vitest',
+      'build': 'nuxt build',
+      'dev': 'nuxt dev',
+      'generate': 'nuxt generate',
+      'preview': 'nuxt preview',
+      'test': 'vitest',
       'test:bdd': 'cucumber-js',
       'test:e2e': 'playwright test',
       'test:content': 'vitest --run tests/content'
@@ -140,7 +140,7 @@ export const PRESETS = {
       scenarios: ['content', 'navigation', 'seo']
     }
   },
-  
+
   // E-commerce application with comprehensive BDD
   'ecommerce-bdd': {
     name: 'E-commerce with BDD',
@@ -196,9 +196,9 @@ export const PRESETS = {
       'playwright'
     ],
     scripts: {
-      build: 'nuxt build',
-      dev: 'nuxt dev',
-      test: 'vitest',
+      'build': 'nuxt build',
+      'dev': 'nuxt dev',
+      'test': 'vitest',
       'test:bdd': 'cucumber-js',
       'test:e2e': 'playwright test',
       'test:cart': 'cucumber-js tests/features/cart',
@@ -211,7 +211,7 @@ export const PRESETS = {
       scenarios: ['cart', 'checkout', 'auth', 'payment']
     }
   },
-  
+
   // API-first application with BDD API testing
   'api-first-bdd': {
     name: 'API-First with BDD',
@@ -255,10 +255,10 @@ export const PRESETS = {
       'supertest'
     ],
     scripts: {
-      build: 'nuxt build',
-      dev: 'nuxt dev',
+      'build': 'nuxt build',
+      'dev': 'nuxt dev',
       'db:migrate': 'node scripts/migrate.js',
-      test: 'vitest',
+      'test': 'vitest',
       'test:bdd': 'cucumber-js',
       'test:api': 'cucumber-js tests/features/api',
       'test:integration': 'vitest --run tests/integration'
@@ -270,7 +270,7 @@ export const PRESETS = {
       scenarios: ['api', 'auth', 'validation']
     }
   },
-  
+
   // Testing-focused development with comprehensive BDD
   'testing-focused': {
     name: 'Testing-Focused BDD',
@@ -311,9 +311,9 @@ export const PRESETS = {
       '@axe-core/playwright'
     ],
     scripts: {
-      build: 'nuxt build',
-      dev: 'nuxt dev',
-      test: 'vitest',
+      'build': 'nuxt build',
+      'dev': 'nuxt dev',
+      'test': 'vitest',
       'test:ui': 'vitest --ui',
       'test:coverage': 'vitest --coverage',
       'test:bdd': 'cucumber-js',
@@ -329,7 +329,7 @@ export const PRESETS = {
       scenarios: ['unit', 'integration', 'e2e', 'a11y']
     }
   },
-  
+
   // PWA with BDD testing
   'pwa-bdd': {
     name: 'PWA with BDD',
@@ -380,10 +380,10 @@ export const PRESETS = {
       'playwright'
     ],
     scripts: {
-      build: 'nuxt build',
-      dev: 'nuxt dev',
-      generate: 'nuxt generate',
-      test: 'vitest',
+      'build': 'nuxt build',
+      'dev': 'nuxt dev',
+      'generate': 'nuxt generate',
+      'test': 'vitest',
       'test:bdd': 'cucumber-js',
       'test:pwa': 'cucumber-js tests/features/pwa',
       'test:offline': 'playwright test tests/e2e/offline'
@@ -396,7 +396,7 @@ export const PRESETS = {
       scenarios: ['offline', 'sw', 'notifications']
     }
   },
-  
+
   // Multi-language site with i18n BDD testing
   'multilang-bdd': {
     name: 'Multi-language with BDD',
@@ -445,10 +445,10 @@ export const PRESETS = {
       'playwright'
     ],
     scripts: {
-      build: 'nuxt build',
-      dev: 'nuxt dev',
-      generate: 'nuxt generate',
-      test: 'vitest',
+      'build': 'nuxt build',
+      'dev': 'nuxt dev',
+      'generate': 'nuxt generate',
+      'test': 'vitest',
       'test:bdd': 'cucumber-js',
       'test:i18n': 'cucumber-js tests/features/i18n',
       'test:translations': 'vitest --run tests/translations'
@@ -487,15 +487,15 @@ export function getPresetNames() {
  */
 export function searchPresets(query) {
   const queryLower = query.toLowerCase()
-  
+
   return Object.entries(PRESETS)
     .filter(([name, preset]) => {
-      return preset.name.toLowerCase().includes(queryLower) ||
-             preset.description.toLowerCase().includes(queryLower) ||
-             preset.dependencies.some(dep => dep.toLowerCase().includes(queryLower)) ||
-             (preset.bddConfig && Object.keys(preset.bddConfig).some(key => 
-               key.toLowerCase().includes(queryLower)
-             ))
+      return preset.name.toLowerCase().includes(queryLower)
+        || preset.description.toLowerCase().includes(queryLower)
+        || preset.dependencies.some(dep => dep.toLowerCase().includes(queryLower))
+        || (preset.bddConfig && Object.keys(preset.bddConfig).some(key =>
+          key.toLowerCase().includes(queryLower)
+        ))
     })
     .map(([name, preset]) => ({ ...preset, id: name }))
 }
@@ -507,16 +507,16 @@ export function searchPresets(query) {
  */
 export function recommendPresets(structure) {
   const recommendations = []
-  
+
   // BDD-focused recommendations (prioritized)
   if (structure.bddStructure?.hasBDD || structure.dependencies.includes('@cucumber/cucumber')) {
     if (structure.dependencies.includes('@nuxtjs/content')) {
       recommendations.push('content-site-bdd')
-    } else if (structure.dependencies.includes('stripe') || 
-               structure.dependencies.includes('commerce')) {
+    } else if (structure.dependencies.includes('stripe')
+      || structure.dependencies.includes('commerce')) {
       recommendations.push('ecommerce-bdd')
-    } else if (structure.directories.includes('server') ||
-               structure.dependencies.includes('jsonwebtoken')) {
+    } else if (structure.directories.includes('server')
+      || structure.dependencies.includes('jsonwebtoken')) {
       recommendations.push('api-first-bdd')
     } else if (structure.dependencies.includes('@nuxtjs/pwa')) {
       recommendations.push('pwa-bdd')
@@ -530,37 +530,37 @@ export function recommendPresets(structure) {
     if (structure.dependencies.includes('@nuxtjs/content')) {
       recommendations.push('content-site-bdd')
     }
-    
-    if (structure.dependencies.includes('stripe') || 
-        structure.dependencies.includes('commerce')) {
+
+    if (structure.dependencies.includes('stripe')
+      || structure.dependencies.includes('commerce')) {
       recommendations.push('ecommerce-bdd')
     }
-    
+
     if (structure.dependencies.includes('@nuxtjs/pwa')) {
       recommendations.push('pwa-bdd')
     }
-    
+
     if (structure.dependencies.includes('@nuxtjs/i18n')) {
       recommendations.push('multilang-bdd')
     }
-    
+
     // API-first detection
-    if (structure.directories.includes('server') ||
-        structure.dependencies.includes('jsonwebtoken')) {
+    if (structure.directories.includes('server')
+      || structure.dependencies.includes('jsonwebtoken')) {
       recommendations.push('api-first-bdd')
     }
-    
+
     // Testing framework detection
     if (structure.testingConfig?.frameworks?.length > 0) {
       recommendations.push('testing-focused')
     }
   }
-  
+
   // Default to BDD-enabled basic if no specific patterns found
   if (recommendations.length === 0) {
     recommendations.push('nuxt-bdd-basic')
   }
-  
+
   return [...new Set(recommendations)] // Remove duplicates
 }
 
@@ -573,14 +573,14 @@ export function recommendPresets(structure) {
  */
 export function applyPreset(presetName, currentConfig = {}, options = {}) {
   const preset = getPreset(presetName)
-  
+
   if (!preset) {
     throw new Error(`Preset "${presetName}" not found`)
   }
-  
+
   // Deep merge preset configuration with current configuration
   const mergedConfig = deepMerge(preset.config, currentConfig)
-  
+
   // Apply BDD enhancements if preset supports it
   if (preset.bddConfig?.enabled && options.enableBDD !== false) {
     mergedConfig.testing = mergedConfig.testing || {}
@@ -589,12 +589,12 @@ export function applyPreset(presetName, currentConfig = {}, options = {}) {
       ...mergedConfig.testing.bdd
     }
   }
-  
+
   // Apply any option overrides
   if (options.overrides) {
     return deepMerge(mergedConfig, options.overrides)
   }
-  
+
   return mergedConfig
 }
 
@@ -624,9 +624,9 @@ export function generateCustomPreset(requirements = {}) {
     },
     dependencies: ['nuxt', '@nuxt/test-utils', 'vitest', '@cucumber/cucumber'],
     scripts: {
-      build: 'nuxt build',
-      dev: 'nuxt dev',
-      test: 'vitest',
+      'build': 'nuxt build',
+      'dev': 'nuxt dev',
+      'test': 'vitest',
       'test:bdd': 'cucumber-js'
     },
     bddConfig: {
@@ -634,7 +634,7 @@ export function generateCustomPreset(requirements = {}) {
       cucumber: true
     }
   }
-  
+
   // Add modules based on requirements
   if (requirements.features) {
     if (requirements.features.includes('content')) {
@@ -642,44 +642,44 @@ export function generateCustomPreset(requirements = {}) {
       preset.dependencies.push('@nuxtjs/content')
       preset.config.testing.bdd.scenarios = ['content', 'navigation']
     }
-    
+
     if (requirements.features.includes('pwa')) {
       preset.config.nuxt.modules.push('@nuxtjs/pwa')
       preset.dependencies.push('@nuxtjs/pwa')
       preset.config.testing.bdd.scenarios = [...(preset.config.testing.bdd.scenarios || []), 'pwa', 'offline']
     }
-    
+
     if (requirements.features.includes('i18n')) {
       preset.config.nuxt.modules.push('@nuxtjs/i18n')
       preset.dependencies.push('@nuxtjs/i18n')
       preset.config.testing.bdd.scenarios = [...(preset.config.testing.bdd.scenarios || []), 'i18n']
     }
-    
+
     if (requirements.features.includes('tailwind')) {
       preset.config.nuxt.modules.push('@nuxtjs/tailwindcss')
       preset.dependencies.push('@nuxtjs/tailwindcss')
     }
-    
+
     if (requirements.features.includes('pinia')) {
       preset.config.nuxt.modules.push('@pinia/nuxt')
       preset.dependencies.push('@pinia/nuxt')
     }
   }
-  
+
   // Add E2E testing if requested
   if (requirements.e2e) {
     preset.dependencies.push('playwright')
     preset.scripts['test:e2e'] = 'playwright test'
     preset.bddConfig.playwright = true
   }
-  
+
   // Add accessibility testing if requested
   if (requirements.accessibility) {
     preset.dependencies.push('@axe-core/playwright')
     preset.scripts['test:a11y'] = 'cucumber-js tests/features/accessibility'
     preset.bddConfig.accessibility = true
   }
-  
+
   return preset
 }
 
@@ -692,11 +692,11 @@ export function generateCustomPreset(requirements = {}) {
 export function comparePresets(preset1Name, preset2Name) {
   const preset1 = getPreset(preset1Name)
   const preset2 = getPreset(preset2Name)
-  
+
   if (!preset1 || !preset2) {
     throw new Error('One or both presets not found')
   }
-  
+
   return {
     name: {
       preset1: preset1.name,
@@ -732,35 +732,35 @@ export function comparePresets(preset1Name, preset2Name) {
  */
 export function getBDDRecommendations(presetName) {
   const preset = getPreset(presetName)
-  
+
   if (!preset) {
     throw new Error(`Preset "${presetName}" not found`)
   }
-  
+
   const recommendations = {
     scenarios: [],
     tools: [],
     bestPractices: []
   }
-  
+
   // Generate scenario recommendations based on preset
   if (preset.bddConfig?.scenarios) {
     recommendations.scenarios = preset.bddConfig.scenarios
   }
-  
+
   // Tool recommendations
   if (preset.bddConfig?.cucumber) {
     recommendations.tools.push('Cucumber for BDD scenarios')
   }
-  
+
   if (preset.bddConfig?.playwright) {
     recommendations.tools.push('Playwright for E2E testing')
   }
-  
+
   if (preset.bddConfig?.accessibility) {
     recommendations.tools.push('Axe-core for accessibility testing')
   }
-  
+
   // Best practices based on preset type
   recommendations.bestPractices = [
     'Write scenarios in plain English using Given/When/Then',
@@ -769,7 +769,7 @@ export function getBDDRecommendations(presetName) {
     'Include both positive and negative test scenarios',
     'Test critical user journeys first'
   ]
-  
+
   return recommendations
 }
 
@@ -781,18 +781,18 @@ export function getBDDRecommendations(presetName) {
  */
 function deepMerge(target, source) {
   const result = { ...target }
-  
+
   for (const key in source) {
     if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
       result[key] = deepMerge(result[key] || {}, source[key])
     } else if (Array.isArray(source[key])) {
-      result[key] = Array.isArray(result[key]) 
+      result[key] = Array.isArray(result[key])
         ? [...result[key], ...source[key]]
         : source[key]
     } else {
       result[key] = source[key]
     }
   }
-  
+
   return result
 }

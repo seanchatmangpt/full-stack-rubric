@@ -49,13 +49,13 @@ describe('BDD Validation Report', () => {
 
       console.log('\n🔧 STEP DEFINITIONS BY TYPE:')
       const stepsByType = { Given: [], When: [], Then: [] }
-      detailedReport.stepDefinitions.forEach(stepDef => {
+      detailedReport.stepDefinitions.forEach((stepDef) => {
         stepsByType[stepDef.type].push(stepDef)
       })
       
       Object.entries(stepsByType).forEach(([type, steps]) => {
         console.log(`   ${type}: ${steps.length} definitions`)
-        steps.slice(0, 3).forEach(step => {
+        steps.slice(0, 3).forEach((step) => {
           console.log(`      - ${step.pattern} (${step.file}:${step.line})`)
         })
         if (steps.length > 3) {
@@ -191,7 +191,7 @@ describe('BDD Validation Report', () => {
       if (criticalSteps.length > 0) {
         console.log('   Phase 1 - Critical Basic Steps (High Priority):')
         console.log(`     Implement ${criticalSteps.length} basic interaction steps`)
-        criticalSteps.slice(0, 3).forEach(step => {
+        criticalSteps.slice(0, 3).forEach((step) => {
           console.log(`       - ${step}`)
         })
       }
@@ -207,7 +207,7 @@ describe('BDD Validation Report', () => {
       if (advancedSteps.length > 0) {
         console.log('   Phase 2 - Advanced Features (Medium Priority):')
         console.log(`     Implement ${advancedSteps.length} advanced testing steps`)
-        advancedSteps.slice(0, 3).forEach(step => {
+        advancedSteps.slice(0, 3).forEach((step) => {
           console.log(`       - ${step}`)
         })
       }
@@ -220,7 +220,7 @@ describe('BDD Validation Report', () => {
       if (edgeCaseSteps.length > 0) {
         console.log('   Phase 3 - Edge Cases & Specialized Tests (Low Priority):')
         console.log(`     Implement ${edgeCaseSteps.length} specialized testing steps`)
-        edgeCaseSteps.slice(0, 2).forEach(step => {
+        edgeCaseSteps.slice(0, 2).forEach((step) => {
           console.log(`       - ${step}`)
         })
       }

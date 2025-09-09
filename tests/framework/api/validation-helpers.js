@@ -486,8 +486,8 @@ export class ValidationHelper {
    */
   _matchesPathTemplate(path, template) {
     const templateRegex = template
-      .replace(/\{[^}]+\}/g, '([^/]+)')  // Replace {param} with capture group
-      .replace(/\//g, '\\/');           // Escape slashes
+      .replace(/\{[^}]+\}/g, '([^/]+)') // Replace {param} with capture group
+      .replace(/\//g, '\\/'); // Escape slashes
     
     const regex = new RegExp(`^${templateRegex}$`);
     return regex.test(path);
@@ -557,7 +557,7 @@ export class ValidationHelper {
      */
     hasFields: (response, fields) => {
       const missing = [];
-      fields.forEach(field => {
+      fields.forEach((field) => {
         if (!(field in response.data)) {
           missing.push(field);
         }
@@ -625,7 +625,7 @@ export class ValidationHelper {
         return errors;
       }
       
-      Object.keys(expected).forEach(key => {
+      Object.keys(expected).forEach((key) => {
         const newPath = path ? `${path}.${key}` : key;
         
         if (!(key in actual)) {

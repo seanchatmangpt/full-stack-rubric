@@ -1,11 +1,16 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
   modules: [
     'nuxt-bdd',
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt'
   ],
+  devtools: { enabled: true },
+  nitro: {
+    experimental: {
+      wasm: true
+    }
+  },
   bdd: {
     enabled: true,
     features: './features',
@@ -23,10 +28,5 @@ export default defineNuxtConfig({
     },
     timeout: 30000,
     retry: 2
-  },
-  nitro: {
-    experimental: {
-      wasm: true
-    }
   }
 })

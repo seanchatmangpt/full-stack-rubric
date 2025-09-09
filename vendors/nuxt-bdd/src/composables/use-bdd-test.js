@@ -17,9 +17,9 @@ export function useBDDTest(options = {}) {
     skipped: 0,
     total: 0
   })
-  
+
   const context = reactive({})
-  
+
   /**
    * Runs a BDD scenario
    * @param {string} scenarioName - Name of the scenario
@@ -28,7 +28,7 @@ export function useBDDTest(options = {}) {
    */
   async function runScenario(scenarioName, scenarioFn) {
     isRunning.value = true
-    
+
     try {
       await scenarioFn(context)
       results.passed++
@@ -41,7 +41,7 @@ export function useBDDTest(options = {}) {
       isRunning.value = false
     }
   }
-  
+
   /**
    * Sets context data
    * @param {string} key - Context key
@@ -50,7 +50,7 @@ export function useBDDTest(options = {}) {
   function setContext(key, value) {
     context[key] = value
   }
-  
+
   /**
    * Gets context data
    * @param {string} key - Context key
@@ -59,7 +59,7 @@ export function useBDDTest(options = {}) {
   function getContext(key) {
     return context[key]
   }
-  
+
   return {
     isRunning,
     results,

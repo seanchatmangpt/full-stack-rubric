@@ -163,7 +163,7 @@ export function generateStepDefinitionsFile(featureContent, filename, options = 
   // Add imports
   if (steps.imports.size > 0) {
     fileContent += '\n// Additional imports\n'
-    steps.imports.forEach(imp => {
+    steps.imports.forEach((imp) => {
       fileContent += `${imp}\n`
     })
   }
@@ -171,7 +171,7 @@ export function generateStepDefinitionsFile(featureContent, filename, options = 
   // Add helper functions
   if (steps.helpers.size > 0) {
     fileContent += '\n// Helper functions\n'
-    steps.helpers.forEach(helper => {
+    steps.helpers.forEach((helper) => {
       fileContent += `${helper}\n\n`
     })
   }

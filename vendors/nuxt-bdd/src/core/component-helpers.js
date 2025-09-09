@@ -160,12 +160,12 @@ export async function mountWithExpectations(component, options = {}) {
   }
 
   // Add element finding utilities
-  wrapper.findByTestId = (testId) => wrapper.find(`[data-testid="${testId}"]`)
-  wrapper.findAllByTestId = (testId) => wrapper.findAll(`[data-testid="${testId}"]`)
-  wrapper.findByText = (text) => wrapper.findAll('*').filter(node => 
+  wrapper.findByTestId = testId => wrapper.find(`[data-testid="${testId}"]`)
+  wrapper.findAllByTestId = testId => wrapper.findAll(`[data-testid="${testId}"]`)
+  wrapper.findByText = text => wrapper.findAll('*').filter(node =>
     node.text().includes(text)
   )[0]
-  wrapper.findByRole = (role) => wrapper.find(`[role="${role}"]`)
+  wrapper.findByRole = role => wrapper.find(`[role="${role}"]`)
 
   return wrapper
 }

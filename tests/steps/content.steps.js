@@ -22,7 +22,7 @@ const mockContentValidator = createMockContentValidator();
 const testRunner = new BDDTestRunner('content');
 
 // Content Loading & Processing
-Given('content exists at path {string}', async function(contentPath) {
+Given('content exists at path {string}', async function (contentPath) {
   this.contentPath = contentPath;
   this.mockContent = {
     path: contentPath,
@@ -38,7 +38,7 @@ Given('content exists at path {string}', async function(contentPath) {
   expect(mockContentManager.contentExists).toHaveBeenCalledWith(contentPath);
 });
 
-Given('content does not exist at path {string}', async function(contentPath) {
+Given('content does not exist at path {string}', async function (contentPath) {
   this.contentPath = contentPath;
   
   mockContentManager.getContent.mockRejectedValue(new Error('Content not found'));
@@ -48,7 +48,7 @@ Given('content does not exist at path {string}', async function(contentPath) {
   expect(mockContentManager.contentExists).toHaveBeenCalledWith(contentPath);
 });
 
-When('the system loads the content', async function() {
+When('the system loads the content', async function () {
   try {
     this.loadedContent = await mockContentManager.getContent(this.contentPath);
   } catch (error) {
@@ -59,7 +59,7 @@ When('the system loads the content', async function() {
   expect(mockContentManager.getContent).toHaveBeenCalledWith(this.contentPath);
 });
 
-When('the content is processed for display', async function() {
+When('the content is processed for display', async function () {
   mockMarkdownProcessor.process.mockResolvedValue({
     html: '<h1>Test Content</h1><p>This is test content.</p>',
     toc: [{ level: 1, text: 'Test Content', anchor: 'test-content' }],
@@ -72,7 +72,7 @@ When('the content is processed for display', async function() {
   expect(mockMarkdownProcessor.process).toHaveBeenCalledWith(this.loadedContent);
 });
 
-Then('the content should be loaded successfully', async function() {
+Then('the content should be loaded successfully', async function () {
   expect(this.loadedContent).toEqual(
     expect.objectContaining({
       path: this.contentPath,
@@ -85,7 +85,7 @@ Then('the content should be loaded successfully', async function() {
   expect(mockContentManager.cacheContent).toHaveBeenCalledWith(this.contentPath, this.loadedContent);
 });
 
-Then('the content should be rendered as HTML', async function() {
+Then('the content should be rendered as HTML', async function () {
   expect(this.processedContent.html).toContain('<h1>Test Content</h1>');
   
   // Verify HTML rendering contract
@@ -93,7 +93,7 @@ Then('the content should be rendered as HTML', async function() {
 });
 
 // Markdown Processing & Syntax Highlighting
-Given('markdown content with code blocks', async function() {
+Given('markdown content with code blocks', async function () {
   this.markdownWithCode = `
 # Code Example
 
@@ -106,13 +106,13 @@ function hello() {
   
   mockMarkdownProcessor.detectCodeBlocks.mockReturnValue([{
     language: 'javascript',
-    code: "function hello() {\n  console.log('Hello, world!');\n}",
+    code: 'function hello() {\n  console.log(\'Hello, world!\');\n}',
     startLine: 3,
     endLine: 5
   }]);
 });
 
-When('syntax highlighting is applied', async function() {
+When('syntax highlighting is applied', async function () {
   mockMarkdownProcessor.applySyntaxHighlighting.mockResolvedValue({
     highlighted: true,
     languages: ['javascript'],
@@ -125,7 +125,7 @@ When('syntax highlighting is applied', async function() {
   expect(mockMarkdownProcessor.applySyntaxHighlighting).toHaveBeenCalledWith(this.markdownWithCode);
 });
 
-Then('code blocks should be syntax highlighted', async function() {
+Then('code blocks should be syntax highlighted', async function () {
   expect(this.highlightedContent.highlighted).toBe(true);
   expect(this.highlightedContent.languages).toContain('javascript');
   
@@ -134,7 +134,7 @@ Then('code blocks should be syntax highlighted', async function() {
 });
 
 // Content Validation & Schema Compliance
-Given('content with frontmatter schema', async function() {
+Given('content with frontmatter schema', async function () {
   this.contentSchema = {
     title: { type: 'string', required: true },
     date: { type: 'string', format: 'date', required: true },
@@ -157,7 +157,7 @@ Given('content with frontmatter schema', async function() {
   });
 });
 
-Given('content with invalid frontmatter', async function() {
+Given('content with invalid frontmatter', async function () {
   this.invalidContent = {
     frontmatter: {
       // Missing required title
@@ -177,7 +177,7 @@ Given('content with invalid frontmatter', async function() {
   });
 });
 
-When('content validation is performed', async function() {
+When('content validation is performed', async function () {
   const contentToValidate = this.validContent || this.invalidContent;
   
   this.validationResult = mockContentValidator.validateAgainstSchema(
@@ -192,7 +192,7 @@ When('content validation is performed', async function() {
   );
 });
 
-Then('validation should pass', async function() {
+Then('validation should pass', async function () {
   expect(this.validationResult.valid).toBe(true);
   expect(this.validationResult.errors).toHaveLength(0);
   
@@ -200,7 +200,7 @@ Then('validation should pass', async function() {
   expect(mockContentValidator.recordValidationSuccess).toHaveBeenCalled();
 });
 
-Then('validation should fail with errors', async function() {
+Then('validation should fail with errors', async function () {
   expect(this.validationResult.valid).toBe(false);
   expect(this.validationResult.errors.length).toBeGreaterThan(0);
   
@@ -209,7 +209,7 @@ Then('validation should fail with errors', async function() {
 });
 
 // Content Search & Indexing
-Given('indexed content in the system', async function() {
+Given('indexed content in the system', async function () {
   this.indexedContent = [
     { path: '/content/post1.md', title: 'First Post', body: 'Content about JavaScript' },
     { path: '/content/post2.md', title: 'Second Post', body: 'Content about Vue.js' },
@@ -223,7 +223,7 @@ Given('indexed content in the system', async function() {
   });
 });
 
-When('the user searches for {string}', async function(searchTerm) {
+When('the user searches for {string}', async function (searchTerm) {
   this.searchTerm = searchTerm;
   
   const mockResults = this.indexedContent.filter(content => 
@@ -244,7 +244,7 @@ When('the user searches for {string}', async function(searchTerm) {
   expect(mockContentManager.search).toHaveBeenCalledWith(searchTerm);
 });
 
-Then('relevant content should be returned', async function() {
+Then('relevant content should be returned', async function () {
   expect(this.searchResults.results.length).toBeGreaterThan(0);
   expect(this.searchResults.total).toBe(this.searchResults.results.length);
   
@@ -252,7 +252,7 @@ Then('relevant content should be returned', async function() {
   expect(mockContentManager.processSearchResults).toHaveBeenCalledWith(this.searchResults);
 });
 
-Then('search results should be ranked by relevance', async function() {
+Then('search results should be ranked by relevance', async function () {
   mockContentManager.rankResults.mockReturnValue({
     ranked: true,
     algorithm: 'tf-idf',
@@ -271,7 +271,7 @@ Then('search results should be ranked by relevance', async function() {
 });
 
 // Content Caching & Performance
-Given('content caching is enabled', async function() {
+Given('content caching is enabled', async function () {
   this.cachingEnabled = true;
   
   mockContentManager.isCachingEnabled.mockReturnValue(true);
@@ -283,7 +283,7 @@ Given('content caching is enabled', async function() {
   });
 });
 
-When('frequently accessed content is requested', async function() {
+When('frequently accessed content is requested', async function () {
   this.frequentContentPath = '/content/popular-post.md';
   
   mockContentManager.getCachedContent.mockResolvedValue({
@@ -299,7 +299,7 @@ When('frequently accessed content is requested', async function() {
   expect(mockContentManager.getCachedContent).toHaveBeenCalledWith(this.frequentContentPath);
 });
 
-Then('content should be served from cache', async function() {
+Then('content should be served from cache', async function () {
   expect(this.cachedResult.cached).toBe(true);
   expect(this.cachedResult.cacheHit).toBe(true);
   expect(this.cachedResult.retrievalTime).toBeLessThan(10);
@@ -309,7 +309,7 @@ Then('content should be served from cache', async function() {
 });
 
 // Content Generation & Templates
-Given('a content template {string}', async function(templateName) {
+Given('a content template {string}', async function (templateName) {
   this.templateName = templateName;
   this.templateData = {
     name: templateName,
@@ -323,7 +323,7 @@ Given('a content template {string}', async function(templateName) {
   expect(mockContentManager.getTemplate).toHaveBeenCalledWith(templateName);
 });
 
-When('content is generated from the template', async function() {
+When('content is generated from the template', async function () {
   const templateValues = {
     title: 'Generated Post',
     date: '2024-01-15',
@@ -356,7 +356,7 @@ When('content is generated from the template', async function() {
   );
 });
 
-Then('new content should be created following the template structure', async function() {
+Then('new content should be created following the template structure', async function () {
   expect(this.generatedContent.generated).toBe(true);
   expect(this.generatedContent.content.frontmatter).toEqual(
     expect.objectContaining({
@@ -374,7 +374,7 @@ Then('new content should be created following the template structure', async fun
 });
 
 // Content Versioning & History
-Given('content with version history', async function() {
+Given('content with version history', async function () {
   this.contentWithHistory = {
     path: '/content/versioned-post.md',
     currentVersion: 3,
@@ -391,7 +391,7 @@ Given('content with version history', async function() {
   expect(mockContentManager.getVersionHistory).toHaveBeenCalledWith(this.contentWithHistory.path);
 });
 
-When('a previous version is requested', async function() {
+When('a previous version is requested', async function () {
   this.requestedVersion = 2;
   
   mockContentManager.getVersion.mockResolvedValue({
@@ -418,7 +418,7 @@ When('a previous version is requested', async function() {
   );
 });
 
-Then('the specific version should be returned', async function() {
+Then('the specific version should be returned', async function () {
   expect(this.versionContent.version).toBe(this.requestedVersion);
   expect(this.versionContent.content).toEqual(
     expect.objectContaining({
@@ -434,7 +434,7 @@ Then('the specific version should be returned', async function() {
 /**
  * Cleanup and teardown
  */
-After(async function() {
+After(async function () {
   // Reset all content mocks after each scenario
   jest.clearAllMocks();
   

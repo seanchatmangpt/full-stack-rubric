@@ -89,7 +89,7 @@ export class TestContext {
    * Clear all mocks
    */
   clearMocks() {
-    this.mocks.forEach(mock => {
+    this.mocks.forEach((mock) => {
       if (mock.mockClear) {
         mock.mockClear()
       }
@@ -226,17 +226,17 @@ export class TestContext {
    * @returns {Object} Scoped context methods
    */
   createScope(scope) {
-    const scopedKey = (key) => `${scope}:${key}`
+    const scopedKey = key => `${scope}:${key}`
 
     return {
       set: (key, value) => this.set(scopedKey(key), value),
       get: (key, defaultValue) => this.get(scopedKey(key), defaultValue),
-      has: (key) => this.has(scopedKey(key)),
-      delete: (key) => this.delete(scopedKey(key)),
+      has: key => this.has(scopedKey(key)),
+      delete: key => this.delete(scopedKey(key)),
       setMock: (name, mockFn) => this.setMock(scopedKey(name), mockFn),
-      getMock: (name) => this.getMock(scopedKey(name)),
+      getMock: name => this.getMock(scopedKey(name)),
       setFixture: (name, data) => this.setFixture(scopedKey(name), data),
-      getFixture: (name) => this.getFixture(scopedKey(name))
+      getFixture: name => this.getFixture(scopedKey(name))
     }
   }
 
@@ -361,14 +361,14 @@ export class ContextHelpers {
    */
   async waitForCondition(condition, timeout = 5000) {
     const start = Date.now()
-    
+
     while (Date.now() - start < timeout) {
       if (condition(this.context)) {
         return true
       }
       await new Promise(resolve => setTimeout(resolve, 10))
     }
-    
+
     return false
   }
 }

@@ -240,7 +240,7 @@ export async function exampleCustomPlugin() {
     plugins: [
       createPlugin('analytics', (framework) => {
         // Add analytics tracking helpers
-        framework.ScenarioBuilder.prototype.analytics = function() {
+        framework.ScenarioBuilder.prototype.analytics = function () {
           return {
             shouldTrackEvent: (event) => {
               return this.addStep('then', `analytics should track ${event}`, (context) => {

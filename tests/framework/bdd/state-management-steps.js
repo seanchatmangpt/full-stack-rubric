@@ -437,9 +437,9 @@ await nextTick() // Wait for reactivity updates`
     return `// Call ${storeName} store action ${actionName}
 const ${this.toCamelCase(storeName)}Store = use${this.toPascalCase(storeName)}Store()
 ${hasData ? 
-  `const actionData = ${this.parseJsonOrString(actionData)}
+    `const actionData = ${this.parseJsonOrString(actionData)}
 this.actionResult = await ${this.toCamelCase(storeName)}Store.${actionName}(actionData)` :
-  `this.actionResult = await ${this.toCamelCase(storeName)}Store.${actionName}()`
+    `this.actionResult = await ${this.toCamelCase(storeName)}Store.${actionName}()`
 }
 await nextTick() // Wait for action completion`
   }
@@ -458,9 +458,9 @@ await nextTick() // Wait for action completion`
     return `// Dispatch ${storeName} store mutation ${mutationName}
 const ${this.toCamelCase(storeName)}Store = use${this.toPascalCase(storeName)}Store()
 ${hasPayload ?
-  `const payload = ${this.parseJsonOrString(payload)}
+    `const payload = ${this.parseJsonOrString(payload)}
 ${this.toCamelCase(storeName)}Store.${mutationName}(payload)` :
-  `${this.toCamelCase(storeName)}Store.${mutationName}()`
+    `${this.toCamelCase(storeName)}Store.${mutationName}()`
 }
 await nextTick() // Wait for mutation completion`
   }

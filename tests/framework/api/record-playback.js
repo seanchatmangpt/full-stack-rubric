@@ -110,7 +110,7 @@ export class RecordPlaybackSystem {
       this.currentCassette = name;
       
       // Load recordings into memory for quick access
-      cassette.recordings.forEach(recording => {
+      cassette.recordings.forEach((recording) => {
         const key = this._generateRecordingKey(recording.request);
         this.recordings.set(key, recording);
       });
@@ -372,7 +372,7 @@ export class RecordPlaybackSystem {
     };
 
     // Remove sensitive headers
-    this.config.sensitiveHeaders.forEach(header => {
+    this.config.sensitiveHeaders.forEach((header) => {
       const key = Object.keys(sanitized.headers).find(k => 
         k.toLowerCase() === header.toLowerCase()
       );
@@ -425,7 +425,7 @@ export class RecordPlaybackSystem {
 
     const redacted = { ...obj };
     
-    this.config.sensitiveFields.forEach(field => {
+    this.config.sensitiveFields.forEach((field) => {
       const key = Object.keys(redacted).find(k => 
         k.toLowerCase().includes(field.toLowerCase())
       );
@@ -435,7 +435,7 @@ export class RecordPlaybackSystem {
     });
 
     // Recursively redact nested objects
-    Object.keys(redacted).forEach(key => {
+    Object.keys(redacted).forEach((key) => {
       if (redacted[key] && typeof redacted[key] === 'object') {
         redacted[key] = this._redactSensitiveFields(redacted[key]);
       }

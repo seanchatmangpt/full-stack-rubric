@@ -167,9 +167,9 @@ export class BDDFramework {
   async _loadCompatibilityPlugins() {
     // Map framework plugins to library imports
     const pluginMapping = {
-      'authPlugin': authPlugin,
-      'apiPlugin': apiPlugin,
-      'formPlugin': formPlugin
+      authPlugin: authPlugin,
+      apiPlugin: apiPlugin,
+      formPlugin: formPlugin
     }
 
     for (const pluginName of this.options.plugins) {
@@ -219,10 +219,10 @@ export class BDDFramework {
    */
   _getPluginPath(pluginName) {
     const pathMapping = {
-      'authPlugin': 'auth',
-      'apiPlugin': 'api', 
-      'formPlugin': 'forms',
-      'visualPlugin': 'visual'
+      authPlugin: 'auth',
+      apiPlugin: 'api', 
+      formPlugin: 'forms',
+      visualPlugin: 'visual'
     }
     
     return pathMapping[pluginName] || 'custom'
@@ -259,10 +259,10 @@ export async function setup(options = {}) {
   const framework = await createFramework(options)
   
   return {
-    scenario: (description) => framework.scenario(description),
-    given: (description) => framework.scenario(description).given,
-    when: (description) => framework.scenario(description).when,
-    then: (description) => framework.scenario(description).then,
+    scenario: description => framework.scenario(description),
+    given: description => framework.scenario(description).given,
+    when: description => framework.scenario(description).when,
+    then: description => framework.scenario(description).then,
     mount: (component, options) => framework.mount(component, options),
     helpers: framework.helpers,
     framework,
@@ -352,7 +352,7 @@ export class MigrationHelper {
     
     const matches = []
     
-    frameworkPatterns.forEach(pattern => {
+    frameworkPatterns.forEach((pattern) => {
       const found = codeString.match(pattern)
       if (found) {
         matches.push({
@@ -373,7 +373,7 @@ export class MigrationHelper {
       removals: []
     }
     
-    analysis.forEach(match => {
+    analysis.forEach((match) => {
       switch (match.pattern) {
         case 'setupNuxtBDD\\(':
           plan.imports.push('import { scenario, mount } from "@nuxt-bdd/core"')

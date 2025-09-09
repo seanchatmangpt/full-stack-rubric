@@ -373,7 +373,7 @@ export class ScenarioFactory {
   static createAuthScenario() {
     const user = UserFactory.create()
     const token = faker.string.alphanumeric(64)
-    
+
     return {
       user,
       credentials: {

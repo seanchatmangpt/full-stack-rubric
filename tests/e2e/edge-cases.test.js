@@ -16,7 +16,7 @@ Object.defineProperty(global, 'performance', {
 })
 
 // Mock RAF for animation testing
-global.requestAnimationFrame = vi.fn((cb) => setTimeout(cb, 16))
+global.requestAnimationFrame = vi.fn(cb => setTimeout(cb, 16))
 
 // Edge case typing tutor component
 const EdgeCaseTypingTutor = {
@@ -639,8 +639,8 @@ const EdgeCaseTypingTutor = {
       return codePoint >= 0x1F600 && codePoint <= 0x1F64F || // Emoticons
              codePoint >= 0x1F300 && codePoint <= 0x1F5FF || // Misc Symbols
              codePoint >= 0x1F680 && codePoint <= 0x1F6FF || // Transport
-             codePoint >= 0x2600 && codePoint <= 0x26FF ||   // Misc symbols
-             codePoint >= 0x2700 && codePoint <= 0x27BF     // Dingbats
+             codePoint >= 0x2600 && codePoint <= 0x26FF || // Misc symbols
+             codePoint >= 0x2700 && codePoint <= 0x27BF // Dingbats
     },
 
     /**
@@ -785,7 +785,8 @@ const EdgeCaseTypingTutor = {
      */
     getExpectedChar() {
       return this.currentPosition < this.targetText.length ? 
-        this.targetText[this.currentPosition] : null
+        this.targetText[this.currentPosition]
+        : null
     },
 
     // Utility methods
@@ -911,7 +912,7 @@ const EdgeCaseTypingTutor = {
      * @param {Array} patterns - Array of input patterns
      */
     simulateComplexInput(patterns) {
-      patterns.forEach(pattern => {
+      patterns.forEach((pattern) => {
         switch (pattern.type) {
           case 'rapid':
             this.simulateRapidTyping(pattern.text, pattern.interval)
@@ -946,7 +947,7 @@ const EdgeCaseTypingTutor = {
      * @param {Array} chars - Array of special characters
      */
     simulateSpecialCharInput(chars) {
-      chars.forEach(char => {
+      chars.forEach((char) => {
         this.userInput += char
         this.handleInput({ target: { value: this.userInput } })
       })

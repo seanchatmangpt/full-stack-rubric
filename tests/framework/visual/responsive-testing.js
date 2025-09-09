@@ -248,7 +248,7 @@ export class ResponsiveTestHelper {
       const scrollResults = await this.testScrollStates(component, breakpoints, name, renderOptions)
       results.scrollStates = scrollResults
       
-      scrollResults.forEach(result => {
+      scrollResults.forEach((result) => {
         results.summary.totalTests++
         if (result.passed) {
           results.summary.passed++
@@ -269,7 +269,7 @@ export class ResponsiveTestHelper {
       )
       results.interactions = interactionResults
       
-      interactionResults.forEach(result => {
+      interactionResults.forEach((result) => {
         results.summary.totalTests++
         if (result.passed) {
           results.summary.passed++
@@ -389,10 +389,11 @@ export class ResponsiveTestHelper {
         const documentHeight = await page.evaluate(() => document.body.scrollHeight)
         const viewportHeight = breakpoint.height
         const maxScroll = Math.max(0, documentHeight - viewportHeight)
-        const scrollY = position.name === 'middle' ? maxScroll * 0.5 : 
-                       position.name === 'bottom' ? maxScroll : 0
+        const scrollY = position.name === 'middle'
+          ? maxScroll * 0.5 : 
+          position.name === 'bottom' ? maxScroll : 0
 
-        await page.evaluate((y) => window.scrollTo(0, y), scrollY)
+        await page.evaluate(y => window.scrollTo(0, y), scrollY)
         await page.waitForTimeout(200)
 
         const screenshot = await page.screenshot({ type: 'png' })
@@ -654,7 +655,8 @@ export class ResponsiveTestHelper {
           </div>
         </div>
 
-        ${results.scrollStates.length > 0 ? `
+        ${results.scrollStates.length > 0
+          ? `
           <div class="section">
             <h2>Scroll State Tests</h2>
             <div class="breakpoint-grid">
@@ -669,9 +671,11 @@ export class ResponsiveTestHelper {
               `).join('')}
             </div>
           </div>
-        ` : ''}
+        `
+          : ''}
 
-        ${results.interactions.length > 0 ? `
+        ${results.interactions.length > 0
+          ? `
           <div class="section">
             <h2>Interaction Tests</h2>
             <div class="breakpoint-grid">
@@ -686,7 +690,8 @@ export class ResponsiveTestHelper {
               `).join('')}
             </div>
           </div>
-        ` : ''}
+        `
+          : ''}
       </body>
       </html>
     `

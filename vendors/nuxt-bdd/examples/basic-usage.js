@@ -5,19 +5,6 @@
 // Example 1: Basic BDD Configuration
 import { defineBDDConfig } from '@nuxt/bdd'
 
-const bddConfig = defineBDDConfig({
-  testDir: 'tests',
-  stepDir: 'tests/steps',
-  featureDir: 'tests/features',
-  autoImport: true,
-  vitest: {
-    environment: 'jsdom',
-    globals: true
-  }
-})
-
-console.log('BDD Config:', bddConfig)
-
 // Example 2: Component Testing
 import { mountBDD } from '@nuxt/bdd/vitest'
 
@@ -27,7 +14,7 @@ import { mountBDD } from '@nuxt/bdd/vitest'
 // })
 // wrapper.findByTestId('title').shouldHaveText('Test')
 
-// Example 3: Page Testing  
+// Example 3: Page Testing
 import { createBDDPage, setupNuxtBDD } from '@nuxt/bdd/vitest'
 
 // In a test file:
@@ -42,9 +29,9 @@ import { Given, When, Then } from '@nuxt/bdd/cucumber'
 //   const page = getCurrentPage()
 //   await page.goto('/login')
 // })
-// 
+//
 // When('I enter valid credentials', async () => {
-//   const page = getCurrentPage()  
+//   const page = getCurrentPage()
 //   await page.fillField('#username', 'testuser')
 //   await page.fillField('#password', 'password123')
 // })
@@ -56,6 +43,19 @@ import { Given, When, Then } from '@nuxt/bdd/cucumber'
 
 // Example 5: Utility Functions
 import { generateTestData, delay, waitForCondition } from '@nuxt/bdd'
+
+const bddConfig = defineBDDConfig({
+  testDir: 'tests',
+  stepDir: 'tests/steps',
+  featureDir: 'tests/features',
+  autoImport: true,
+  vitest: {
+    environment: 'jsdom',
+    globals: true
+  }
+})
+
+console.log('BDD Config:', bddConfig)
 
 const testEmail = generateTestData('email')
 const testUsername = generateTestData('username')

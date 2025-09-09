@@ -323,7 +323,7 @@ export class AutoConfigManager {
     return {
       visit: `scenario.when.page.isVisited('${this.getPageRoute(page.path)}')`,
       shouldBeVisible: `scenario.then.page.shouldDisplay('${page.name}')`,
-      shouldHaveTitle: (title) => `scenario.then.page.shouldHaveTitle('${title}')`
+      shouldHaveTitle: title => `scenario.then.page.shouldHaveTitle('${title}')`
     }
   }
 
@@ -337,8 +337,8 @@ export class AutoConfigManager {
     const tag = this.getComponentTag(component.path)
     return {
       shouldRender: `scenario.then.component.shouldRender('${tag}')`,
-      shouldHaveProps: (props) => `scenario.then.component.shouldHaveProps('${tag}', ${JSON.stringify(props)})`,
-      shouldEmit: (event) => `scenario.then.component.shouldEmit('${tag}', '${event}')`
+      shouldHaveProps: props => `scenario.then.component.shouldHaveProps('${tag}', ${JSON.stringify(props)})`,
+      shouldEmit: event => `scenario.then.component.shouldEmit('${tag}', '${event}')`
     }
   }
 
@@ -351,8 +351,8 @@ export class AutoConfigManager {
   generateStoreHelpers(store) {
     const storeName = this.getStoreName(store.path)
     return {
-      shouldHaveState: (state) => `scenario.then.store.shouldHaveState('${storeName}', ${JSON.stringify(state)})`,
-      shouldCallAction: (action) => `scenario.when.store.callsAction('${storeName}', '${action}')`,
+      shouldHaveState: state => `scenario.then.store.shouldHaveState('${storeName}', ${JSON.stringify(state)})`,
+      shouldCallAction: action => `scenario.when.store.callsAction('${storeName}', '${action}')`,
       shouldUpdateState: (key, value) => `scenario.then.store.shouldUpdateState('${storeName}', '${key}', ${JSON.stringify(value)})`
     }
   }

@@ -588,7 +588,7 @@ describe('Monaco Editor Integration', () => {
       }
 
       const startTime = performance.now()
-      rapidKeystrokes.forEach(keystroke => {
+      rapidKeystrokes.forEach((keystroke) => {
         wrapper.vm.handleKeyDown(keystroke)
       })
       const endTime = performance.now()

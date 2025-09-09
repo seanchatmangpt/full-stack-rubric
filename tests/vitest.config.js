@@ -1,161 +1,173 @@
 /**
- * @fileoverview Vitest configuration for typing tutor testing infrastructure
- * Comprehensive test setup with performance monitoring and browser simulation
+ * Vitest configuration for performance and unit testing
+ * Includes benchmarking setup and DOM environment configuration
  */
 
 import { defineConfig } from 'vitest/config'
-import vue from '@vitejs/plugin-vue'
+import { defineVitestConfig } from '@nuxt/test-utils/config'
 import { resolve } from 'path'
 
-/**
- * @typedef {import('vitest/config').UserConfig} VitestConfig
- */
-
-/**
- * @type {VitestConfig}
- */
 export default defineConfig({
-  plugins: [vue()],
-  
   test: {
-    // Test environment configuration
+    // Environment configuration
     environment: 'jsdom',
     
-    // Global test setup
+    // Global test settings
     globals: true,
     
     // Setup files
     setupFiles: [
-      './setup/global-setup.js',
-      './setup/dom-setup.js',
-      './setup/performance-setup.js'
+      './tests/setup/global-setup.js',
+      './tests/setup/dom-setup.js',
+      './tests/setup/performance-setup.js'
     ],
     
-    // Test inclusion patterns
+    // Include patterns for test files
     include: [
-      'tests/**/*.test.js',
-      'tests/**/*.spec.js'
+      'tests/**/*.{test,spec}.{js,mjs,ts}',
+      'tests/**/*.bench.{js,mjs,ts}',
+      'app/**/*.{test,spec}.{js,mjs,ts}',
+      'server/**/*.{test,spec}.{js,mjs,ts}'
     ],
     
-    // Test exclusion patterns
+    // Exclude patterns
     exclude: [
       'node_modules',
       'dist',
       '.nuxt',
-      'coverage'
+      'coverage',
+      'tests/framework/cucumber-runner.js' // Separate Cucumber runner
     ],
-    
-    // Test timeout configuration
-    testTimeout: 10000, // 10 seconds for complex tests
-    hookTimeout: 10000,
     
     // Coverage configuration
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html', 'lcov'],
-      reportsDirectory: './coverage',
+      reporter: ['text', 'html', 'json', 'lcov'],
+      reportsDirectory: 'coverage',
       exclude: [
-        'node_modules/',
-        'tests/',
-        '**/*.d.ts',
-        '**/*.config.*',
-        '**/coverage/**'
+        'node_modules/**',
+        'tests/**',
+        '.nuxt/**',
+        'dist/**',
+        'coverage/**',
+        '*.config.{js,ts}',
+        'nuxt.config.{js,ts}',
+        'app.config.{js,ts}'
       ],
       thresholds: {
         global: {
-          branches: 75,
+          branches: 80,
           functions: 80,
           lines: 80,
           statements: 80
         }
-      },
-      all: true,
-      clean: true
+      }
     },
+    
+    // Performance and timeout settings
+    testTimeout: 30000, // 30 seconds for performance tests
+    hookTimeout: 10000, // 10 seconds for setup/teardown
+    teardownTimeout: 10000,
     
     // Reporter configuration
-    reporter: [
-      'verbose',
-      'json',
-      'html'
-    ],
-    
-    // Performance benchmarking
-    benchmark: {
-      include: ['tests/performance/**/*.bench.js'],
-      reporters: ['verbose', 'json']
+    reporter: ['default', 'html', 'json'],
+    outputFile: {
+      html: './tests/reports/test-results.html',
+      json: './tests/reports/test-results.json'
     },
     
-    // Parallel execution
-    threads: true,
-    maxThreads: 4,
-    minThreads: 1,
+    // Benchmark configuration
+    benchmark: {
+      outputFile: './tests/reports/benchmark-results.json',
+      reporterOptions: {
+        default: {
+          colors: true
+        }
+      }
+    },
     
-    // Watch mode configuration
-    watch: true,
+    // Pool configuration for parallel execution
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        singleThread: false,
+        maxThreads: 4,
+        minThreads: 1,
+        useAtomics: true
+      }
+    },
     
-    // File watching options
-    watchExclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/.nuxt/**'
-    ],
-    
-    // Test retry configuration
+    // Retry configuration
     retry: 2,
     
-    // Sequence configuration
-    sequence: {
-      shuffle: false,
-      concurrent: true
-    },
-    
-    // Browser testing configuration (for e2e tests)
-    browser: {
-      enabled: false, // Enable when needed for browser-specific testing
-      name: 'chrome',
-      provider: 'webdriverio',
-      headless: true
-    },
+    // Test isolation
+    isolate: true,
     
     // Mock configuration
-    clearMocks: true,
-    restoreMocks: true,
+    deps: {
+      external: ['jsdom']
+    },
     
-    // Environment variables for testing
-    env: {
-      NODE_ENV: 'test',
-      VITEST: 'true'
-    }
+    // Define configuration for different test types
+    workspace: [
+      {
+        // Unit tests configuration
+        test: {
+          name: 'unit',
+          include: ['tests/unit/**/*.test.js'],
+          environment: 'node'
+        }
+      },
+      {
+        // Integration tests configuration  
+        test: {
+          name: 'integration',
+          include: ['tests/integration/**/*.test.js'],
+          environment: 'jsdom'
+        }
+      },
+      {
+        // E2E tests configuration
+        test: {
+          name: 'e2e',
+          include: ['tests/e2e/**/*.test.js'],
+          environment: 'jsdom',
+          testTimeout: 60000 // Longer timeout for E2E tests
+        }
+      },
+      {
+        // Performance tests configuration
+        test: {
+          name: 'performance',
+          include: ['tests/performance/**/*.test.js'],
+          environment: 'jsdom',
+          testTimeout: 120000, // 2 minutes for performance tests
+          retry: 0, // No retries for performance tests
+          benchmark: {
+            include: ['**/*.bench.js']
+          }
+        }
+      }
+    ]
   },
   
   // Resolve configuration
   resolve: {
     alias: {
-      '@': resolve(__dirname, '../'),
-      '~': resolve(__dirname, '../'),
-      'tests': resolve(__dirname, './')
+      '@': resolve(__dirname, './app'),
+      '~': resolve(__dirname, './'),
+      'tests': resolve(__dirname, './tests')
     }
   },
   
   // Define global constants
   define: {
     __TEST__: true,
-    __DEV__: false
+    __PERFORMANCE_TEST__: process.env.NODE_ENV === 'test'
   },
   
-  // Optimize dependencies
-  optimizeDeps: {
-    include: [
-      'vue',
-      '@vue/test-utils',
-      'vitest'
-    ]
-  },
-  
-  // Build configuration for testing
-  build: {
-    target: 'node14',
-    sourcemap: true
+  // Esbuild configuration for faster compilation
+  esbuild: {
+    target: 'node18'
   }
 })

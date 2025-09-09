@@ -1,9 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
   modules: [
     'nuxt-bdd'
   ],
+  devtools: { enabled: true },
   bdd: {
     // Basic configuration for BDD testing
     enabled: true,

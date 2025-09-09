@@ -11,7 +11,7 @@
  */
 export async function waitForElement(page, selector, options = {}) {
   const { timeout = 5000 } = options
-  
+
   try {
     return await page.waitForSelector(selector, { timeout })
   } catch (error) {
@@ -27,6 +27,6 @@ export async function waitForElement(page, selector, options = {}) {
  */
 export async function waitForNavigation(page, options = {}) {
   const { timeout = 10000 } = options
-  
+
   await page.waitForLoadState('networkidle', { timeout })
 }

@@ -280,7 +280,7 @@ export class ScenarioMockSystem extends SmartMockSystem {
     Object.entries(scenario.responses).forEach(([pattern, response]) => {
       if (pattern === '*') {
         // Apply to all methods and paths
-        ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].forEach(method => {
+        ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].forEach((method) => {
           this.mock(method, /.*/, response, { scenario: scenario.name });
         });
       } else if (pattern.includes(' ')) {
@@ -473,7 +473,7 @@ export class ScenarioMockSystem extends SmartMockSystem {
     }
 
     if (expected && typeof expected === 'object') {
-      Object.keys(expected).forEach(key => {
+      Object.keys(expected).forEach((key) => {
         const newPath = path ? `${path}.${key}` : key;
         
         if (!(key in actual)) {

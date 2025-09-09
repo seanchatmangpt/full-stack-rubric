@@ -23,7 +23,7 @@ export class NitroTestRunner {
       maxConcurrency: 10,
       ...options
     }
-    
+
     this.nuxtContext = null
     this.nitroServer = null
     this.storage = new Map()
@@ -132,10 +132,10 @@ export class NitroTestRunner {
     try {
       // Create mock event object
       const event = this.createMockEvent(path, testOptions)
-      
+
       // Load and execute handler
       const result = await this.executeHandler(path, event)
-      
+
       const endTime = performance.now()
 
       // Validate result
@@ -157,10 +157,9 @@ export class NitroTestRunner {
       this.requestHistory.push(testResult)
 
       return testResult
-
     } catch (error) {
       const endTime = performance.now()
-      
+
       return {
         success: false,
         path,
@@ -181,7 +180,7 @@ export class NitroTestRunner {
    */
   createMockEvent(path, options) {
     const url = new URL(path, this.options.baseURL)
-    
+
     // Add query parameters
     Object.entries(options.query || {}).forEach(([key, value]) => {
       url.searchParams.set(key, value)
@@ -231,7 +230,7 @@ export class NitroTestRunner {
    */
   extractParams(path, route) {
     if (!route) return {}
-    
+
     const pathSegments = path.split('/').filter(Boolean)
     const routeSegments = route.split('/').filter(Boolean)
     const params = {}
@@ -264,7 +263,7 @@ export class NitroTestRunner {
     try {
       const handlerPath = this.resolveHandlerPath(path)
       const handler = await this.loadHandler(handlerPath)
-      
+
       if (typeof handler === 'function') {
         return await handler(event)
       } else if (handler.default && typeof handler.default === 'function') {
@@ -288,14 +287,14 @@ export class NitroTestRunner {
     // Convert API path to file path
     // /api/users -> server/api/users.js
     // /api/users/[id] -> server/api/users/[id].js
-    
+
     const segments = apiPath.split('/').filter(Boolean)
-    
+
     if (segments[0] === 'api') {
       segments.shift() // Remove 'api' prefix
     }
-    
-    const filePath = segments.length > 0 
+
+    const filePath = segments.length > 0
       ? `server/api/${segments.join('/')}.js`
       : 'server/api/index.js'
 
@@ -435,7 +434,7 @@ export class NitroTestRunner {
    */
   checkSecurityHeaders(headers) {
     const warnings = []
-    
+
     const securityHeaders = [
       'x-content-type-options',
       'x-frame-options',
@@ -444,7 +443,7 @@ export class NitroTestRunner {
       'content-security-policy'
     ]
 
-    securityHeaders.forEach(header => {
+    securityHeaders.forEach((header) => {
       if (!headers[header]) {
         warnings.push(`Missing security header: ${header}`)
       }
@@ -480,14 +479,14 @@ export class NitroTestRunner {
 
       // Test getItem
       const getResult = await storage.getItem(testOptions.testKey)
-      results.operations.get = { 
+      results.operations.get = {
         success: JSON.stringify(getResult) === JSON.stringify(testOptions.testData),
         result: getResult
       }
 
       // Test getKeys
       const keysResult = await storage.getKeys()
-      results.operations.keys = { 
+      results.operations.keys = {
         success: keysResult.includes(testOptions.testKey),
         result: keysResult
       }
@@ -498,13 +497,12 @@ export class NitroTestRunner {
 
       // Verify removal
       const verifyResult = await storage.getItem(testOptions.testKey)
-      results.operations.verify = { 
+      results.operations.verify = {
         success: verifyResult === null,
         result: verifyResult
       }
 
       results.success = Object.values(results.operations).every(op => op.success)
-
     } catch (error) {
       results.success = false
       results.errors.push(error.message)
@@ -530,7 +528,7 @@ export class NitroTestRunner {
 
     // Execute batches
     for (const batch of batches) {
-      const batchPromises = batch.map(config => 
+      const batchPromises = batch.map(config =>
         this.testHandler(config.path, config.options)
           .then(result => ({
             ...result,
@@ -539,11 +537,13 @@ export class NitroTestRunner {
       )
 
       const batchResults = await Promise.allSettled(batchPromises)
-      results.push(...batchResults.map(r => 
-        r.status === 'fulfilled' ? r.value : { 
-          success: false, 
-          error: r.reason.message 
-        }
+      results.push(...batchResults.map(r =>
+        r.status === 'fulfilled'
+          ? r.value
+          : {
+              success: false,
+              error: r.reason.message
+            }
       ))
     }
 
@@ -559,11 +559,11 @@ export class NitroTestRunner {
    */
   async testEventHandling(eventName, eventData, expectedHandlers = []) {
     const startTime = performance.now()
-    
+
     try {
       // Register test handlers
       const handlerResults = []
-      expectedHandlers.forEach(handlerName => {
+      expectedHandlers.forEach((handlerName) => {
         this.eventBus.on(eventName, async (data) => {
           handlerResults.push({
             handler: handlerName,
@@ -587,7 +587,6 @@ export class NitroTestRunner {
         expectedHandlers: expectedHandlers.length,
         actualHandlers: handlerResults.length
       }
-
     } catch (error) {
       return {
         success: false,
@@ -657,7 +656,7 @@ export class NitroTestRunner {
     const promises = []
     for (let i = 0; i < benchmarkOptions.requests; i++) {
       const promise = this.testHandler(path, options)
-        .then(result => {
+        .then((result) => {
           if (result.success) {
             results.successfulRequests++
             results.responseTimes.push(result.duration)
@@ -668,7 +667,7 @@ export class NitroTestRunner {
             results.errors.push(result.error)
           }
         })
-      
+
       promises.push(promise)
 
       // Control concurrency
@@ -724,8 +723,8 @@ export class NitroTestRunner {
     // Calculate averages
     const successful = testResults.filter(r => r.success && r.duration)
     if (successful.length > 0) {
-      report.summary.averageDuration = 
-        successful.reduce((sum, r) => sum + r.duration, 0) / successful.length
+      report.summary.averageDuration
+        = successful.reduce((sum, r) => sum + r.duration, 0) / successful.length
     }
 
     report.summary.successRate = (report.summary.successful / report.summary.totalTests) * 100
@@ -739,13 +738,13 @@ export class NitroTestRunner {
   async cleanup() {
     // Clear storage
     await this.nitroStorage.clear()
-    
+
     // Clear event handlers
     this.eventHandlers.clear()
-    
+
     // Clear mocks
     this.clearHandlerMocks()
-    
+
     // Clear history
     this.requestHistory = []
   }

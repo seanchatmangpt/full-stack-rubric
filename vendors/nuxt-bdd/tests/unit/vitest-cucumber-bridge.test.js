@@ -5,12 +5,12 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { 
-  VitestCucumberBridge, 
-  bddBridge, 
+import {
+  VitestCucumberBridge,
+  bddBridge,
   bddContext,
   registerGiven,
-  registerWhen, 
+  registerWhen,
   registerThen,
   mountWithBDD,
   getBDDContext,
@@ -26,7 +26,7 @@ vi.mock('@vue/test-utils', () => ({
 // Mock vitest-cucumber
 vi.mock('@amiceli/vitest-cucumber', () => ({
   Given: vi.fn(),
-  When: vi.fn(), 
+  When: vi.fn(),
   Then: vi.fn(),
   Before: vi.fn(),
   After: vi.fn()
@@ -50,7 +50,7 @@ describe('VitestCucumberBridge', () => {
       vm: {},
       element: document.createElement('div')
     }
-    
+
     // Reset context
     bddContext.wrapper = null
     bddContext.state = {}
@@ -65,7 +65,7 @@ describe('VitestCucumberBridge', () => {
   describe('constructor', () => {
     it('should initialize with default configuration', () => {
       const defaultBridge = new VitestCucumberBridge()
-      
+
       expect(defaultBridge.config).toEqual({
         autoCleanup: true,
         performanceTracking: false,
@@ -79,7 +79,7 @@ describe('VitestCucumberBridge', () => {
         performanceTracking: true,
         mockDefaults: { CustomStub: { template: '<div>Custom</div>' } }
       })
-      
+
       expect(customBridge.config.autoCleanup).toBe(false)
       expect(customBridge.config.performanceTracking).toBe(true)
       expect(customBridge.config.mockDefaults.CustomStub).toBeDefined()
@@ -90,12 +90,12 @@ describe('VitestCucumberBridge', () => {
     it('should register Given step correctly', () => {
       const handler = vi.fn()
       const pattern = 'I have a test pattern'
-      
+
       bridge.registerStep('given', pattern, handler)
-      
+
       const registry = bridge.getStepRegistry()
       expect(registry.has(`given:${pattern}`)).toBe(true)
-      
+
       const stepDef = registry.get(`given:${pattern}`)
       expect(stepDef.pattern).toBe(pattern)
       expect(stepDef.handler).toBe(handler)
@@ -105,9 +105,9 @@ describe('VitestCucumberBridge', () => {
     it('should register When step correctly', () => {
       const handler = vi.fn()
       const pattern = 'I perform an action'
-      
+
       bridge.registerStep('when', pattern, handler)
-      
+
       const registry = bridge.getStepRegistry()
       expect(registry.has(`when:${pattern}`)).toBe(true)
     })
@@ -115,16 +115,16 @@ describe('VitestCucumberBridge', () => {
     it('should register Then step correctly', () => {
       const handler = vi.fn()
       const pattern = 'I should see the result'
-      
+
       bridge.registerStep('then', pattern, handler)
-      
+
       const registry = bridge.getStepRegistry()
       expect(registry.has(`then:${pattern}`)).toBe(true)
     })
 
     it('should throw error for invalid step type', () => {
       const handler = vi.fn()
-      
+
       expect(() => {
         bridge.registerStep('invalid', 'pattern', handler)
       }).toThrow('Invalid step type: invalid')
@@ -134,7 +134,7 @@ describe('VitestCucumberBridge', () => {
   describe('mountComponent', () => {
     beforeEach(() => {
       vi.mocked(mount).mockReturnValue(mockWrapper)
-      
+
       // Mock performance API
       global.performance = {
         now: vi.fn().mockReturnValue(100),
@@ -144,9 +144,9 @@ describe('VitestCucumberBridge', () => {
 
     it('should mount component with default stubs', async () => {
       const config = { component: TestComponent, props: { testProp: 'value' } }
-      
+
       const wrapper = await bridge.mountComponent(config)
-      
+
       expect(mount).toHaveBeenCalledWith(TestComponent, expect.objectContaining({
         props: { testProp: 'value' },
         global: expect.objectContaining({
@@ -159,20 +159,20 @@ describe('VitestCucumberBridge', () => {
           })
         })
       }))
-      
+
       expect(wrapper).toBe(mockWrapper)
       expect(bddContext.wrapper).toBe(mockWrapper)
     })
 
     it('should merge custom stubs with defaults', async () => {
       const customStubs = { CustomComponent: { template: '<div>Custom</div>' } }
-      const config = { 
+      const config = {
         component: TestComponent,
         stubs: customStubs
       }
-      
+
       await bridge.mountComponent(config)
-      
+
       expect(mount).toHaveBeenCalledWith(TestComponent, expect.objectContaining({
         global: expect.objectContaining({
           stubs: expect.objectContaining({
@@ -187,11 +187,11 @@ describe('VitestCucumberBridge', () => {
     it('should track performance when enabled', async () => {
       const perfBridge = new VitestCucumberBridge({ performanceTracking: true })
       perfBridge.initializePerformanceTracking()
-      
+
       const config = { component: TestComponent }
-      
+
       await perfBridge.mountComponent(config)
-      
+
       const metrics = perfBridge.getPerformanceMetrics()
       expect(metrics.renderTimes).toHaveLength(1)
       expect(metrics.renderTimes[0]).toBeGreaterThanOrEqual(0)
@@ -204,9 +204,9 @@ describe('VitestCucumberBridge', () => {
       bddContext.state = { testKey: 'testValue' }
       bddContext.mocks = { mockFn: vi.fn() }
       bddContext.performance = { metric: 100 }
-      
+
       bridge.cleanup()
-      
+
       expect(mockWrapper.unmount).toHaveBeenCalled()
       expect(bddContext.wrapper).toBeNull()
       expect(bddContext.state).toEqual({})
@@ -221,7 +221,7 @@ describe('VitestCucumberBridge', () => {
       bridge.registerStep('given', 'I have a user', vi.fn())
       bridge.registerStep('when', 'I click the button', vi.fn())
       bridge.registerStep('then', 'I should see success', vi.fn())
-      
+
       const featureContent = `
 Feature: Test Feature
   Scenario: Test Scenario
@@ -229,9 +229,9 @@ Feature: Test Feature
     When I click the button
     Then I should see success
       `
-      
+
       const result = bridge.validateFeatureSteps(featureContent)
-      
+
       expect(result.isValid).toBe(true)
       expect(result.missing).toHaveLength(0)
       expect(result.found).toHaveLength(3)
@@ -246,9 +246,9 @@ Feature: Test Feature
     When I perform undefined action
     Then I should see success
       `
-      
+
       const result = bridge.validateFeatureSteps(featureContent)
-      
+
       expect(result.isValid).toBe(false)
       expect(result.missing).toHaveLength(3)
       expect(result.missing[0].text).toBe('I have a user')
@@ -266,9 +266,9 @@ Feature: Test Feature
     When I click button number 5
     Then I should see 3.14 result
       `
-      
+
       const generated = bridge.generateStepDefinitions(featureContent)
-      
+
       expect(generated).toContain('Given(\'{string}\', i_have_a_user_named)')
       expect(generated).toContain('When(\'{int}\', i_click_button_number)')
       expect(generated).toContain('Then(\'{float}\', i_should_see_result)')
@@ -292,7 +292,7 @@ Feature: Test Feature
     })
 
     it('should parameterize single quoted strings', () => {
-      const result = bridge.parameterizeStep("I have a user named 'Jane'")
+      const result = bridge.parameterizeStep('I have a user named \'Jane\'')
       expect(result).toBe('I have a user named {string}')
     })
   })
@@ -327,7 +327,7 @@ Feature: Test Feature
 
     beforeEach(() => {
       perfBridge = new VitestCucumberBridge({ performanceTracking: true })
-      
+
       global.performance = {
         now: vi.fn().mockReturnValue(1000),
         memory: { usedJSHeapSize: 2000000 }
@@ -336,7 +336,7 @@ Feature: Test Feature
 
     it('should initialize performance tracking', () => {
       perfBridge.initializePerformanceTracking()
-      
+
       const metrics = perfBridge.getPerformanceMetrics()
       expect(metrics.renderTimes).toEqual([])
       expect(metrics.inputLatency).toEqual([])
@@ -345,9 +345,9 @@ Feature: Test Feature
 
     it('should track memory usage with labels', () => {
       perfBridge.initializePerformanceTracking()
-      
+
       perfBridge.trackMemory('test_operation')
-      
+
       const metrics = perfBridge.getPerformanceMetrics()
       expect(metrics.memoryUsage).toHaveLength(1)
       expect(metrics.memoryUsage[0].label).toBe('test_operation')
@@ -356,7 +356,7 @@ Feature: Test Feature
 
     it('should calculate memory diff correctly', () => {
       perfBridge.initializePerformanceTracking()
-      
+
       const metrics = perfBridge.getPerformanceMetrics()
       expect(metrics.memoryDiff).toBeGreaterThanOrEqual(0)
     })
@@ -372,9 +372,9 @@ describe('convenience functions', () => {
     it('should register Given step using convenience function', () => {
       const handler = vi.fn()
       const pattern = 'I have something'
-      
+
       registerGiven(pattern, handler, { description: 'Test given' })
-      
+
       const registry = bddBridge.getStepRegistry()
       expect(registry.has(`given:${pattern}`)).toBe(true)
     })
@@ -382,9 +382,9 @@ describe('convenience functions', () => {
     it('should register When step using convenience function', () => {
       const handler = vi.fn()
       const pattern = 'I do something'
-      
+
       registerWhen(pattern, handler)
-      
+
       const registry = bddBridge.getStepRegistry()
       expect(registry.has(`when:${pattern}`)).toBe(true)
     })
@@ -392,9 +392,9 @@ describe('convenience functions', () => {
     it('should register Then step using convenience function', () => {
       const handler = vi.fn()
       const pattern = 'I should see something'
-      
+
       registerThen(pattern, handler)
-      
+
       const registry = bddBridge.getStepRegistry()
       expect(registry.has(`then:${pattern}`)).toBe(true)
     })
@@ -416,16 +416,16 @@ describe('convenience functions', () => {
 
     it('should mount component using convenience function', async () => {
       const options = { props: { test: true } }
-      
+
       const wrapper = await mountWithBDD(TestComponent, options)
-      
+
       expect(mount).toHaveBeenCalledWith(TestComponent, expect.objectContaining({
         props: { test: true },
         global: expect.objectContaining({
           stubs: expect.any(Object)
         })
       }))
-      
+
       expect(wrapper).toBeDefined()
     })
   })
@@ -446,7 +446,7 @@ describe('convenience functions', () => {
 
     it('should set and get BDD state', () => {
       setBDDState('testKey', 'testValue')
-      
+
       expect(getBDDState('testKey')).toBe('testValue')
       expect(bddContext.state.testKey).toBe('testValue')
     })
@@ -462,9 +462,9 @@ describe('integration with vitest-cucumber', () => {
     const { Given } = require('@amiceli/vitest-cucumber')
     const handler = vi.fn()
     const pattern = 'test pattern'
-    
+
     registerGiven(pattern, handler)
-    
+
     expect(Given).toHaveBeenCalledWith(pattern, handler)
   })
 
@@ -472,9 +472,9 @@ describe('integration with vitest-cucumber', () => {
     const { When } = require('@amiceli/vitest-cucumber')
     const handler = vi.fn()
     const pattern = 'test pattern'
-    
+
     registerWhen(pattern, handler)
-    
+
     expect(When).toHaveBeenCalledWith(pattern, handler)
   })
 
@@ -482,9 +482,9 @@ describe('integration with vitest-cucumber', () => {
     const { Then } = require('@amiceli/vitest-cucumber')
     const handler = vi.fn()
     const pattern = 'test pattern'
-    
+
     registerThen(pattern, handler)
-    
+
     expect(Then).toHaveBeenCalledWith(pattern, handler)
   })
 })

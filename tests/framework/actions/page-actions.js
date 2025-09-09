@@ -281,7 +281,7 @@ export class PageHelpers {
       helpers[page.name] = {
         visit: () => this.scenario.when.page.isVisited(page.path),
         shouldBeVisible: () => this.scenario.then.page.shouldDisplay(page.name),
-        shouldHaveTitle: (title) => this.scenario.then.page.shouldHaveTitle(title)
+        shouldHaveTitle: title => this.scenario.then.page.shouldHaveTitle(title)
       }
     }
 

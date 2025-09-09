@@ -24,7 +24,7 @@ export class NuxtServerTester {
       },
       ...options
     }
-    
+
     this.nuxtContext = null
     this.testServer = null
     this.interceptors = new Map()
@@ -48,10 +48,10 @@ export class NuxtServerTester {
   setupRequestInterception() {
     if (this.nuxtContext?.$fetch) {
       const originalFetch = this.nuxtContext.$fetch
-      
+
       this.nuxtContext.$fetch = async (url, options = {}) => {
         const startTime = performance.now()
-        
+
         // Record request
         const request = {
           url,
@@ -61,13 +61,13 @@ export class NuxtServerTester {
           timestamp: Date.now(),
           startTime
         }
-        
+
         // Check for mock response
         const mockKey = `${request.method}:${url}`
         if (this.mockResponses.has(mockKey)) {
           const mock = this.mockResponses.get(mockKey)
           const endTime = performance.now()
-          
+
           this.requestHistory.push({
             ...request,
             response: mock.response,
@@ -75,20 +75,20 @@ export class NuxtServerTester {
             duration: endTime - startTime,
             mocked: true
           })
-          
+
           if (mock.status >= 400) {
             const error = new Error(`HTTP ${mock.status}`)
             error.statusCode = mock.status
             throw error
           }
-          
+
           return mock.response
         }
-        
+
         try {
           const response = await originalFetch(url, options)
           const endTime = performance.now()
-          
+
           this.requestHistory.push({
             ...request,
             response,
@@ -96,11 +96,11 @@ export class NuxtServerTester {
             duration: endTime - startTime,
             mocked: false
           })
-          
+
           return response
         } catch (error) {
           const endTime = performance.now()
-          
+
           this.requestHistory.push({
             ...request,
             error: error.message,
@@ -108,7 +108,7 @@ export class NuxtServerTester {
             duration: endTime - startTime,
             mocked: false
           })
-          
+
           throw error
         }
       }
@@ -133,7 +133,7 @@ export class NuxtServerTester {
     }
 
     const startTime = performance.now()
-    
+
     try {
       // Prepare request
       const requestConfig = {
@@ -145,18 +145,18 @@ export class NuxtServerTester {
       }
 
       if (testOptions.body && testOptions.method !== 'GET') {
-        requestConfig.body = typeof testOptions.body === 'string' 
-          ? testOptions.body 
+        requestConfig.body = typeof testOptions.body === 'string'
+          ? testOptions.body
           : JSON.stringify(testOptions.body)
       }
 
       // Make request
       const response = await this.makeRequest(endpoint, requestConfig, testOptions.timeout)
       const endTime = performance.now()
-      
+
       // Validate response
       const validation = await this.validateResponse(response, testOptions)
-      
+
       return {
         success: validation.isValid,
         endpoint,
@@ -170,7 +170,7 @@ export class NuxtServerTester {
       }
     } catch (error) {
       const endTime = performance.now()
-      
+
       return {
         success: false,
         endpoint,
@@ -197,7 +197,7 @@ export class NuxtServerTester {
         if (this.nuxtContext?.$fetch) {
           const response = await Promise.race([
             this.nuxtContext.$fetch(endpoint, config),
-            new Promise((_, reject) => 
+            new Promise((_, reject) =>
               setTimeout(() => reject(new Error('Request timeout')), timeout)
             )
           ])
@@ -329,7 +329,7 @@ export class NuxtServerTester {
    */
   async testApiEndpoints(endpoints) {
     const results = []
-    
+
     for (const endpointConfig of endpoints) {
       const result = await this.testApiRoute(endpointConfig.endpoint, endpointConfig.options)
       results.push({
@@ -337,7 +337,7 @@ export class NuxtServerTester {
         name: endpointConfig.name || endpointConfig.endpoint
       })
     }
-    
+
     return results
   }
 
@@ -350,29 +350,31 @@ export class NuxtServerTester {
   async testApiEndpointsParallel(endpoints, concurrency = 5) {
     const results = []
     const batches = []
-    
+
     // Create batches
     for (let i = 0; i < endpoints.length; i += concurrency) {
       batches.push(endpoints.slice(i, i + concurrency))
     }
-    
+
     // Execute batches
     for (const batch of batches) {
-      const batchPromises = batch.map(config => 
+      const batchPromises = batch.map(config =>
         this.testApiRoute(config.endpoint, config.options)
           .then(result => ({
             ...result,
             name: config.name || config.endpoint
           }))
       )
-      
+
       const batchResults = await Promise.allSettled(batchPromises)
-      results.push(...batchResults.map(r => r.status === 'fulfilled' ? r.value : {
-        success: false,
-        error: r.reason.message
-      }))
+      results.push(...batchResults.map(r => r.status === 'fulfilled'
+        ? r.value
+        : {
+            success: false,
+            error: r.reason.message
+          }))
     }
-    
+
     return results
   }
 
@@ -410,8 +412,8 @@ export class NuxtServerTester {
 
     for (let batch = 0; batch < config.concurrency; batch++) {
       const batchPromise = this.runLoadTestBatch(
-        endpoint, 
-        batchSize, 
+        endpoint,
+        batchSize,
         config,
         results
       )
@@ -419,7 +421,7 @@ export class NuxtServerTester {
 
       // Ramp up delay
       if (config.rampUp > 0) {
-        await new Promise(resolve => 
+        await new Promise(resolve =>
           setTimeout(resolve, (config.rampUp * 1000) / config.concurrency)
         )
       }
@@ -531,7 +533,7 @@ export class NuxtServerTester {
   async cleanup() {
     this.clearApiMocks()
     this.clearRequestHistory()
-    
+
     if (this.testServer) {
       this.testServer.close()
       this.testServer = null

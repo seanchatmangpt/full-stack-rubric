@@ -1,27 +1,34 @@
-/**
- * @fileoverview Integration tests for session persistence and progress tracking
- * Tests data persistence across browser sessions and progress tracking functionality
- */
+// Integration tests for session persistence and progress tracking
+// Tests data persistence across browser sessions and progress tracking functionality
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 
-// Mock localStorage
-/** @type {{ store: Map<string, string>, getItem: Function, setItem: Function, removeItem: Function, clear: Function }} */
-const mockLocalStorage = {
-  store: new Map(),
-  getItem: vi.fn((key) => mockLocalStorage.store.get(key) || null),
-  setItem: vi.fn((key, value) => {
-    mockLocalStorage.store.set(key, value)
-  }),
-  removeItem: vi.fn((key) => {
-    mockLocalStorage.store.delete(key)
-  }),
-  clear: vi.fn(() => {
-    mockLocalStorage.store.clear()
-  })
-}
+// Mock localStorage with proper implementation
+const mockLocalStorage = (() => {
+  const store = new Map()
+  return {
+    store,
+    getItem: vi.fn(key => store.get(key) || null),
+    setItem: vi.fn((key, value) => {
+      store.set(key, String(value))
+    }),
+    removeItem: vi.fn((key) => {
+      store.delete(key)
+    }),
+    clear: vi.fn(() => {
+      store.clear()
+    }),
+    get length() {
+      return store.size
+    },
+    key: vi.fn((index) => {
+      const keys = Array.from(store.keys())
+      return keys[index] || null
+    })
+  }
+})()
 
 // Mock IndexedDB for advanced persistence
 const mockIndexedDB = {
@@ -41,8 +48,25 @@ const mockIndexedDB = {
 }
 
 // Global mocks
-Object.defineProperty(global, 'localStorage', { value: mockLocalStorage })
-Object.defineProperty(global, 'indexedDB', { value: mockIndexedDB })
+Object.defineProperty(global, 'localStorage', { 
+  value: mockLocalStorage, 
+  writable: true, 
+  configurable: true 
+})
+Object.defineProperty(global, 'indexedDB', { 
+  value: mockIndexedDB, 
+  writable: true, 
+  configurable: true 
+})
+
+// Also mock window.localStorage for browser environment
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'localStorage', { 
+    value: mockLocalStorage, 
+    writable: true, 
+    configurable: true 
+  })
+}
 
 // Mock crypto for UUID generation
 Object.defineProperty(global, 'crypto', {
@@ -1046,7 +1070,7 @@ describe('Session Persistence and Progress Tracking', () => {
         await wrapper.vm.saveCurrentSession()
 
         const firstSessionAchievement = wrapper.vm.userProgress.achievements.find(
-          (a) => a.id === 'first_session'
+          a => a.id === 'first_session'
         )
         expect(firstSessionAchievement).toBeTruthy()
         expect(firstSessionAchievement.name).toBe('Getting Started')
@@ -1059,7 +1083,7 @@ describe('Session Persistence and Progress Tracking', () => {
         await wrapper.vm.saveCurrentSession()
 
         const speedAchievement = wrapper.vm.userProgress.achievements.find(
-          (a) => a.id === 'speed_demon_50'
+          a => a.id === 'speed_demon_50'
         )
         expect(speedAchievement).toBeTruthy()
         expect(speedAchievement.name).toBe('Speed Demon')
@@ -1072,7 +1096,7 @@ describe('Session Persistence and Progress Tracking', () => {
         await wrapper.vm.saveCurrentSession()
 
         const accuracyAchievement = wrapper.vm.userProgress.achievements.find(
-          (a) => a.id === 'accuracy_master'
+          a => a.id === 'accuracy_master'
         )
         expect(accuracyAchievement).toBeTruthy()
         expect(accuracyAchievement.name).toBe('Accuracy Master')
@@ -1090,7 +1114,7 @@ describe('Session Persistence and Progress Tracking', () => {
         await wrapper.vm.saveCurrentSession()
 
         const speedAchievements = wrapper.vm.userProgress.achievements.filter(
-          (a) => a.id === 'speed_demon_50'
+          a => a.id === 'speed_demon_50'
         )
         expect(speedAchievements).toHaveLength(1)
       })

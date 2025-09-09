@@ -97,10 +97,10 @@ export async function mountWithExpectations(component, options = {}) {
   console.warn('mountWithExpectations: Using compatibility fallback')
   return {
     component,
-    expect: (selector) => ({
+    expect: selector => ({
       toBeVisible: () => true,
-      toHaveText: (text) => true,
-      toHaveValue: (value) => true
+      toHaveText: text => true,
+      toHaveValue: value => true
     })
   }
 }

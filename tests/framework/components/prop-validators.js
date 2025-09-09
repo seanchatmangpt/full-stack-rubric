@@ -46,7 +46,7 @@ const testPropType = (component, propName, config) => {
     it(`accepts valid ${propName} values`, () => {
       const validValues = Array.isArray(config.valid) ? config.valid : [config.valid]
       
-      validValues.forEach(value => {
+      validValues.forEach((value) => {
         const wrapper = mount(component, {
           props: { [propName]: value }
         })
@@ -60,7 +60,7 @@ const testPropType = (component, propName, config) => {
       const invalidValues = Array.isArray(config.invalid) ? config.invalid : [config.invalid]
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
       
-      invalidValues.forEach(value => {
+      invalidValues.forEach((value) => {
         try {
           mount(component, {
             props: { [propName]: value }
@@ -252,7 +252,7 @@ const getInvalidValueForType = (type) => {
  */
 export const testUnionTypes = (component, propName, types) => {
   return describe(`${propName} union types`, () => {
-    types.forEach(type => {
+    types.forEach((type) => {
       it(`accepts ${type.name} type`, () => {
         const value = getValidValueForType(type)
         const wrapper = mount(component, {

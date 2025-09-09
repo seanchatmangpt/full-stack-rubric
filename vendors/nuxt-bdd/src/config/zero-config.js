@@ -37,12 +37,11 @@ export async function initializeZeroConfig(projectPath = process.cwd(), options 
     structure: {},
     bddConfig: {}
   }
-  
+
   try {
-    
     // Discover existing project structure
     result.structure = await discoverProjectStructure(projectPath)
-    
+
     // Generate smart defaults with BDD enhancements
     const smartConfig = await generateSmartDefaults(projectPath, {
       ...options,
@@ -50,17 +49,17 @@ export async function initializeZeroConfig(projectPath = process.cwd(), options 
       testingFramework: 'vitest',
       cucumberIntegration: true
     })
-    
+
     // Apply recommended presets (prioritize testing-focused)
     const recommendedPresets = recommendPresets(result.structure)
-    
+
     // Prioritize testing-focused preset for BDD projects
     if (!recommendedPresets.includes('testing-focused')) {
       recommendedPresets.unshift('testing-focused')
     }
-    
+
     let finalConfig = smartConfig
-    
+
     if (recommendedPresets.length > 0 && options.usePreset !== false) {
       const primaryPreset = getPreset(recommendedPresets[0])
       if (primaryPreset) {
@@ -68,42 +67,41 @@ export async function initializeZeroConfig(projectPath = process.cwd(), options 
         result.recommendations.push(`Applied preset: ${primaryPreset.name}`)
       }
     }
-    
+
     // Apply BDD-specific enhancements
     finalConfig = await enhanceForBDD(finalConfig, result.structure, options)
     result.bddConfig = extractBDDConfig(finalConfig)
-    
+
     // Apply plugins with BDD support
     await pluginSystem.initialize()
     finalConfig = await pluginSystem.applyMiddleware(finalConfig)
     finalConfig = await pluginSystem.callHook('config:modify', finalConfig)
-    
+
     result.config = finalConfig
-    
+
     // Create configuration files
     const createdFiles = await createConfigurationFiles(projectPath, finalConfig, options)
     result.filesCreated = createdFiles
-    
+
     // Generate package.json scripts with BDD commands
     if (options.updatePackageJson !== false) {
       await updatePackageJsonScripts(projectPath, finalConfig, recommendedPresets[0])
     }
-    
+
     // Create essential directories including BDD structure
     await createEssentialDirectories(projectPath, finalConfig)
-    
+
     // Generate BDD-specific recommendations
     result.recommendations.push(...generateBDDRecommendations(result.structure, finalConfig))
-    
+
     result.success = true
-    
+
     // Display next steps
     displayNextSteps(result)
-    
   } catch (error) {
     result.recommendations.push(`Setup failed: ${error.message}`)
   }
-  
+
   return result
 }
 
@@ -116,28 +114,27 @@ export async function initializeZeroConfig(projectPath = process.cwd(), options 
  */
 export async function createNewProject(projectName, projectPath, options = {}) {
   const fullPath = join(projectPath, projectName)
-  
-  
+
   // Create project directory
   await mkdir(fullPath, { recursive: true })
-  
+
   // Create basic package.json with BDD dependencies
   await createPackageJson(fullPath, projectName, {
     ...options,
     includeBDD: true,
     testingFramework: 'vitest'
   })
-  
+
   // Initialize zero-config setup with BDD enhancements
   const result = await initializeZeroConfig(fullPath, {
     ...options,
     enableBDD: true,
     createExampleTests: true
   })
-  
+
   if (result.success) {
   }
-  
+
   return result
 }
 
@@ -156,7 +153,7 @@ export async function quickSetup(projectPath = process.cwd(), preset = 'testing-
     enableBDD: true,
     createExampleTests: true
   }
-  
+
   return await initializeZeroConfig(projectPath, options)
 }
 
@@ -183,7 +180,7 @@ async function enhanceForBDD(config, structure, options = {}) {
       }
     }
   }
-  
+
   // Enhance Vitest configuration for BDD
   if (config.testing?.framework === 'vitest') {
     config.testing.vitest = {
@@ -210,7 +207,7 @@ async function enhanceForBDD(config, structure, options = {}) {
       }
     }
   }
-  
+
   // Add BDD-specific Nuxt modules
   config.nuxt = {
     ...config.nuxt,
@@ -219,7 +216,7 @@ async function enhanceForBDD(config, structure, options = {}) {
       '@nuxt/test-utils'
     ]
   }
-  
+
   return config
 }
 
@@ -247,7 +244,7 @@ function extractBDDConfig(config) {
  */
 async function createConfigurationFiles(projectPath, config, options) {
   const createdFiles = []
-  
+
   // Create nuxt.config.js
   const nuxtConfigPath = join(projectPath, 'nuxt.config.js')
   if (!existsSync(nuxtConfigPath) || options.overwrite) {
@@ -255,7 +252,7 @@ async function createConfigurationFiles(projectPath, config, options) {
     await writeFile(nuxtConfigPath, nuxtConfigContent)
     createdFiles.push('nuxt.config.js')
   }
-  
+
   // Create vitest.config.js with BDD support
   if (config.testing?.framework === 'vitest') {
     const vitestConfigPath = join(projectPath, 'vitest.config.js')
@@ -265,7 +262,7 @@ async function createConfigurationFiles(projectPath, config, options) {
       createdFiles.push('vitest.config.js')
     }
   }
-  
+
   // Create cucumber.config.js
   if (config.testing?.bdd?.enabled) {
     const cucumberConfigPath = join(projectPath, 'cucumber.config.js')
@@ -275,7 +272,7 @@ async function createConfigurationFiles(projectPath, config, options) {
       createdFiles.push('cucumber.config.js')
     }
   }
-  
+
   // Create example BDD test files if requested
   if (options.createExampleTests) {
     await createExampleBDDFiles(projectPath)
@@ -285,7 +282,7 @@ async function createConfigurationFiles(projectPath, config, options) {
       'tests/setup/bdd-setup.js'
     )
   }
-  
+
   return createdFiles
 }
 
@@ -358,7 +355,7 @@ async function createExampleBDDFiles(projectPath) {
   await mkdir(join(projectPath, 'tests/features'), { recursive: true })
   await mkdir(join(projectPath, 'tests/steps'), { recursive: true })
   await mkdir(join(projectPath, 'tests/setup'), { recursive: true })
-  
+
   // Create example feature file
   const featureContent = `Feature: Home Page
   As a user
@@ -372,7 +369,7 @@ async function createExampleBDDFiles(projectPath) {
     And the page should be accessible
 `
   await writeFile(join(projectPath, 'tests/features/example.feature'), featureContent)
-  
+
   // Create example step definitions
   const stepsContent = `import { Given, When, Then } from '@cucumber/cucumber'
 import { expect } from 'vitest'
@@ -396,7 +393,7 @@ Then('the page should be accessible', function () {
 })
 `
   await writeFile(join(projectPath, 'tests/steps/example.steps.js'), stepsContent)
-  
+
   // Create BDD setup file
   const setupContent = `/**
  * BDD Test Setup
@@ -431,16 +428,16 @@ global.testTimeout = 30000
  */
 async function updatePackageJsonScripts(projectPath, config, presetName) {
   const packageJsonPath = join(projectPath, 'package.json')
-  
+
   if (!existsSync(packageJsonPath)) {
     return
   }
-  
+
   const packageContent = await readFile(packageJsonPath, 'utf-8')
   const packageJson = JSON.parse(packageContent)
-  
+
   packageJson.scripts = packageJson.scripts || {}
-  
+
   // Standard Nuxt scripts
   const scripts = {
     build: 'nuxt build',
@@ -449,7 +446,7 @@ async function updatePackageJsonScripts(projectPath, config, presetName) {
     preview: 'nuxt preview',
     postinstall: 'nuxt prepare'
   }
-  
+
   // BDD testing scripts
   if (config.testing?.framework === 'vitest') {
     scripts.test = 'vitest'
@@ -457,26 +454,26 @@ async function updatePackageJsonScripts(projectPath, config, presetName) {
     scripts['test:coverage'] = 'vitest --coverage'
     scripts['test:watch'] = 'vitest --watch'
   }
-  
+
   // BDD-specific scripts
   if (config.testing?.bdd?.enabled) {
     scripts['test:bdd'] = 'cucumber-js'
     scripts['test:bdd:watch'] = 'cucumber-js --watch'
     scripts['test:e2e'] = 'playwright test'
   }
-  
+
   // Linting and quality scripts
   scripts.lint = 'eslint .'
   scripts['lint:fix'] = 'eslint . --fix'
   scripts.typecheck = 'nuxt typecheck'
-  
+
   // Merge scripts without overwriting existing ones
   for (const [name, script] of Object.entries(scripts)) {
     if (!packageJson.scripts[name]) {
       packageJson.scripts[name] = script
     }
   }
-  
+
   await writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2))
 }
 
@@ -500,7 +497,7 @@ async function createEssentialDirectories(projectPath, config) {
     'assets/images',
     'public',
     'server/api',
-    
+
     // BDD testing directories
     'tests/features',
     'tests/steps',
@@ -511,7 +508,7 @@ async function createEssentialDirectories(projectPath, config) {
     'tests/e2e',
     'tests/results'
   ]
-  
+
   for (const dir of directories) {
     const dirPath = join(projectPath, dir)
     try {
@@ -550,7 +547,7 @@ async function createPackageJson(projectPath, projectName, options) {
       '@nuxt/test-utils': '^3.0.0'
     }
   }
-  
+
   // Add BDD dependencies
   if (options.includeBDD) {
     Object.assign(packageJson.devDependencies, {
@@ -562,18 +559,18 @@ async function createPackageJson(projectPath, projectName, options) {
       'eslint': '^8.0.0',
       '@nuxt/eslint-config': 'latest'
     })
-    
+
     // Add BDD scripts
     Object.assign(packageJson.scripts, {
-      test: 'vitest',
+      'test': 'vitest',
       'test:ui': 'vitest --ui',
       'test:bdd': 'cucumber-js',
       'test:e2e': 'playwright test',
-      lint: 'eslint .',
+      'lint': 'eslint .',
       'lint:fix': 'eslint . --fix'
     })
   }
-  
+
   const packageJsonPath = join(projectPath, 'package.json')
   await writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2))
 }
@@ -586,27 +583,27 @@ async function createPackageJson(projectPath, projectName, options) {
  */
 function generateBDDRecommendations(structure, config) {
   const recommendations = []
-  
+
   // Installation recommendations
   recommendations.push('Run "pnpm install" to install BDD dependencies')
-  
+
   // Development recommendations
   recommendations.push('Run "pnpm run dev" to start development server')
   recommendations.push('Run "pnpm run test" to execute unit tests')
   recommendations.push('Run "pnpm run test:bdd" to run BDD scenarios')
   recommendations.push('Run "pnpm run test:ui" for interactive testing')
-  
+
   // BDD workflow recommendations
   if (config.testing?.bdd?.enabled) {
     recommendations.push('Write feature files in tests/features/')
     recommendations.push('Implement step definitions in tests/steps/')
     recommendations.push('Use "Given/When/Then" syntax for scenarios')
   }
-  
+
   // Quality recommendations
   recommendations.push('Run "pnpm run lint" to check code quality')
   recommendations.push('Consider adding TypeScript for better development experience')
-  
+
   return recommendations
 }
 
@@ -615,7 +612,6 @@ function generateBDDRecommendations(structure, config) {
  * @param {ZeroConfigResult} result - Setup result
  */
 function displayNextSteps(result) {
-  
   if (result.recommendations.length > 0) {
   }
 }
@@ -631,13 +627,13 @@ export async function validateZeroConfig(projectPath = process.cwd()) {
     issues: [],
     suggestions: []
   }
-  
+
   // Check for essential files
   const essentialFiles = [
     'nuxt.config.js',
     'package.json'
   ]
-  
+
   for (const file of essentialFiles) {
     const filePath = join(projectPath, file)
     if (!existsSync(filePath)) {
@@ -645,13 +641,13 @@ export async function validateZeroConfig(projectPath = process.cwd()) {
       validation.issues.push(`Missing ${file}`)
     }
   }
-  
+
   // Check for BDD setup
   const bddFiles = [
     'vitest.config.js',
     'cucumber.config.js'
   ]
-  
+
   let hasBDDSetup = false
   for (const file of bddFiles) {
     const filePath = join(projectPath, file)
@@ -660,11 +656,11 @@ export async function validateZeroConfig(projectPath = process.cwd()) {
       break
     }
   }
-  
+
   if (!hasBDDSetup) {
     validation.suggestions.push('Consider setting up BDD testing with Vitest and Cucumber')
   }
-  
+
   // Check for test directories
   const testDirs = ['tests/features', 'tests/steps']
   for (const dir of testDirs) {
@@ -675,7 +671,7 @@ export async function validateZeroConfig(projectPath = process.cwd()) {
       validation.suggestions.push(`Consider creating ${dir} directory for BDD tests`)
     }
   }
-  
+
   return validation
 }
 
@@ -686,7 +682,7 @@ export async function validateZeroConfig(projectPath = process.cwd()) {
  */
 function mergeConfigurations(...configs) {
   const result = {}
-  
+
   for (const config of configs) {
     if (config && typeof config === 'object') {
       for (const [key, value] of Object.entries(config)) {
@@ -700,6 +696,6 @@ function mergeConfigurations(...configs) {
       }
     }
   }
-  
+
   return result
 }

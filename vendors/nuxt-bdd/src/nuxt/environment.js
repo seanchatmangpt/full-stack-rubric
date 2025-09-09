@@ -17,25 +17,24 @@ export async function setupNuxtTestEnvironment(options = {}) {
     browser: false,
     ssr: true,
     nitro: true,
-    
+
     // Test runners
     enableComponentTesting: true,
     enableServerTesting: true,
     enableComposableTesting: true,
     enableSSRTesting: true,
     enableNitroTesting: true,
-    
+
     // Performance
     timeout: 30000,
     retries: 2,
-    
+
     // Cleanup
     autoCleanup: true,
     cleanupTimeout: 5000,
-    
+
     ...options
   }
-
 
   const environment = {
     config,
@@ -104,9 +103,7 @@ export async function setupNuxtTestEnvironment(options = {}) {
     // Setup global test hooks
     setupGlobalTestHooks(environment)
 
-    
     return environment
-
   } catch (error) {
     throw error
   }
@@ -122,11 +119,10 @@ function setupGlobalTestHooks(environment) {
 
   // Global beforeAll hook
   beforeAll(async () => {
-    
     for (const hook of hooks.beforeAll) {
       await hook(environment)
     }
-    
+
     // Initialize all testers if not already done
     for (const [name, tester] of Object.entries(testers)) {
       if (tester && tester.initialize && !tester.initialized) {
@@ -137,7 +133,6 @@ function setupGlobalTestHooks(environment) {
 
   // Global afterAll hook
   afterAll(async () => {
-    
     for (const hook of hooks.afterAll) {
       await hook(environment)
     }
@@ -185,7 +180,6 @@ function setupGlobalTestHooks(environment) {
  * @returns {Promise<void>}
  */
 export async function teardownNuxtTestEnvironment(environment) {
-
   try {
     // Run cleanup functions
     for (const cleanup of environment.cleanup) {
@@ -202,8 +196,6 @@ export async function teardownNuxtTestEnvironment(environment) {
     })
 
     await Promise.allSettled(cleanupPromises)
-
-
   } catch (error) {
   }
 }
@@ -246,7 +238,6 @@ export function getEnvironmentTester(environment, testerName) {
  * @returns {Promise<Object>} Test suite environment
  */
 export async function createTestSuite(suiteName, options = {}) {
-
   const suiteConfig = {
     name: suiteName,
     isolated: false,
@@ -277,7 +268,6 @@ export async function createTestSuite(suiteName, options = {}) {
  * @returns {Promise<Object>} Isolated test environment
  */
 export async function createIsolatedTestEnvironment(testName, options = {}) {
-
   const isolatedConfig = {
     ...options,
     isolated: true,
@@ -311,8 +301,8 @@ export function validateTestEnvironment(environment) {
 
   // Check required components
   const requiredTesters = ['nuxtBridge']
-  
-  requiredTesters.forEach(testerName => {
+
+  requiredTesters.forEach((testerName) => {
     if (!environment.testers[testerName]) {
       validation.errors.push(`Required tester missing: ${testerName}`)
       validation.isValid = false

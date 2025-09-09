@@ -22,7 +22,7 @@ const mockAdaptiveEngine = createMockAdaptiveEngine();
 const testRunner = new BDDTestRunner('typing');
 
 // Real-time Typing Detection & Feedback
-Given('the user is on the typing practice page', async function() {
+Given('the user is on the typing practice page', async function () {
   this.page = await testRunner.setupPage('/typing');
   this.typingArea = await this.page.locator('[data-testid="typing-area"]');
   
@@ -33,7 +33,7 @@ Given('the user is on the typing practice page', async function() {
   });
 });
 
-Given('a typing exercise is loaded with content {string}', async function(content) {
+Given('a typing exercise is loaded with content {string}', async function (content) {
   this.exerciseContent = content;
   this.currentIndex = 0;
   
@@ -52,12 +52,12 @@ Given('a typing exercise is loaded with content {string}', async function(conten
   });
 });
 
-When('the user types {string}', async function(text) {
+When('the user types {string}', async function (text) {
   this.typedText = text;
   this.startTime = Date.now();
   
   // Mock real-time feedback behavior
-  mockTypingService.processKeypress.mockImplementation((char) => ({
+  mockTypingService.processKeypress.mockImplementation(char => ({
     isCorrect: char === this.exerciseContent[this.currentIndex],
     currentIndex: this.currentIndex++,
     feedback: 'correct'
@@ -73,7 +73,7 @@ When('the user types {string}', async function(text) {
   expect(mockTypingService.processKeypress).toHaveBeenCalledTimes(text.length);
 });
 
-When('the user makes a typing error at position {int}', async function(position) {
+When('the user makes a typing error at position {int}', async function (position) {
   this.errorPosition = position;
   
   mockTypingService.processKeypress.mockReturnValueOnce({
@@ -89,7 +89,7 @@ When('the user makes a typing error at position {int}', async function(position)
   expect(mockTypingService.processKeypress).toHaveBeenCalledWith('x');
 });
 
-Then('real-time feedback should be displayed', async function() {
+Then('real-time feedback should be displayed', async function () {
   const feedbackElement = await this.page.locator('[data-testid="typing-feedback"]');
   await expect(feedbackElement).toBeVisible();
   
@@ -97,7 +97,7 @@ Then('real-time feedback should be displayed', async function() {
   expect(mockTypingService.getFeedback).toHaveBeenCalled();
 });
 
-Then('the typed character should be highlighted as {string}', async function(status) {
+Then('the typed character should be highlighted as {string}', async function (status) {
   const highlightedChar = await this.page.locator(`[data-status="${status}"]`).first();
   await expect(highlightedChar).toBeVisible();
   
@@ -109,7 +109,7 @@ Then('the typed character should be highlighted as {string}', async function(sta
 });
 
 // Adaptive Difficulty Adjustment
-Given('the user has a typing speed of {int} WPM', async function(wpm) {
+Given('the user has a typing speed of {int} WPM', async function (wpm) {
   this.userWPM = wpm;
   
   mockMetricsCollector.getCurrentWPM.mockReturnValue(wpm);
@@ -119,13 +119,13 @@ Given('the user has a typing speed of {int} WPM', async function(wpm) {
   });
 });
 
-Given('the current difficulty is {string}', async function(difficulty) {
+Given('the current difficulty is {string}', async function (difficulty) {
   this.currentDifficulty = difficulty;
   
   mockAdaptiveEngine.getCurrentDifficulty.mockReturnValue(difficulty);
 });
 
-When('the adaptive system evaluates performance', async function() {
+When('the adaptive system evaluates performance', async function () {
   this.performanceData = {
     wpm: this.userWPM,
     accuracy: 95,
@@ -145,7 +145,7 @@ When('the adaptive system evaluates performance', async function() {
   );
 });
 
-Then('the difficulty should be adjusted to {string}', async function(expectedDifficulty) {
+Then('the difficulty should be adjusted to {string}', async function (expectedDifficulty) {
   mockAdaptiveEngine.adjustDifficulty.mockReturnValue(expectedDifficulty);
   
   const newDifficulty = await mockAdaptiveEngine.adjustDifficulty(this.performanceData);
@@ -155,13 +155,13 @@ Then('the difficulty should be adjusted to {string}', async function(expectedDif
 });
 
 // Progress Tracking & Analytics
-Given('the user has completed {int} exercises', async function(exerciseCount) {
+Given('the user has completed {int} exercises', async function (exerciseCount) {
   this.completedExercises = exerciseCount;
   
   mockMetricsCollector.getCompletedExercises.mockReturnValue(exerciseCount);
 });
 
-When('the user completes the current exercise', async function() {
+When('the user completes the current exercise', async function () {
   this.exerciseEndTime = Date.now();
   this.exerciseDuration = this.exerciseEndTime - this.startTime;
   
@@ -185,7 +185,7 @@ When('the user completes the current exercise', async function() {
   );
 });
 
-Then('progress metrics should be updated', async function() {
+Then('progress metrics should be updated', async function () {
   const progressUpdate = {
     totalExercises: this.completedExercises + 1,
     averageWPM: 45,
@@ -201,7 +201,7 @@ Then('progress metrics should be updated', async function() {
 });
 
 // Session Persistence
-Given('the user has an active typing session', async function() {
+Given('the user has an active typing session', async function () {
   this.sessionId = 'session-123';
   this.sessionData = {
     startTime: Date.now() - 300000, // 5 minutes ago
@@ -212,7 +212,7 @@ Given('the user has an active typing session', async function() {
   mockTypingService.getActiveSession.mockReturnValue(this.sessionData);
 });
 
-When('the user navigates away from the page', async function() {
+When('the user navigates away from the page', async function () {
   // Simulate page unload
   await this.page.evaluate(() => {
     window.dispatchEvent(new Event('beforeunload'));
@@ -227,7 +227,7 @@ When('the user navigates away from the page', async function() {
   );
 });
 
-When('the user returns to the typing page', async function() {
+When('the user returns to the typing page', async function () {
   this.page = await testRunner.setupPage('/typing');
   
   mockTypingService.restoreSession.mockResolvedValue(this.sessionData);
@@ -238,7 +238,7 @@ When('the user returns to the typing page', async function() {
   expect(mockTypingService.restoreSession).toHaveBeenCalledWith(this.sessionId);
 });
 
-Then('the previous session should be restored', async function() {
+Then('the previous session should be restored', async function () {
   const restoredSession = await mockTypingService.getActiveSession();
   
   expect(restoredSession).toEqual(
@@ -250,7 +250,7 @@ Then('the previous session should be restored', async function() {
 });
 
 // Performance Optimization
-Given('the typing interface has {int} active components', async function(componentCount) {
+Given('the typing interface has {int} active components', async function (componentCount) {
   this.activeComponents = componentCount;
   
   mockTypingService.getActiveComponents.mockReturnValue(
@@ -258,7 +258,7 @@ Given('the typing interface has {int} active components', async function(compone
   );
 });
 
-When('performance optimization is triggered', async function() {
+When('performance optimization is triggered', async function () {
   mockTypingService.optimizePerformance.mockResolvedValue({
     optimizedComponents: this.activeComponents - 2,
     memoryReduction: '15%',
@@ -271,7 +271,7 @@ When('performance optimization is triggered', async function() {
   expect(mockTypingService.optimizePerformance).toHaveBeenCalled();
 });
 
-Then('response time should be under {int}ms', async function(maxResponseTime) {
+Then('response time should be under {int}ms', async function (maxResponseTime) {
   const responseTime = await testRunner.measureResponseTime(async () => {
     await this.typingArea.press('a');
   });
@@ -283,13 +283,13 @@ Then('response time should be under {int}ms', async function(maxResponseTime) {
 });
 
 // Error Recovery & Edge Cases
-Given('the user encounters a network error', async function() {
+Given('the user encounters a network error', async function () {
   mockTypingService.saveProgress.mockRejectedValue(new Error('Network unavailable'));
   
   this.networkError = true;
 });
 
-When('the system attempts to save progress', async function() {
+When('the system attempts to save progress', async function () {
   try {
     await mockTypingService.saveProgress(this.sessionData);
   } catch (error) {
@@ -300,11 +300,11 @@ When('the system attempts to save progress', async function() {
   expect(mockTypingService.saveProgress).toHaveBeenCalled();
 });
 
-Then('progress should be cached locally', async function() {
+Then('progress should be cached locally', async function () {
   expect(mockTypingService.cacheProgressLocally).toHaveBeenCalledWith(this.sessionData);
 });
 
-Then('the user should be notified of offline mode', async function() {
+Then('the user should be notified of offline mode', async function () {
   const notification = await this.page.locator('[data-testid="offline-notification"]');
   await expect(notification).toBeVisible();
   
@@ -315,7 +315,7 @@ Then('the user should be notified of offline mode', async function() {
 /**
  * Cleanup and teardown
  */
-After(async function() {
+After(async function () {
   // Reset all mocks after each scenario
   jest.clearAllMocks();
   

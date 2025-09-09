@@ -14,15 +14,15 @@ const activeMocks = new Map()
 export function mockApi(endpoint, response, options = {}) {
   const { method = 'GET', status = 200 } = options
   const mockId = `${method}:${endpoint}`
-  
+
   const mockImplementation = async () => ({
     status,
     json: async () => response,
     text: async () => JSON.stringify(response)
   })
-  
+
   activeMocks.set(mockId, mockImplementation)
-  
+
   return () => activeMocks.delete(mockId)
 }
 

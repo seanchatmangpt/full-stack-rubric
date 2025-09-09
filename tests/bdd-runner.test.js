@@ -6,9 +6,8 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest'
 // Note: Using custom BDD implementation since nuxt-bdd-testing has compatibility issues
 import { readdir, readFile, stat } from 'fs/promises'
-import { join, extname } from 'path'
+import { join, extname, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { dirname } from 'path'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -347,7 +346,7 @@ describe('BDD Test Runner - Feature Discovery and Execution', () => {
       expect(features.length).toBeGreaterThan(0)
       
       // Verify all discovered files are .feature files
-      features.forEach(featurePath => {
+      features.forEach((featurePath) => {
         expect(featurePath).toMatch(/\.feature$/)
       })
       
@@ -389,7 +388,7 @@ describe('BDD Test Runner - Feature Discovery and Execution', () => {
           expect(scenario.steps.length).toBeGreaterThan(0)
           
           // Validate steps have proper keywords
-          scenario.steps.forEach(step => {
+          scenario.steps.forEach((step) => {
             expect(step.keyword).toMatch(/^(Given|When|Then|And|But)$/)
             expect(step.text).toBeDefined()
             expect(step.text).toBeTruthy()
@@ -415,7 +414,7 @@ describe('BDD Test Runner - Feature Discovery and Execution', () => {
           let hasWhen = false  
           let hasThen = false
           
-          scenario.steps.forEach(step => {
+          scenario.steps.forEach((step) => {
             if (step.keyword === 'Given') hasGiven = true
             if (step.keyword === 'When') hasWhen = true
             if (step.keyword === 'Then') hasThen = true
@@ -504,32 +503,32 @@ describe('BDD Test Runner - Feature Discovery and Execution', () => {
    * @returns {Promise<Object>} Execution result
    */
   async function simulateScenarioExecution(feature, scenario) {
-      try {
-        // Simulate execution delay
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 100))
+    try {
+      // Simulate execution delay
+      await new Promise(resolve => setTimeout(resolve, Math.random() * 100))
         
-        // Simulate success/failure based on scenario complexity
-        const complexity = scenario.steps.length
-        const successRate = Math.max(0.7, 1 - (complexity * 0.1))
-        const isSuccess = Math.random() < successRate
+      // Simulate success/failure based on scenario complexity
+      const complexity = scenario.steps.length
+      const successRate = Math.max(0.7, 1 - (complexity * 0.1))
+      const isSuccess = Math.random() < successRate
         
-        return {
-          feature: feature.name,
-          scenario: scenario.name,
-          status: isSuccess ? 'passed' : 'failed',
-          duration: Math.floor(Math.random() * 1000) + 100,
-          error: isSuccess ? null : `Simulated failure for scenario: ${scenario.name}`
-        }
-      } catch (error) {
-        return {
-          feature: feature.name,
-          scenario: scenario.name,
-          status: 'failed',
-          duration: 0,
-          error: error.message
-        }
+      return {
+        feature: feature.name,
+        scenario: scenario.name,
+        status: isSuccess ? 'passed' : 'failed',
+        duration: Math.floor(Math.random() * 1000) + 100,
+        error: isSuccess ? null : `Simulated failure for scenario: ${scenario.name}`
+      }
+    } catch (error) {
+      return {
+        feature: feature.name,
+        scenario: scenario.name,
+        status: 'failed',
+        duration: 0,
+        error: error.message
       }
     }
+  }
 
   describe('Coverage Analysis', () => {
     it('should analyze feature coverage', async () => {

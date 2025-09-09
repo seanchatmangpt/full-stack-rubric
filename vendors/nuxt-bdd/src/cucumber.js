@@ -47,7 +47,7 @@ When('I click on {string}', async (selector) => {
   if (!currentPage) {
     throw new Error('BDD Step Error: No page is currently loaded. Use "Given I am on the..." first')
   }
-  
+
   const element = await currentPage.waitForBDDElement(selector)
   await element.click()
 })
@@ -56,7 +56,7 @@ When('I fill {string} with {string}', async (selector, value) => {
   if (!currentPage) {
     throw new Error('BDD Step Error: No page is currently loaded. Use "Given I am on the..." first')
   }
-  
+
   await currentPage.fillField(selector, value)
 })
 
@@ -64,7 +64,7 @@ When('I submit the form', async () => {
   if (!currentPage) {
     throw new Error('BDD Step Error: No page is currently loaded. Use "Given I am on the..." first')
   }
-  
+
   const submitButton = await currentPage.waitForBDDElement('[type="submit"], button[type="submit"], .submit-button')
   await submitButton.click()
 })
@@ -83,7 +83,7 @@ Then('I should see {string}', async (text) => {
   if (!currentPage) {
     throw new Error('BDD Step Error: No page is currently loaded')
   }
-  
+
   const content = await currentPage.textContent('body')
   if (!content.includes(text)) {
     throw new Error(`BDD Assertion Failed: Expected to see "${text}" on the page, but it was not found`)
@@ -94,7 +94,7 @@ Then('I should see an element {string}', async (selector) => {
   if (!currentPage) {
     throw new Error('BDD Step Error: No page is currently loaded')
   }
-  
+
   await currentPage.waitForBDDElement(selector)
 })
 
@@ -102,7 +102,7 @@ Then('the element {string} should contain {string}', async (selector, expectedTe
   if (!currentPage) {
     throw new Error('BDD Step Error: No page is currently loaded')
   }
-  
+
   await currentPage.shouldHaveText(selector, expectedText)
 })
 
@@ -110,10 +110,10 @@ Then('I should be redirected to {string}', async (expectedPath) => {
   if (!currentPage) {
     throw new Error('BDD Step Error: No page is currently loaded')
   }
-  
+
   const currentUrl = await currentPage.url()
   const urlPath = new URL(currentUrl).pathname
-  
+
   if (urlPath !== expectedPath) {
     throw new Error(`BDD Assertion Failed: Expected to be on "${expectedPath}" but was on "${urlPath}"`)
   }
@@ -124,7 +124,7 @@ Then('I should be redirected to {string}', async (expectedPath) => {
  */
 export {
   Given,
-  When, 
+  When,
   Then,
   Before,
   After

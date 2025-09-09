@@ -4,19 +4,13 @@
  */
 
 /**
- * @typedef {Object} FrameworkVersions
- * @property {string} nuxt - Nuxt version
- * @property {string} vue - Vue version  
- * @property {string} vitest - Vitest version
- * @property {string} node - Node.js version
+ * Framework version information
+ * Contains versions for Nuxt, Vue, Vitest, and Node.js
  */
 
 /**
- * @typedef {Object} CompatibilityResult
- * @property {boolean} compatible - Whether versions are compatible
- * @property {string[]} warnings - Compatibility warnings
- * @property {string[]} errors - Compatibility errors
- * @property {Object} recommendations - Version recommendations
+ * Compatibility check result
+ * Contains compatibility status, warnings, errors, and recommendations
  */
 
 /**
@@ -51,7 +45,7 @@ const COMPATIBILITY_MATRIX = {
 export const FeatureDetection = {
   /**
    * Check if Composition API is available
-   * @returns {boolean} True if Composition API is supported
+   * Returns true if Composition API is supported
    */
   hasCompositionAPI() {
     try {
@@ -69,7 +63,7 @@ export const FeatureDetection = {
 
   /**
    * Check if Monaco Editor can be loaded
-   * @returns {Promise<boolean>} True if Monaco can be initialized
+   * Returns promise that resolves to true if Monaco can be initialized
    */
   async hasMonacoSupport() {
     try {
@@ -88,7 +82,7 @@ export const FeatureDetection = {
 
   /**
    * Check if testing environment supports Vue components
-   * @returns {boolean} True if component testing is supported
+   * Returns true if component testing is supported
    */
   hasComponentTesting() {
     try {
@@ -110,7 +104,7 @@ export const FeatureDetection = {
 
   /**
    * Check if ESM modules are properly supported
-   * @returns {boolean} True if ESM is supported
+   * Returns true if ESM is supported
    */
   hasESMSupport() {
     try {
@@ -128,7 +122,7 @@ export const FeatureDetection = {
 export const EnvironmentUtils = {
   /**
    * Get current runtime environment
-   * @returns {string} Environment type: 'ssr', 'client', 'test', 'node'
+   * Returns environment type: 'ssr', 'client', 'test', 'node'
    */
   getEnvironment() {
     // SSR environment (Nuxt server)
@@ -152,7 +146,7 @@ export const EnvironmentUtils = {
 
   /**
    * Check if code is running in Nuxt context
-   * @returns {boolean} True if in Nuxt context
+   * Returns true if in Nuxt context
    */
   isNuxtContext() {
     try {
@@ -167,7 +161,7 @@ export const EnvironmentUtils = {
 
   /**
    * Check if code is running in test context
-   * @returns {boolean} True if in test context
+   * Returns true if in test context
    */
   isTestContext() {
     return typeof global !== 'undefined' && 
@@ -182,7 +176,7 @@ export class CompatibilityChecker {
   /**
    * Check framework versions compatibility
    * @param {FrameworkVersions} versions - Framework versions to check
-   * @returns {CompatibilityResult} Compatibility analysis result
+   * Returns Compatibility analysis result
    */
   static checkVersions(versions) {
     const result = {
@@ -232,7 +226,7 @@ export class CompatibilityChecker {
    * Check if version matches pattern
    * @param {string} version - Actual version
    * @param {string} pattern - Version pattern (e.g., '3.x', '4.0+')
-   * @returns {boolean} True if version matches pattern
+   * Returns True if version matches pattern
    */
   static versionMatches(version, pattern) {
     // Simple version matching logic
@@ -256,7 +250,7 @@ export class CompatibilityChecker {
 
   /**
    * Get current framework versions
-   * @returns {Promise<FrameworkVersions>} Current versions
+   * Returns Current versions
    */
   static async getCurrentVersions() {
     const versions = {
@@ -288,7 +282,7 @@ export class CompatibilityChecker {
 export const CompatibilityShims = {
   /**
    * Monaco Editor compatibility shim for SSR
-   * @returns {Object} Monaco-compatible object for SSR
+   * Returns Monaco-compatible object for SSR
    */
   getMonacoSSRShim() {
     if (typeof window === 'undefined') {
@@ -322,7 +316,7 @@ export const CompatibilityShims = {
 
   /**
    * Performance API shim for testing
-   * @returns {Object} Performance-compatible object
+   * Returns Performance-compatible object
    */
   getPerformanceShim() {
     if (typeof performance === 'undefined') {
@@ -341,7 +335,7 @@ export const CompatibilityShims = {
 
   /**
    * Local storage shim for SSR/testing
-   * @returns {Object} Storage-compatible object
+   * Returns Storage-compatible object
    */
   getStorageShim() {
     if (typeof localStorage === 'undefined') {
@@ -368,7 +362,7 @@ export const SafeUtils = {
    * Safely use Nuxt composable
    * @param {Function} composable - Nuxt composable function
    * @param {*} fallback - Fallback value if not in Nuxt context
-   * @returns {*} Composable result or fallback
+   * Returns Composable result or fallback
    */
   safeNuxtComposable(composable, fallback = null) {
     try {
@@ -386,7 +380,7 @@ export const SafeUtils = {
    * Safely import dynamic module
    * @param {string} modulePath - Module path to import
    * @param {*} fallback - Fallback if import fails
-   * @returns {Promise<*>} Module or fallback
+   * Returns Module or fallback
    */
   async safeDynamicImport(modulePath, fallback = {}) {
     try {
@@ -401,7 +395,7 @@ export const SafeUtils = {
    * Safely execute code that may not work in all environments
    * @param {Function} code - Code to execute
    * @param {*} fallback - Fallback value
-   * @returns {*} Execution result or fallback
+   * Returns Execution result or fallback
    */
   safeExecute(code, fallback = null) {
     try {

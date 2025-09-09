@@ -177,7 +177,7 @@ export class ContentFactory {
     const baseContent = this.create()
     const translations = {}
 
-    languages.forEach(lang => {
+    languages.forEach((lang) => {
       faker.setLocale(lang === 'en' ? 'en' : lang)
       translations[lang] = {
         title: faker.lorem.sentence({ min: 3, max: 8 }),
@@ -222,11 +222,13 @@ export class ContentFactory {
           duration: faker.number.int({ min: 30, max: 600 }),
           thumbnail: faker.image.url({ width: 320, height: 180 })
         })),
-        audio: faker.datatype.boolean(0.2) ? {
-          url: faker.internet.url(),
-          title: faker.lorem.sentence(),
-          duration: faker.number.int({ min: 60, max: 3600 })
-        } : null
+        audio: faker.datatype.boolean(0.2)
+          ? {
+              url: faker.internet.url(),
+              title: faker.lorem.sentence(),
+              duration: faker.number.int({ min: 60, max: 3600 })
+            }
+          : null
       },
       ...overrides
     })

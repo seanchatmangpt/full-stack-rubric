@@ -26,12 +26,12 @@ export class BDDTestRunner {
   async discoverFeatures() {
     const pattern = resolve(this.config.featuresDir, '**/*.feature')
     const featureFiles = await glob(pattern)
-    
+
     for (const featureFile of featureFiles) {
       const feature = loadFeature(featureFile)
       this.features.set(featureFile, feature)
     }
-    
+
     return featureFiles
   }
 
@@ -42,7 +42,7 @@ export class BDDTestRunner {
   async discoverSteps() {
     const pattern = resolve(this.config.stepsDir, '**/*.{js,mjs,cjs,ts}')
     const stepFiles = await glob(pattern)
-    
+
     if (this.config.autoLoad) {
       for (const stepFile of stepFiles) {
         try {
@@ -52,7 +52,7 @@ export class BDDTestRunner {
         }
       }
     }
-    
+
     return stepFiles
   }
 
@@ -63,7 +63,7 @@ export class BDDTestRunner {
   async run() {
     const features = await this.discoverFeatures()
     const steps = await this.discoverSteps()
-    
+
     return {
       features: features.length,
       steps: steps.length,

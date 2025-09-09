@@ -9,7 +9,7 @@
  */
 export const STEP_TYPES = {
   GIVEN: 'Given',
-  WHEN: 'When', 
+  WHEN: 'When',
   THEN: 'Then',
   AND: 'And',
   BUT: 'But'
@@ -63,7 +63,7 @@ export const TIMEOUTS = {
  */
 
 /**
- * @typedef {Object} BDDScenario  
+ * @typedef {Object} BDDScenario
  * @property {string} name - Scenario name
  * @property {BDDStep[]} steps - Array of steps
  * @property {Object} [context] - Scenario context data
