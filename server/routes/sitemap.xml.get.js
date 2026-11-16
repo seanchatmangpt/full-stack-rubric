@@ -4,7 +4,7 @@
  */
 
 import { eventHandler, setHeader } from 'h3'
-import { queryCollection } from '@nuxt/content/server'
+import { queryCollection } from '@nuxt/content/nitro'
 
 /**
  * Generate sitemap.xml for SEO
@@ -15,7 +15,7 @@ export default eventHandler(async (event) => {
   try {
     setHeader(event, 'Content-Type', 'application/xml')
     
-    // Get all content pages
+    // Get all content pages using Nuxt Content v3 API
     const pages = await queryCollection(event, 'docs').find()
     const landing = await queryCollection(event, 'landing').first()
     

@@ -4,9 +4,9 @@
  */
 
 import { withLeadingSlash, joinURL } from 'ufo'
-import { queryCollection } from '@nuxt/content/server'
 import { eventHandler, getRouterParams, createError, setHeader } from 'h3'
-import { withCache } from '~/server/utils/contentCache.js'
+import { queryCollection } from '@nuxt/content/nitro'
+import { withCache } from '../../utils/contentCache.js'
 import fs from 'fs/promises'
 import path from 'path'
 

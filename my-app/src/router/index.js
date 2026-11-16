@@ -5,9 +5,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 // Import page components (create these as needed)
 const Home = () => import('../pages/Home.vue')
-const About = () => import('../pages/About.vue') 
+const About = () => import('../pages/About.vue')
 const Dashboard = () => import('../pages/Dashboard.vue')
-const Profile = () => import('../pages/Profile.vue')
 
 /**
  * Route definitions supporting navigation component patterns
@@ -26,7 +25,7 @@ const routes = [
   },
   {
     path: '/about',
-    name: 'about', 
+    name: 'about',
     component: About,
     meta: {
       title: 'About',
@@ -46,49 +45,49 @@ const routes = [
       requiresAuth: true,
       breadcrumb: { title: 'Dashboard', icon: '📊' }
     },
-    children: [
-      {
-        path: 'analytics',
-        name: 'dashboard-analytics',
-        component: () => import('../pages/dashboard/Analytics.vue'),
-        meta: {
-          title: 'Analytics',
-          icon: '📈',
-          breadcrumb: { title: 'Analytics', icon: '📈' }
-        }
-      },
-      {
-        path: 'settings',
-        name: 'dashboard-settings',
-        component: () => import('../pages/dashboard/Settings.vue'),
-        meta: {
-          title: 'Settings',
-          icon: '⚙️',
-          breadcrumb: { title: 'Settings', icon: '⚙️' }
-        }
-      }
-    ]
+    // children: [
+    //   {
+    //     path: 'analytics',
+    //     name: 'dashboard-analytics',
+    //     component: () => import('../pages/dashboard/Analytics.vue'),
+    //     meta: {
+    //       title: 'Analytics',
+    //       icon: '📈',
+    //       breadcrumb: { title: 'Analytics', icon: '📈' }
+    //     }
+    //   },
+    //   {
+    //     path: 'settings',
+    //     name: 'dashboard-settings',
+    //     component: () => import('../pages/dashboard/Settings.vue'),
+    //     meta: {
+    //       title: 'Settings',
+    //       icon: '⚙️',
+    //       breadcrumb: { title: 'Settings', icon: '⚙️' }
+    //     }
+    //   }
+    // ]
   },
-  {
-    path: '/profile',
-    name: 'profile',
-    component: Profile,
-    meta: {
-      title: 'Profile',
-      icon: '👤',
-      requiresAuth: true,
-      breadcrumb: { title: 'Profile', icon: '👤' }
-    }
-  },
-  {
-    path: '/:pathMatch(.*)*',
-    name: 'not-found',
-    component: () => import('../pages/NotFound.vue'),
-    meta: {
-      title: '404 Not Found',
-      breadcrumb: { title: 'Not Found' }
-    }
-  }
+  // {
+  //   path: '/profile',
+  //   name: 'profile',
+  //   component: Profile,
+  //   meta: {
+  //     title: 'Profile',
+  //     icon: '👤',
+  //     requiresAuth: true,
+  //     breadcrumb: { title: 'Profile', icon: '👤' }
+  //   }
+  // },
+  // {
+  //   path: '/:pathMatch(.*)*',
+  //   name: 'not-found',
+  //   component: () => import('../pages/NotFound.vue'),
+  //   meta: {
+  //     title: '404 Not Found',
+  //     breadcrumb: { title: 'Not Found' }
+  //   }
+  // }
 ]
 
 /**
@@ -125,7 +124,7 @@ export function getNavMenuItems(includeChildren = true) {
       title: route.meta.title,
       to: route.path,
       icon: route.meta.icon,
-      children: includeChildren && route.children ? 
+      children: includeChildren && route.children ?
         route.children.map(child => ({
           id: child.name,
           title: child.meta?.title || child.name,
@@ -143,7 +142,7 @@ export function getNavMenuItems(includeChildren = true) {
 export function getBreadcrumbItems(route) {
   const breadcrumbs = []
   const routeMatched = route.matched || []
-  
+
   // Build breadcrumb path from matched routes
   routeMatched.forEach((match, index) => {
     if (match.meta?.breadcrumb) {
@@ -155,7 +154,7 @@ export function getBreadcrumbItems(route) {
       })
     }
   })
-  
+
   return breadcrumbs
 }
 
@@ -166,7 +165,7 @@ export function getBreadcrumbItems(route) {
 export function getTabItems(parentRoute = 'dashboard') {
   const parent = routes.find(route => route.name === parentRoute)
   if (!parent?.children) return []
-  
+
   return parent.children.map(child => ({
     id: child.name,
     label: child.meta?.title || child.name,
@@ -178,7 +177,7 @@ export function getTabItems(parentRoute = 'dashboard') {
 /**
  * Check if user has access to route
  * @param {Object} route - Route object
- * @param {Object} user - User object  
+ * @param {Object} user - User object
  */
 export function canAccessRoute(route, user = null) {
   if (!route.meta?.requiresAuth) return true
@@ -193,19 +192,19 @@ router.beforeEach((to, from, next) => {
   if (to.meta?.title) {
     document.title = `${to.meta.title} - My App`
   }
-  
+
   // Check authentication for protected routes
   if (to.meta?.requiresAuth) {
     // TODO: Replace with real auth check
     const isAuthenticated = localStorage.getItem('user_authenticated') === 'true'
-    
+
     if (!isAuthenticated) {
-      // Redirect to login or home
+      // Redirect to log in or home
       next({ name: 'home' })
       return
     }
   }
-  
+
   next()
 })
 

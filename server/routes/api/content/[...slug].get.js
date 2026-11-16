@@ -4,8 +4,8 @@
  */
 
 import { eventHandler, getRouterParams, createError, setHeader } from 'h3'
-import { queryCollection } from '@nuxt/content/server'
-import { withCache } from '~/server/utils/contentCache.js'
+import { queryCollection } from '@nuxt/content/nitro'
+import { withCache } from '../../../utils/contentCache.js'
 import fs from 'fs/promises'
 import path from 'path'
 

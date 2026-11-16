@@ -4,7 +4,7 @@
  */
 
 import { eventHandler, getQuery, createError, setHeader } from 'h3'
-import { queryCollection } from '@nuxt/content/server'
+import { queryCollection } from '@nuxt/content/nitro'
 
 /**
  * Search content API handler
@@ -25,7 +25,7 @@ export default eventHandler(async (event) => {
       }
     }
 
-    // Build search query
+    // Build search query using Nuxt Content v3 API
     let contentQuery = queryCollection(event, 'docs')
 
     // Apply filters

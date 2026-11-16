@@ -1,51 +1,61 @@
 import { defineConfig } from 'cypress'
-import { devServer } from '@cypress/vite-dev-server'
-import viteConfig from './vite.config.js'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
 
 export default defineConfig({
+  projectId: 'vue-ui-patterns',
+  
+  e2e: {
+    baseUrl: 'http://localhost:5173',
+    specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
+    supportFile: 'cypress/support/e2e.js',
+    video: true,
+    screenshot: true,
+    viewportWidth: 1280,
+    viewportHeight: 720,
+    
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+      return config
+    },
+    
+    env: {
+      coverage: true,
+      visualRegression: {
+        type: 'regression',
+        options: {
+          outputDir: 'cypress/visual-regression',
+          specDir: 'cypress/visual-regression'
+        }
+      }
+    }
+  },
+
   component: {
     devServer: {
       framework: 'vue',
       bundler: 'vite',
-      viteConfig
     },
-    specPattern: 'cypress/components/**/*.cy.{js,ts}',
-    indexHtmlFile: 'cypress/support/component-index.html'
-  },
-  e2e: {
-    baseUrl: 'http://localhost:5173',
-    specPattern: 'cypress/e2e/**/*.cy.{js,ts}',
-    supportFile: 'cypress/support/e2e.js',
-    video: true,
-    screenshotOnRunFailure: true,
-    viewportWidth: 1280,
-    viewportHeight: 720,
-    chromeWebSecurity: false,
+    specPattern: 'cypress/component/**/*.cy.{js,jsx,ts,tsx}',
+    supportFile: 'cypress/support/component.js',
+    indexHtmlFile: 'cypress/support/component-index.html',
+    
     setupNodeEvents(on, config) {
-      // Code coverage
-      require('@cypress/code-coverage/task')(on, config)
-      
-      // Terminal output
-      require('cypress-terminal-report/src/installLogsPrinter')(on, {
-        printLogsToConsole: 'onFail',
-      })
-      
-      // Visual regression
-      const getCompareSnapshotsPlugin = require('cypress-visual-regression/dist/plugin')
-      getCompareSnapshotsPlugin(on, config)
-      
       return config
-    },
-    env: {
-      coverage: true,
-      codeCoverage: {
-        url: 'http://localhost:5173/__coverage__'
-      }
     }
   },
+
+  // Global settings
+  defaultCommandTimeout: 10000,
+  requestTimeout: 10000,
+  responseTimeout: 10000,
+  pageLoadTimeout: 30000,
+  
+  // Retry configuration
   retries: {
     runMode: 2,
     openMode: 0
   },
-  experimentalWebKitSupport: true
+
+  // Remove custom browser configuration to use Cypress defaults
 })

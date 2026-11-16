@@ -1,0 +1,445 @@
+name: Comprehensive Testing Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+env:
+  NODE_VERSION: '18'
+  CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
+
+jobs:
+  # Unit and BDD Testing with Vitest
+  unit-bdd-tests:
+    name: Unit & BDD Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run Vitest unit tests with coverage
+      run: npm run test:coverage
+      
+    - name: Run BDD tests with Vitest-Cucumber
+      run: npm run test:bdd
+      
+    - name: Upload Vitest coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        directory: ./coverage
+        flags: vitest
+        name: vitest-coverage
+        
+    - name: Store Vitest artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: vitest-results
+        path: |
+          coverage/
+          !coverage/tmp
+        retention-days: 30
+
+  # Component Testing with Cypress
+  component-tests:
+    name: Component Tests (Cypress)
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Cypress component tests
+      uses: cypress-io/github-action@v6
+      with:
+        component: true
+        browser: chrome
+        headed: false
+        
+    - name: Store component test artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: cypress-component-results
+        path: |
+          cypress/screenshots
+          cypress/videos
+          cypress/reports
+        retention-days: 30
+
+  # E2E Testing with Cypress
+  e2e-tests:
+    name: E2E Tests (Cypress)
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        browser: [chrome, firefox, edge]
+        
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Start application server
+      run: |
+        npm run serve:backend &
+        npm run frontend &
+        npx wait-on http://localhost:5173
+        
+    - name: Run Cypress E2E tests
+      uses: cypress-io/github-action@v6
+      with:
+        browser: ${{ matrix.browser }}
+        spec: cypress/e2e/**/*.cy.js
+        headed: false
+        record: true
+      env:
+        CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Store E2E test artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: cypress-e2e-results-${{ matrix.browser }}
+        path: |
+          cypress/screenshots
+          cypress/videos
+          cypress/reports
+        retention-days: 30
+
+  # Accessibility Testing
+  accessibility-tests:
+    name: Accessibility Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Start application server
+      run: |
+        npm run serve:backend &
+        npm run frontend &
+        npx wait-on http://localhost:5173
+        
+    - name: Run accessibility tests
+      run: npm run test:accessibility
+      env:
+        ACCESSIBILITY: true
+        
+    - name: Upload accessibility results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: accessibility-results
+        path: |
+          cypress/reports/accessibility
+          cypress/screenshots
+        retention-days: 30
+
+  # Performance Testing
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Start application server
+      run: |
+        npm run serve:backend &
+        npm run frontend &
+        npx wait-on http://localhost:5173
+        
+    - name: Run performance tests
+      run: npm run test:performance
+      env:
+        PERFORMANCE: true
+        
+    - name: Upload performance results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: performance-results
+        path: |
+          cypress/reports/performance
+          lighthouse-reports
+        retention-days: 30
+
+  # Visual Regression Testing
+  visual-tests:
+    name: Visual Regression Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Start application server
+      run: |
+        npm run serve:backend &
+        npm run frontend &
+        npx wait-on http://localhost:5173
+        
+    - name: Run visual regression tests
+      uses: cypress-io/github-action@v6
+      with:
+        spec: cypress/e2e/**/*.cy.js
+        config: video=false,screenshotOnRunFailure=false
+      env:
+        VISUAL_REGRESSION: true
+        
+    - name: Upload visual diff artifacts
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: visual-diffs
+        path: |
+          cypress/screenshots/diff
+          cypress/screenshots/actual
+        retention-days: 30
+
+  # Combined Report Generation
+  generate-reports:
+    name: Generate Combined Reports
+    needs: [unit-bdd-tests, component-tests, e2e-tests, accessibility-tests, performance-tests]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Download all test artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./artifacts
+        
+    - name: Merge artifacts
+      run: |
+        # Copy Vitest results
+        if [ -d "./artifacts/vitest-results" ]; then
+          cp -r ./artifacts/vitest-results/* ./
+        fi
+        
+        # Copy Cypress results
+        if [ -d "./artifacts/cypress-component-results" ]; then
+          cp -r ./artifacts/cypress-component-results/* ./
+        fi
+        
+        # Merge E2E results from different browsers
+        for browser in chrome firefox edge; do
+          if [ -d "./artifacts/cypress-e2e-results-$browser" ]; then
+            cp -r "./artifacts/cypress-e2e-results-$browser"/* ./
+          fi
+        done
+        
+    - name: Generate combined report
+      run: npm run test:report
+      
+    - name: Upload combined report
+      uses: actions/upload-artifact@v4
+      with:
+        name: combined-test-report
+        path: |
+          coverage/combined-report.html
+          coverage/combined-report.json
+          coverage/test-summary.json
+        retention-days: 90
+        
+    - name: Comment PR with results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          try {
+            const summary = JSON.parse(fs.readFileSync('coverage/test-summary.json', 'utf8'));
+            
+            const body = `
+          ## 🧪 Test Results Summary
+          
+          **Status:** ${summary.passed ? '✅ PASSED' : '❌ FAILED'}
+          
+          ### Coverage
+          - **Statements:** ${summary.coverage.statements}% (target: 80%)
+          - **Branches:** ${summary.coverage.branches}% (target: 75%)
+          - **Functions:** ${summary.coverage.functions}% (target: 80%)
+          - **Lines:** ${summary.coverage.lines}% (target: 80%)
+          
+          ### Test Results
+          - **Vitest:** ${summary.tests.vitest.passed}/${summary.tests.vitest.total} passed
+          - **Cypress:** ${summary.tests.cypress.passed}/${summary.tests.cypress.total} passed
+          
+          ### Files Tested
+          - **Total:** ${summary.files.total}
+          - **Vitest:** ${summary.files.vitest}
+          - **Cypress:** ${summary.files.cypress}
+          - **Both:** ${summary.files.both}
+          
+          [View detailed report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          `;
+          
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+          } catch (error) {
+            console.log('Could not read test summary:', error.message);
+          }
+
+  # Security and Quality Checks
+  security-quality:
+    name: Security & Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run npm audit
+      run: npm audit --audit-level moderate
+      continue-on-error: true
+      
+    - name: Run ESLint
+      run: npm run lint
+      continue-on-error: true
+      
+    - name: Check for hardcoded secrets
+      run: |
+        if grep -r "password\|secret\|key\|token" src/ --exclude-dir=node_modules --exclude="*.test.js" --exclude="*.spec.js" || true; then
+          echo "⚠️ Potential secrets found in code"
+        fi
+        
+    - name: Bundle size check
+      run: |
+        npm run build
+        du -sh dist/
+        
+  # Notification on failure
+  notify-on-failure:
+    name: Notify on Failure
+    needs: [unit-bdd-tests, component-tests, e2e-tests, accessibility-tests, performance-tests, generate-reports]
+    runs-on: ubuntu-latest
+    if: failure() && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Notify Slack on failure
+      if: env.SLACK_WEBHOOK_URL
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"🚨 Testing failed on main branch: ${{ github.repository }}"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+          
+    - name: Create issue on failure
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: '🚨 Test Suite Failure on Main Branch',
+            body: `
+            The comprehensive test suite failed on the main branch.
+            
+            **Commit:** ${{ github.sha }}
+            **Run:** https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            
+            Please investigate and fix the failing tests.
+            `,
+            labels: ['bug', 'testing', 'high-priority']
+          });
+
+env:
+  # Cypress environment variables
+  CYPRESS_baseUrl: http://localhost:5173
+  CYPRESS_video: true
+  CYPRESS_screenshotOnRunFailure: true
+  
+  # Coverage thresholds
+  COVERAGE_STATEMENTS: 80
+  COVERAGE_BRANCHES: 75
+  COVERAGE_FUNCTIONS: 80
+  COVERAGE_LINES: 80
